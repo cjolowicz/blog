@@ -21,7 +21,7 @@ pygmentsCodeFencesGuessSyntax = true
 
     footerContent = "code poetry for machines and humans"
 
-    hideCredits = true
+    hideCredits = false
     hideCopyright = false
 
     rtl = false
