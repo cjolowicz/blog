@@ -175,6 +175,7 @@ Return to the `blog` repository, and invoke the following commands in
 its top-level directory:
 
 ```sh
+cd blog
 git submodule add \
     https://github.com/username/username.github.io.git \
     public
