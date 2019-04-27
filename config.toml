@@ -1,5 +1,5 @@
 baseURL = "http://cjolowicz.github.io/"
 languageCode = "en-us"
 title = "cjolowicz.github.io"
-theme = "ananke"
+theme = "coder"
 pygmentsCodeFences = true
