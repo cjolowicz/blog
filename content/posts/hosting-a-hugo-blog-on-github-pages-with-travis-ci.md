@@ -10,23 +10,23 @@ web hosting service offered by GitHub. The
 [Travis CI](https://travis-ci.com) continuous integration service is
 used to deploy changes to the blog.
 
-> This post is partially based on Artem Sidorenko's article
+> This post is based on Artem Sidorenko's article
 > [Hugo on GitHub Pages with Travis CI](https://www.sidorenko.io/post/2018/12/hugo-on-github-pages-with-travis-ci/).
 
 ## Overview
 
-We will set up two separate GitHub repositories:
+We will set up two GitHub repositories:
 
 - The first repository is named `blog` and holds the Hugo sources.
 - The second repository is named `username.github.io` and holds the
   generated content.
 
-(Throughout this post, replace `username` with your GitHub username.)
+(Throughout this post, replace _username_ with your GitHub username.)
 
-When you push a change to `blog`, Travis CI will invoke Hugo to
-rebuild the site, and push the generated content to
-`username.github.io`. GitHub Pages will then deploy the site to
-https://username.github.io/.
+We will also set up Travis CI such that, when you push a change to
+`blog`, it will invoke Hugo to rebuild the site, and push the
+generated content to `username.github.io`. GitHub Pages will then
+deploy the site to https://username.github.io/.
 
 ## Installing Hugo
 
@@ -130,10 +130,9 @@ Let's start by creating the repository locally:
 ```sh
 mkdir username.github.io
 cd username.github.io
-
-git init
 echo "# username.github.io" > README.md
 
+git init
 git add .
 git commit -m "Initial commit"
 ```
@@ -192,15 +191,14 @@ We can now start to think about Continuous Deployment. Deploying a
 change such as a new post to the live blog requires several steps:
 
 1. The change is pushed to the `blog` repository.
-2. Hugo is triggered to rebuild the site content in `public`.
+2. Hugo is triggered to rebuild the site content.
 3. The changes are pushed to the `username.github.io` repository.
 4. The repository is deployed to GitHub Pages.
 
 We will set up continuous integration on the `blog` repository to
 achieve steps 2 and 3, using [Travis CI](https://travis-ci.com). The
 last step---deploying from `username.github.io` to GitHub Pages---does
-not require further setup, because the repository is treated specially
-by GitHub.
+not require further setup.
 
 #### Setting up a bot account
 
@@ -217,16 +215,16 @@ personal account. The bot account is just a normal GitHub user
 account.
 
 Note that you need to use a separate email address for the bot
-account, since GitHub accounts must have unique email addresses. One
-useful technique is
+account, since GitHub accounts must have unique email addresses. A
+useful technique in this scenario is
 [subaddressing](https://en.wikipedia.org/wiki/Email_address#Subaddressing)
-(also known as _plus addressing_): Add `+blog-bot` after the local
-part of your email address before the `@` sign, and have it delivered
-to your normal inbox.
+(also known as _plus addressing_): Append `+blog-bot` to the local
+part of your email address (before the `@` sign), and have mails
+delivered to your normal inbox.
 
-When you're done setting up the GitHub account, add the bot account as
-a collaborator to the `username.github.io` repository, using the
-_Settings_ page for that repository.
+When you're done setting up the GitHub account, go to the _Settings_
+page for the `username.github.io` repository, and add the bot account
+as a collaborator.
 
 #### Adding GitHub credentials to Travis CI
 
@@ -320,13 +318,11 @@ You can now visit https://travis-ci.com/USERNAME/blog to see your blog
 building. When CI has completed, your blog should be live at
 https://username.github.io/.
 
-#### Some remarks
+#### Some remarks about the CI setup
 
-Some remarks about this CI setup. This section can be safely skipped.
-
-First, note that we force-push the generated content, effectively
-replacing `HEAD` and effacing history. This is no big deal, as we're
-only dealing with generated content here.
+Note that we force-push the generated content, effectively replacing
+`HEAD` and effacing history. This is no big deal, as we're only
+dealing with generated content here.
 
 The reason for force-pushing is somewhat subtle: The submodule is
 checked out in detached `HEAD` mode, so we cannot easily pull the
