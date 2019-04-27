@@ -188,7 +188,7 @@ the generated content to `username.github.io`.
 
 ## Continuous Deployment
 
-We can now start to think about Continous Deployment. Deploying a
+We can now start to think about Continuous Deployment. Deploying a
 change such as a new post to the live blog requires several steps:
 
 1. The change is pushed to the `blog` repository.
