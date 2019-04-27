@@ -90,7 +90,7 @@ the blog title, and to declare the theme we just installed. This is
 what the file should look like:
 
 ```toml
-baseURL = "http://username.github.io/"
+baseURL = "https://username.github.io/"
 languageCode = "en-us"
 title = "My Blog"
 theme = "ananke"
