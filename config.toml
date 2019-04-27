@@ -2,4 +2,44 @@ baseURL = "http://cjolowicz.github.io/"
 languageCode = "en-us"
 title = "cjolowicz.github.io"
 theme = "coder"
+
+paginate = 20
+canonifyURLs = true
+
 pygmentsCodeFences = true
+pygmentsCodeFencesGuessSyntax = true
+
+[params]
+    author = "Claudio Jolowicz"
+    info = ""
+    description = "Claudio Jolowicz's personal website"
+    keywords = "blog,developer,personal"
+    avatarurl = "/images/avatar.jpg"
+
+    favicon_32 = "/images/favicon-32x32.png"
+    favicon_16 = "/images/favicon-16x16.png"
+
+    footerContent = "poetry for machines--music for humans"
+
+    hideCredits = true
+    hideCopyright = false
+
+    rtl = false
+
+    math = true
+
+[[params.social]]
+    name = "Github"
+    icon = "fab fa-github fa-2x"
+    weight = 1
+    url = "https://github.com/cjolowicz/"
+[[params.social]]
+    name = "Twitter"
+    icon = "fab fa-twitter fa-2x"
+    weight = 2
+    url = "https://twitter.com/cjolowicz/"
+
+[[menu.main]]
+    name = "Blog"
+    weight = 1
+    url  = "/posts/"
