@@ -19,7 +19,7 @@ pygmentsCodeFencesGuessSyntax = true
     favicon_32 = "/images/favicon-32x32.png"
     favicon_16 = "/images/favicon-16x16.png"
 
-    footerContent = "poetry for machines--music for humans"
+    footerContent = "code poetry for machines and humans"
 
     hideCredits = true
     hideCopyright = false
