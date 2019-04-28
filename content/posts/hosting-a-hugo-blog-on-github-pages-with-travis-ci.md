@@ -336,12 +336,14 @@ effectively replacing `HEAD` and effacing history. This is no big deal, as the
 repository only contains generated content.
 
 The reason for force-pushing is somewhat subtle: As mentioned above, the
-submodule still points to the initial commit in the _username.github.io_
+submodule still points to the initial commit in the `username.github.io`
 repository. To perform a normal push you would therefore first need to pull from
-origin. Unfortunately, this is impossible because the submodule is checked out
-in detached `HEAD` mode and has no information about local and upstream
-branches. Incidentally, this is also the reason why the last argument to the
-push command is `HEAD:master` rather than `master`.
+origin. 
+
+Unfortunately, this is impossible because the submodule is checked out in
+detached `HEAD` mode and has no information about local and upstream branches.
+Incidentally, this is also the reason why the last argument to the push command
+is `HEAD:master` rather than `master`.
 
 ## Writing a post
 
