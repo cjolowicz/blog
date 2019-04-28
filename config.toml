@@ -1,6 +1,6 @@
 baseURL = "https://cjolowicz.github.io/"
 languageCode = "en-us"
-title = "cjolowicz.github.io"
+title = "<<"
 theme = "coder"
 
 paginate = 20
@@ -12,17 +12,17 @@ pygmentsCodeFencesGuessSyntax = true
 [params]
     author = "Claudio Jolowicz"
     info = ""
-    description = "Claudio Jolowicz's personal website"
+    description = "Blog of Claudio Jolowicz"
     keywords = "blog,developer,personal"
     avatarurl = "/images/avatar.jpg"
 
     favicon_32 = "/images/favicon-32x32.png"
     favicon_16 = "/images/favicon-16x16.png"
 
-    footerContent = "code poetry for machines and humans"
+    footerContent = ""
 
-    hideCredits = false
-    hideCopyright = false
+    hideCredits = true
+    hideCopyright = true
 
     rtl = false
 
