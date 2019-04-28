@@ -304,7 +304,7 @@ git push --force origin HEAD:master
 
 You can also invoke this script manually on your machine, after running `hugo`
 to rebuild the site. Outside of CI, the script uses your normal GitHub
-credentials to push and deploy the generated content.
+credentials to commit and push the generated content.
 
 #### Finishing
 
@@ -313,6 +313,7 @@ Finally, commit the added files and push them to the `blog` repository.
 ```sh
 git add .travis.yml deploy.sh
 git commit -am "CI: Build and push to username.github.io"
+git push
 ```
 
 You can now visit https://travis-ci.com/USERNAME/blog to see your blog building.
@@ -320,17 +321,19 @@ When CI has completed, your blog should be live at https://username.github.io/.
 
 #### Some remarks about the CI setup
 
-Committing to the submodule leaves the main repository in a dirty state. CI
-never updates the main repository to point to the new commit in the submodule.
-It cannot, because the bot account does not have write access to the `blog`
-repository.
+Two remarks about the CI setup.
+
+First, note that CI never updates the `blog` repository to point to the new
+commit in the submodule. It cannot, because the bot account does not have write
+access to this repository. This means that the `blog` repository is left
+pointing at the initial commit of the submodule.
 
 This is not really an issue, because our site is deployed directly from
 `username.github.io`, rather than from the `blog` repository's submodule.
 
-Note that the deployment script force-pushes the generated content, effectively
-replacing `HEAD` and effacing history. This is no big deal, as the repository
-only contains generated content.
+Second, note that the deployment script force-pushes the generated content,
+effectively replacing `HEAD` and effacing history. This is no big deal, as the
+repository only contains generated content.
 
 The reason for force-pushing is somewhat subtle: As mentioned above, the
 submodule still points to the initial commit in the _username.github.io_
