@@ -1,9 +1,11 @@
-+++ 
-date = 2019-05-23T09:08:59+02:00
-title = "Incremental Docker builds for monolithic codebases"
-description = "This post demonstrates how to use Docker to incrementally build and deploy multiple artifacts from large monolithic codebases."
-tags = ["docker", "cmake"]
-+++
+--- 
+date: 2019-05-23T09:08:59+02:00
+title: "Incremental Docker builds for monolithic codebases"
+description: "This post demonstrates how to use Docker to incrementally build and deploy multiple artifacts from large monolithic codebases."
+tags:
+  - docker
+  - cmake
+---
 
 This post demonstrates how to use [Docker](https://www.docker.com/) to
 incrementally build and deploy multiple artifacts from large monolithic
