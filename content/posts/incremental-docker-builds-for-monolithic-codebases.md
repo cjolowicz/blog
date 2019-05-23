@@ -16,13 +16,13 @@ repository](https://github.com/cjolowicz/docker-incremental-build-example).
 ##### Overview
 
 1. [Introduction](#introduction)
-1. [Example codebase](#example-codebase)
-2. [Writing Dockerfiles](#writing-dockerfiles)
-3. [Avoiding code duplication](#avoiding-code-duplication)
-4. [Using Docker Compose for a builder image](#using-docker-compose-for-a-builder-image)
-5. [Reducing image size](#reducing-image-size)
-6. [Building incrementally](#building-incrementally)
-7. [Summary](#summary)
+2. [Example codebase](#example-codebase)
+3. [Writing Dockerfiles](#writing-dockerfiles)
+4. [Avoiding code duplication](#avoiding-code-duplication)
+5. [Using Docker Compose for a builder image](#using-docker-compose-for-a-builder-image)
+6. [Reducing image size](#reducing-image-size)
+7. [Building incrementally](#building-incrementally)
+8. [Summary](#summary)
 
 ## Introduction
 
