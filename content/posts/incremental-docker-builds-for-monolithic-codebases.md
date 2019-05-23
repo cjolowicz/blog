@@ -13,6 +13,17 @@ technique is useful for developers who need to run frequent integration tests on
 their work in progress. Sample code is available in a [GitHub
 repository](https://github.com/cjolowicz/docker-incremental-build-example).
 
+##### Overview
+
+1. [Introduction](#introduction)
+1. [Example codebase](#example-codebase)
+2. [Writing Dockerfiles](#writing-dockerfiles)
+3. [Avoiding code duplication](#avoiding-code-duplication)
+4. [Using Docker Compose for a builder image](#using-docker-compose-for-a-builder-image)
+5. [Reducing image size](#reducing-image-size)
+6. [Building incrementally](#building-incrementally)
+7. [Summary](#summary)
+
 ## Introduction
 
 Companies and open-source organizations often use a single source code
@@ -32,17 +43,16 @@ development, it is important to also run integration tests early on. They help
 making sure that services start up and interact with each other as expected.
 
 [Docker](https://www.docker.com/) is a convenient way of automating the build
-and deployment process. What's more, it is not restricted to [continuous
-integration](https://en.wikipedia.org/wiki/Continuous_integration) and
-production. Docker can also be used on a developer machine, allowing you to test
-the running environment even before you push your changes to a branch for CI and
-review.
+and deployment process. What's more, it is not restricted to continuous
+integration and production. Docker can also be used on a developer machine,
+allowing you to test the running environment even before you push your changes
+to a branch for CI and review.
 
 Using Docker to build and deploy artifacts from a monolithic codebase faces
 several challenges. This is especially true if you're a developer who needs to
 frequently rebuild the codebase.
 
-##### Goal 
+##### The goal
 
 ▹&nbsp;&nbsp;&nbsp;*Build and deploy artifacts from a monolithic repository during development*
 
@@ -83,16 +93,6 @@ quite complex. While Dockerfiles already help greatly with this, you can use
 build and deployment process in a single declarative file. However, Docker
 Compose assumes that only a single Dockerfile needs to be built for every
 service. How can you get it to build a shared intermediate image?
-
-##### Overview
-
-1. [Example codebase](#example-codebase)
-2. [Writing Dockerfiles](#writing-dockerfiles)
-3. [Avoiding code duplication](#avoiding-code-duplication)
-4. [Using Docker Compose for a builder image](#using-docker-compose-for-a-builder-image)
-5. [Reducing image size](#reducing-image-size)
-6. [Building incrementally](#building-incrementally)
-7. [Summary](#summary)
 
 ## Example codebase
 
