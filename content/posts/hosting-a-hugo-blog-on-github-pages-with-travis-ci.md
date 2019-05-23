@@ -1,6 +1,7 @@
 ---
 title: "Hosting a Hugo blog on GitHub Pages with Travis CI"
 date: 2019-04-27T10:48:29+02:00
+tags: ["hugo", "github-pages", "travis"]
 ---
 
 This post describes how to set up a blog using [Hugo](https://gohugo.io/), an
