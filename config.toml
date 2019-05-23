@@ -9,6 +9,8 @@ canonifyURLs = true
 pygmentsCodeFences = true
 pygmentsCodeFencesGuessSyntax = true
 
+disqusShortname = "cjolowicz"
+
 [params]
     author = "Claudio Jolowicz"
     info = ""
