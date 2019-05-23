@@ -1,6 +1,6 @@
 baseURL = "https://cjolowicz.github.io/"
 languageCode = "en-us"
-title = "<<"
+title = "Claudio Jolowicz's website"
 theme = "coder"
 
 paginate = 20
@@ -12,7 +12,7 @@ pygmentsCodeFencesGuessSyntax = true
 [params]
     author = "Claudio Jolowicz"
     info = ""
-    description = "Blog of Claudio Jolowicz"
+    description = "Claudio Jolowicz's website"
     keywords = "blog,developer,personal"
     avatarurl = "/images/avatar.jpg"
 
