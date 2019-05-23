@@ -10,6 +10,30 @@ Pages](https://pages.github.com/), a web hosting service offered by GitHub. The
 [Travis CI](https://travis-ci.com) continuous integration service is used to
 deploy changes to the blog.
 
+**Contents**
+
+- [Overview](#overview)
+- [Installing Hugo](#installing-hugo)
+- [Setting up the blog repository](#setting-up-the-blog-repository)
+  - [Creating the repository](#creating-the-repository)
+  - [Installing a theme](#installing-a-theme)
+  - [Configuring the site](#configuring-the-site)
+  - [Publishing the repository](#publishing-the-repository)
+- [Setting up the github.io repository](#setting-up-the-githubio-repository)
+  - [Creating the repository](#creating-the-repository-1)
+  - [Publishing the repository](#publishing-the-repository-1)
+  - [Cleaning up](#cleaning-up)
+  - [Linking the repositories](#linking-the-repositories)
+- [Continuous Deployment](#continuous-deployment)
+  - [Setting up a bot account](#setting-up-a-bot-account)
+  - [Adding GitHub credentials to Travis CI](#adding-github-credentials-to-travis-ci)
+  - [Configuring Travis CI](#configuring-travis-ci)
+  - [Adding the deployment script](#adding-the-deployment-script)
+  - [Finishing](#finishing)
+  - [Some remarks about the CI setup](#some-remarks-about-the-ci-setup)
+- [Writing a post](#writing-a-post)
+- [Links](#links)
+
 > This post is based on Artem Sidorenko's article
 > [Hugo on GitHub Pages with Travis CI](https://www.sidorenko.io/post/2018/12/hugo-on-github-pages-with-travis-ci/).
 
