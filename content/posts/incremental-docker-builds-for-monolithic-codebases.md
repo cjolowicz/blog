@@ -261,9 +261,8 @@ docker-incremental-build-example_bar   317MB
 builder                                317MB
 ```
 
-Instead of deriving from the builder image, extract the required package from
-the builder image using the `COPY --from` instruction, and copy it into a
-minimal base image:
+Instead of deriving from the builder image, extract the required package using
+the `COPY --from` instruction, and install it into a minimal base image:
 
 ```Dockerfile
 FROM debian:stretch-slim
@@ -272,9 +271,9 @@ RUN dpkg --install /tmp/foobar-0.1.1-Linux-bar.deb
 CMD ["bar"]
 ```
 
-Images now derive from a minimal base image, leaving source and build trees as
-well as build dependencies behind. This reduces image sizes significantly, even
-for our tiny example codebase:
+Images now contain only the minimum required to run the service, leaving source
+and build trees as well as build dependencies behind. This reduces image sizes
+significantly, even for our tiny example codebase:
 
 ```sh
 $ docker image ls --format="table {{.Repository}}\t{{.Size}}"
