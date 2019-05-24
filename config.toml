@@ -40,6 +40,11 @@ disqusShortname = "cjolowicz"
     icon = "fab fa-twitter fa-2x"
     weight = 2
     url = "https://twitter.com/cjolowicz/"
+[[params.social]]
+    name = "Medium"
+    icon = "fab fa-medium"
+    weight = 3
+    url = "https://medium.com/@cjolowicz"
 
 [[menu.main]]
     name = "Blog"
