@@ -292,12 +292,28 @@ shared between images and defined in a separate Dockerfile.
 
 ▶ **[View code](https://github.com/cjolowicz/docker-incremental-build-example/commit/277915f)**
 
-Anytime a line of source code is changed, Docker needs to rebuild the entire
-codebase.
+Anytime a line of source code is changed, Docker rebuilds the entire codebase
+from scratch.
 
-Copy the build tree from a previous Docker build, using the `COPY --from`
-instruction. Now only targets with changed dependencies are rebuilt. For a
-sizeable codebase, this can speed up Docker builds dramatically.
+Let's see why this happens. The Dockerfile for the builder image imports the
+source tree into the image using the `COPY` instruction. When encountering a
+`COPY` instruction, Docker examines the contents of the copied files and
+calculates a checksum for each file. If the checksum of each of the files
+matches its checksum in a previous build, the image is retrieved from the
+[Docker build
+cache](https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#leverage-build-cache).
+
+On the other hand, if one of the files has changed, the build cache is
+invalidated and Docker runs the remaining instructions in the Dockerfile without
+using the cache. As a consequence, the build tools---cmake and make---cannot
+reuse any artifacts from a previous run. The layers containing them appear after
+the `COPY` instruction and are thus no longer available.
+
+Luckily, there is an instruction that allows you to copy the build artifacts
+into the image explicitly, and you have just seen it: the `COPY --from`
+instruction. At the time the Dockerfile is being executed, the `builder` tag
+still references the last successful build of this image, so you can use it to
+copy the build tree from it:
 
 ```diff
 diff --git a/Dockerfile b/Dockerfile
@@ -314,12 +330,16 @@ index 70a4be8..82469c0 100644
  RUN make package
 ```
 
+Now the build tools can access the results of previous runs, and only targets
+with changed dependencies need to be rebuilt. For a sizeable codebase, this can
+speed up Docker builds dramatically.
+
 ##### Bootstrapping incremental builds
 
-The `COPY --from=builder` instruction introduces a self-referentiality to the
-Dockerfile for the builder image. The consequence of this self-referentiality is
-that the initial build is now broken: there is no image to copy the build tree
-from.
+The `COPY --from=builder` instruction references the very image that is
+currently being built: the builder image. The consequence of this
+self-referentiality is that the initial build is now broken: there is no image
+to copy the build tree from.
 
 The following `Dockerfile.init` creates an initial builder image from which the
 "real" builder image can copy the build directory. The build directory contains
