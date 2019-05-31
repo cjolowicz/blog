@@ -253,7 +253,7 @@ docker-incremental-build-example_bar   317MB
 builder                                317MB
 ```
 
-##### How to keep source and build trees out of the images
+##### Multi-stage builds
 
 [Multi-stage
 builds](https://docs.docker.com/develop/develop-images/multistage-build/) are
@@ -278,20 +278,22 @@ COPY --from=0 /build/foo /usr/bin/
 CMD ["foo"]
 ```
 
-This Dockerfile has two stages, each introduced by a `FROM` instruction. In this
-example, the second stage uses an Alpine image. [Alpine
+This Dockerfile has two stages, each introduced by a `FROM` instruction. The
+first stage uses a Debian image to build an executable named `foo`. The second
+stage uses an Alpine image, copies `foo` from the first stage and sets it as the
+command to be executed when the image is run. Docker build stages are numbered
+from zero, so `COPY --from=0` copies from the first stage. [Alpine
 Linux](https://alpinelinux.org/) is a security-oriented, lightweight Linux
-distribution and a popular choice for Docker images. Docker build stages are
-numbered from zero, so `COPY --from=0` references the first stage. It copies the
-build artifact from the first stage and sets it as the command to be executed
-when the image is run.
+distribution and a popular choice for Docker images.
 
-But with a monolithic codebase, the build instructions for the first stage are
+##### Using the builder image as a "stage"
+
+With a monolithic codebase, the build instructions for the first stage are
 identical for all images. How do you use multi-stage builds when the initial
 stage is shared between the images? This is actually rather simple. The `COPY
 --from` instruction can also be used with the name of an external image, rather
-than a build stage. You already have an image that builds the codebase,
-producing all the required build artifacts: the builder image.
+than a build stage. You already have an image that builds the codebase: the
+builder image.
 
 Let's rewrite the Dockerfiles for `bar` and `baz` using the `COPY --from`
 instruction. Instead of deriving the final images from the builder image, derive
