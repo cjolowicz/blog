@@ -117,7 +117,7 @@ RUN dpkg --install foobar-0.1.1-Linux-bar.deb
 CMD ["bar"]
 ```
 
-Instructions to build and deploy many services become complex very fast. While
+Instructions to build and deploy many services become complex, very fast. While
 Dockerfiles already help greatly with this, you can use [Docker
 Compose](https://docs.docker.com/compose/) to encapsulate the entire build and
 deployment process in a single declarative file.
@@ -184,9 +184,9 @@ RUN dpkg --install foobar-0.1.1-Linux-bar.deb
 CMD ["bar"]
 ```
 
-Docker Compose does not yet know about the builder image. Before the services
-can be created and started, the builder image needs to be built explicitly using
-a command such as the following:
+The builder image is not yet registered in the Docker Compose file. Before the
+services can be created and started, the builder image needs to be built
+explicitly using a command such as the following:
 
 ```sh
 docker build --tag=builder .
@@ -196,11 +196,12 @@ docker build --tag=builder .
 
 ▶ **[View code](https://github.com/cjolowicz/docker-incremental-build-example/commit/1cfa80e)**
 
-Docker Compose assumes that only a single Dockerfile needs to be built for every
-service. How do you build a shared intermediate image using Docker Compose?
+Docker Compose only builds a single image for every service, but these images
+are derived from a common base image. How do you ensure the base image is
+rebuilt any time the services are?
 
-Getting Docker Compose to build the base image is possible by adding a service
-for it at the top of the Docker Compose file:
+Getting Docker Compose to build the base image is possible, but it involves
+adding a service for it at the top of the Docker Compose file:
 
 {{< highlight yaml "hl_lines=3-5" >}}
 version: "3.7"
@@ -214,13 +215,14 @@ services:
     build: baz
 {{< /highlight >}}
 
-The image name is specified explicitly because, by default, Docker Compose
-constructs image names from the basename of the directory and the service name.
-In our case, this would end up rather unwieldy, like
-`docker-incremental-build-example_builder`.
+The image name is specified explicitly because, by default, image names are
+constructed from the basename of the directory and the service name. By default,
+the image would end up being named `docker-incremental-build-example_builder`,
+rather than `builder`.
 
-Ensure that the builder service exits immediately by changing its command to
-`true`.
+Of course, you do not actually want Docker Compose to run a service with the
+builder image. Ensure that the builder service exits immediately by changing its
+command to `true`:
 
 ```diff
 diff --git a/Dockerfile b/Dockerfile
