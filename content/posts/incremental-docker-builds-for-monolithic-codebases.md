@@ -14,10 +14,10 @@ their work in progress. Sample code is available in a [GitHub
 repository](https://github.com/cjolowicz/docker-incremental-build-example).
 
 After showing a naive approach to building an entire codebase with Docker, the
-post develops an interesting and novel solution which avoids code duplication,
-reduces image size, and speeds up builds by reusing the intermediate build
-artifacts from a previous Docker run. Each section in the post corresponds to a
-commit in the GitHub repository, linked to at the top of the section.
+post describes an interesting solution which avoids code duplication, reduces
+image size, and speeds up builds by reusing the intermediate build artifacts
+from a previous Docker run. Each section in the post corresponds to a commit in
+the GitHub repository, linked to at the top of the section.
 
 ##### Contents
 
