@@ -13,7 +13,7 @@ technique is useful for developers who need to run frequent integration tests on
 their work in progress. Sample code is available in a [GitHub
 repository](https://github.com/cjolowicz/docker-incremental-build-example).
 
-##### Overview
+##### Contents
 
 1. [Introduction](#introduction)
 2. [Example codebase](#example-codebase)
@@ -40,7 +40,7 @@ terabytes of data.[^1]
 How do you test changes that potentially affect a multitude of services built
 from it? While unit tests are the primary means of checking code changes during
 development, it is important to also run integration tests early on. They help
-making sure that services start up and interact with each other as expected.
+make sure that services start up and interact with each other as expected.
 
 [Docker](https://www.docker.com/) is a convenient way of automating the build
 and deployment process. What's more, it is not restricted to continuous
@@ -48,11 +48,20 @@ integration and production. Docker can also be used on a developer machine,
 allowing you to test the running environment even before you push your changes
 to a branch for CI and review.
 
-Using Docker to build and deploy artifacts from a monolithic codebase faces
+Using Docker to build and deploy artifacts from a monolithic codebase presents
 several challenges. This is especially true if you're a developer who needs to
 frequently rebuild the codebase.
 
+This article shows the naive approach to solving this problem, and a really
+interesting and novel solution which involves avoiding code duplication,
+reducing image size, and building incrementally by reusing the intermediate
+build artifacts from a previous Docker run. Every section in the article
+corresponds to a commit in the GitHub repository, which is linked to at the top
+of the section.
+
 ##### The goal
+
+Here's what we're setting out to do:
 
 ▹&nbsp;&nbsp;&nbsp;*Build and deploy artifacts from a monolithic repository during development*
 
@@ -62,20 +71,20 @@ frequently rebuild the codebase.
 
 ##### Challenges
 
-▹&nbsp;&nbsp;&nbsp;*How to avoid building the entire source tree each time?*
+▹&nbsp;&nbsp;&nbsp;*How to avoid building the entire source tree each time*
 
 Every time a line of code is changed, Docker's build cache is invalidated,
-causing it to rebuild the entire codebase from scratch. Typically this takes
-anywhere from minutes to hours depending on codebase and build infrastructure.
+causing it to rebuild the entire codebase from scratch. Typically, this takes
+anywhere from minutes to hours, depending on codebase and build infrastructure.
 How can you get Docker to build incrementally, reusing the intermediate build
 artifacts from its last invocation?
 
-▹&nbsp;&nbsp;&nbsp;*How to keep source and build trees out of the images?*
+▹&nbsp;&nbsp;&nbsp;*How to keep source and build trees out of the images*
 
 Another problem you encounter when writing Dockerfiles for a monolithic codebase
 is the size of the Docker images resulting from it. The intermediate images
-contain the entire source and build trees, including a heap of intermediate and
-unrelated build artifacts, as well as the complete build toolchain.
+contain the entire source and build trees, including a heap of unrelated build
+artifacts, as well as the complete build toolchain.
 
 [Multi-stage
 builds](https://docs.docker.com/develop/develop-images/multistage-build/) are
@@ -85,22 +94,22 @@ the build artifact. The second stage extracts the build artifact and copies it
 into a minimal base image. But how do you use multi-stage builds when the
 initial build stage must be shared between all the images?
 
-▹&nbsp;&nbsp;&nbsp;*How to use Docker Compose to build a shared intermediate image?*
+▹&nbsp;&nbsp;&nbsp;*How to use Docker Compose to build a shared intermediate image*
 
-Instructions to build and deploy a great number of services can easily become
-quite complex. While Dockerfiles already help greatly with this, you can use
-[Docker Compose](https://docs.docker.com/compose/) to encapsulate the entire
-build and deployment process in a single declarative file. However, Docker
-Compose assumes that only a single Dockerfile needs to be built for every
-service. How can you get it to build a shared intermediate image?
+Instructions to build and deploy many services become complex very fast. While
+Dockerfiles already help greatly with this, you can use [Docker
+Compose](https://docs.docker.com/compose/) to encapsulate the entire build and
+deployment process in a single declarative file. However, Docker Compose assumes
+that only a single Dockerfile needs to be built for every service. How do you
+build a shared intermediate image using Docker Compose?
 
 ## Example codebase
 
 ▶ **[View code](https://github.com/cjolowicz/docker-incremental-build-example/commit/6c6da9e)**
 
-The example codebase consists of a static library `foo` and two executables
-`bar` and `baz`, written in C. The project is built using
-[CMake](https://cmake.org/) and produces a Debian package for each executable.
+I will use a small example codebase to explain how to use Docker for a
+monolithic repository. It consists of a static library `foo` and two executables
+`bar` and `baz`. The build system produces a Debian package for each executable.
 
 ```
 .
@@ -119,14 +128,21 @@ The example codebase consists of a static library `foo` and two executables
 3 directories, 8 files
 ```
 
+Don't worry if you're not familiar with the C programming language or the
+[CMake](https://cmake.org/) build system. This article does not assume any
+knowledge about these. The technique shown here applies to any programming
+language and build system, and should be straightforward to translate.
+
 ## Writing Dockerfiles
 
 ▶ **[View code](https://github.com/cjolowicz/docker-incremental-build-example/commit/d7b93f1)**
 
-The Dockerfiles for the two executables are almost identical: They install the
-build requirements, copy the source tree, and build the binaries and packages.
-At the end, each Dockerfile installs the package containing its executable, and
-sets it as the command to be executed when running the image.
+Let's start by writing a Dockerfile for each of the two executables.
+
+The Dockerfiles are almost identical: They install the build requirements, copy
+the source tree, and build the binaries and packages. At the end, each
+Dockerfile installs the package containing its executable, and sets it as the
+command to be executed when running the image.
 
 ```Dockerfile
 FROM debian:stretch-slim
@@ -144,8 +160,8 @@ RUN dpkg --install foobar-0.1.1-Linux-bar.deb
 CMD ["bar"]
 ```
 
-The `docker-compose.yml` file allows building and deploying the images with a
-single command:
+For convenience, create the following `docker-compose.yml` file. This allows you
+to build and deploy the images with a single command:
 
 ```yaml
 version: "3.7"
@@ -160,7 +176,7 @@ services:
       dockerfile: baz/Dockerfile
 ```
 
-Test this solution using the following commands:
+Test everything using the following commands:
 
 ```sh
 docker-compose up --build --detach
@@ -168,7 +184,7 @@ docker-compose logs --tail=10
 docker-compose down
 ```
 
-There are several problems with this approach:
+It works, but this solution has several shortcomings:
 
 1. Each Dockerfile contains the code to build the source tree.
 2. Each Docker image contains the entire source and build trees.
@@ -206,7 +222,7 @@ CMD ["bar"]
 
 Docker Compose does not yet know about the builder image. Before the services
 can be created and started, the builder image needs to be built explicitly using
-a command like the following:
+a command such as the following:
 
 ```sh
 docker build --tag=builder .
@@ -303,17 +319,18 @@ matches its checksum in a previous build, the image is retrieved from the
 [Docker build
 cache](https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#leverage-build-cache).
 
-On the other hand, if one of the files has changed, the build cache is
+If, on the other hand, one of the files has changed, the build cache is
 invalidated and Docker runs the remaining instructions in the Dockerfile without
 using the cache. As a consequence, the build tools---cmake and make---cannot
 reuse any artifacts from a previous run. The layers containing them appear after
 the `COPY` instruction and are thus no longer available.
 
 Luckily, there is an instruction that allows you to copy the build artifacts
-into the image explicitly, and you have just seen it: the `COPY --from`
-instruction. At the time the Dockerfile is being executed, the `builder` tag
-still references the last successful build of this image, so you can use it to
-copy the build tree from it:
+into the image explicitly: the `COPY --from` instruction, which you just used in
+the section [Reducing image size](#reducing-image-size). At the time the
+Dockerfile is being executed, the `builder` tag still references the last
+successful build of this image, so you can use it to copy the build tree from
+it:
 
 ```diff
 diff --git a/Dockerfile b/Dockerfile
@@ -330,7 +347,7 @@ index 70a4be8..82469c0 100644
  RUN make package
 ```
 
-Now the build tools can access the results of previous runs, and only targets
+Now the build tools can access the results of previous runs, so only targets
 with changed dependencies need to be rebuilt. For a sizeable codebase, this can
 speed up Docker builds dramatically.
 
@@ -371,8 +388,8 @@ docker-compose --file=docker-compose.init.yml build
 
 ## Summary
 
-The technique outlined here allows to build and deploy artifacts from large and
-monolithic codebases.
+The technique outlined here allows you to build and deploy artifacts from large
+and monolithic codebases.
 
 * A single command builds and deploys Docker images.
 * Docker builds are fast due to the use of incremental builds.
@@ -403,3 +420,6 @@ From then on, images can be built and deployed using the command:
 ```sh
 docker-compose up --build
 ```
+
+I hope you found this useful, and I'm happy to answer questions or to learn
+about how you've implemented this method in your own work.
