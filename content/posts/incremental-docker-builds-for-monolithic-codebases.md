@@ -9,15 +9,14 @@ tags:
 
 This post demonstrates how to use Docker to incrementally build and deploy
 multiple artifacts from a large monolithic codebase during development. The
-technique is useful for developers who need to run frequent integration tests on
-their work in progress. Sample code is available in a [GitHub
-repository](https://github.com/cjolowicz/docker-incremental-build-example).
+solution described below avoids code duplication, reduces image size, and speeds
+up builds by reusing intermediate build artifacts from a previous Docker run.
 
-After showing a naive approach to building an entire codebase with Docker, the
-post describes an interesting solution which avoids code duplication, reduces
-image size, and speeds up builds by reusing the intermediate build artifacts
-from a previous Docker run. Each section in the post corresponds to a commit in
-the GitHub repository, linked to at the top of the section.
+The technique is useful for developers who need to run frequent integration
+tests on their work in progress. Sample code is available in a [GitHub
+repository](https://github.com/cjolowicz/docker-incremental-build-example). Each
+section in the post corresponds to a commit in the GitHub repository, linked to
+at the top of the section.
 
 ##### Contents
 
