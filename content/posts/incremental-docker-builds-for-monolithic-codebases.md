@@ -13,11 +13,12 @@ technique is useful for developers who need to run frequent integration tests on
 their work in progress. Sample code is available in a [GitHub
 repository](https://github.com/cjolowicz/docker-incremental-build-example).
 
-The post shows a naive approach to building an entire codebase with Docker, and
-an interesting and novel solution which avoids code duplication, reduces image
-size, and speeds up builds by reusing the intermediate build artifacts from a
-previous Docker run. Each section corresponds to a commit in the GitHub
-repository, linked to at the top of the section.
+The post first shows a naive approach to building an entire codebase with
+Docker, and then an interesting and novel solution which avoids code
+duplication, reduces image size, and speeds up builds by reusing the
+intermediate build artifacts from a previous Docker run. Each section
+corresponds to a commit in the GitHub repository, linked to at the top of each
+section.
 
 ##### Contents
 
@@ -58,50 +59,6 @@ Using Docker to build and deploy artifacts from a monolithic codebase presents
 several challenges. This is especially true if you're a developer who needs to
 frequently rebuild the codebase.
 
-##### The goal
-
-Here's what we're setting out to do:
-
-▹&nbsp;&nbsp;&nbsp;*Build and deploy artifacts from a monolithic repository during development*
-
-* The solution must scale to large codebases.
-* Images are built on, and deployed to, a developer machine.
-* Builds and deployments can be repeated frequently.
-
-##### Challenges
-
-▹&nbsp;&nbsp;&nbsp;*How to avoid building the entire source tree each time*
-
-Every time a line of code is changed, Docker's build cache is invalidated,
-causing it to rebuild the entire codebase from scratch. Typically, this takes
-anywhere from minutes to hours, depending on codebase and build infrastructure.
-How can you get Docker to build incrementally, reusing the intermediate build
-artifacts from its last invocation?
-
-▹&nbsp;&nbsp;&nbsp;*How to keep source and build trees out of the images*
-
-Another problem you encounter when writing Dockerfiles for a monolithic codebase
-is the size of the Docker images resulting from it. The intermediate images
-contain the entire source and build trees, including a heap of unrelated build
-artifacts, as well as the complete build toolchain.
-
-[Multi-stage
-builds](https://docs.docker.com/develop/develop-images/multistage-build/) are
-commonly used to keep build dependencies out of the final Docker image: The
-first stage imports the source tree, installs the build toolchain, and produces
-the build artifact. The second stage extracts the build artifact and copies it
-into a minimal base image. But how do you use multi-stage builds when the
-initial build stage must be shared between all the images?
-
-▹&nbsp;&nbsp;&nbsp;*How to use Docker Compose to build a shared intermediate image*
-
-Instructions to build and deploy many services become complex very fast. While
-Dockerfiles already help greatly with this, you can use [Docker
-Compose](https://docs.docker.com/compose/) to encapsulate the entire build and
-deployment process in a single declarative file. However, Docker Compose assumes
-that only a single Dockerfile needs to be built for every service. How do you
-build a shared intermediate image using Docker Compose?
-
 ## Example codebase
 
 ▶ **[View code](https://github.com/cjolowicz/docker-incremental-build-example/commit/6c6da9e)**
@@ -130,7 +87,8 @@ monolithic repository. It consists of a static library `foo` and two executables
 Don't worry if you're not familiar with the C programming language or the
 [CMake](https://cmake.org/) build system. This article does not assume any
 knowledge about these. The technique shown here applies to any programming
-language and build system, and should be straightforward to translate.
+language and build system, and should be straightforward to translate to your
+favorite weapon of choice.
 
 ## Writing Dockerfiles
 
@@ -159,8 +117,12 @@ RUN dpkg --install foobar-0.1.1-Linux-bar.deb
 CMD ["bar"]
 ```
 
-For convenience, create the following `docker-compose.yml` file. This allows you
-to build and deploy the images with a single command:
+Instructions to build and deploy many services become complex very fast. While
+Dockerfiles already help greatly with this, you can use [Docker
+Compose](https://docs.docker.com/compose/) to encapsulate the entire build and
+deployment process in a single declarative file.
+
+Create the following `docker-compose.yml` file:
 
 ```yaml
 version: "3.7"
@@ -175,6 +137,9 @@ services:
       dockerfile: baz/Dockerfile
 ```
 
+This allows you to build and deploy the images with a single invocation of
+`docker-compose up`.
+
 Test everything using the following commands:
 
 ```sh
@@ -185,9 +150,9 @@ docker-compose down
 
 It works, but this solution has several shortcomings:
 
-1. Each Dockerfile contains the code to build the source tree.
+1. Each Dockerfile contains identical commands to build the source tree.
 2. Each Docker image contains the entire source and build trees.
-3. The entire tree is built every time a line of code is changed.
+3. The entire codebase is built every time a line of code is changed.
 
 ## Avoiding code duplication
 
@@ -231,8 +196,11 @@ docker build --tag=builder .
 
 ▶ **[View code](https://github.com/cjolowicz/docker-incremental-build-example/commit/1cfa80e)**
 
-Getting Docker Compose to build the base image is only possible by adding a
-service for it to the Docker Compose file:
+Docker Compose assumes that only a single Dockerfile needs to be built for every
+service. How do you build a shared intermediate image using Docker Compose?
+
+Getting Docker Compose to build the base image is possible by adding a service
+for it at the top of the Docker Compose file:
 
 {{< highlight yaml "hl_lines=3-5" >}}
 version: "3.7"
@@ -245,6 +213,11 @@ services:
   baz:
     build: baz
 {{< /highlight >}}
+
+The image name is specified explicitly because, by default, Docker Compose
+constructs image names from the basename of the directory and the service name.
+In our case, this would end up rather unwieldy, like
+`docker-incremental-build-example_builder`.
 
 Ensure that the builder service exits immediately by changing its command to
 `true`.
@@ -265,8 +238,10 @@ index 2202b3f..70a4be8 100644
 
 ▶ **[View code](https://github.com/cjolowicz/docker-incremental-build-example/commit/ca1c97a)**
 
-Each image still contains the entire codebase, all the build artifacts produced
-from it, and the complete build toolchain:
+One problem you encounter when writing Dockerfiles for a monolithic codebase is
+the size of the Docker images resulting from it. Each image contains the entire
+source and build trees, including a heap of unrelated build artifacts, as well
+as the complete build toolchain. You can verify this for your example codebase:
 
 ```sh
 $ docker image ls --format="table {{.Repository}}\t{{.Size}}"
@@ -276,8 +251,50 @@ docker-incremental-build-example_bar   317MB
 builder                                317MB
 ```
 
-Instead of deriving from the builder image, extract the required package using
-the `COPY --from` instruction, and install it into a minimal base image:
+##### How to keep source and build trees out of the images
+
+[Multi-stage
+builds](https://docs.docker.com/develop/develop-images/multistage-build/) are
+commonly used to keep build dependencies out of the final Docker image: The
+first stage imports the source tree, installs the build toolchain, and produces
+the build artifact. The second stage extracts the build artifact and copies it
+into a minimal base image. This is achieved using the `COPY --from` instruction,
+which allows copying files from another image or build stage.
+
+A typical multi-stage build looks like this:
+
+```Dockerfile
+FROM debian
+RUN apt-get update && apt-get install -y build-essential \
+    && rm -rf /var/lib/apt/lists/*
+WORKDIR /build
+COPY . .
+RUN make foo
+
+FROM alpine
+COPY --from=0 /build/foo /usr/bin/
+RUN ["foo"]
+```
+
+This Dockerfile has two stages, each introduced by a `FROM` instruction. In this
+example, the second stage uses an Alpine image. [Alpine
+Linux](https://alpinelinux.org/) is a security-oriented, lightweight Linux
+distribution and a popular choice for Docker images. Docker build stages are
+numbered from zero, so `COPY --from=0` references the first stage. It copies the
+build artifact from the first stage and sets it as the command to be executed
+when the image is run.
+
+But with a monolithic codebase, the build instructions for the first stage are
+identical for all images. How do you use multi-stage builds when the initial
+stage is shared between the images? This is actually rather simple. The `COPY
+--from` instruction can also be used with the name of an external image, rather
+than a build stage. In your case, this needs to be an image that builds the
+codebase and produces all the build artifacts: the builder image.
+
+Let's rewrite the Dockerfiles for `bar` and `baz` using the `COPY --from`
+instruction. Instead of deriving the final images from the builder image, derive
+them from a minimal base image. Then extract the Debian package from the builder
+image, and install it into the image:
 
 ```Dockerfile
 FROM debian:stretch-slim
@@ -288,7 +305,7 @@ CMD ["bar"]
 
 Images now contain only the minimum required to run the service, leaving source
 and build trees as well as build dependencies behind. This reduces image sizes
-significantly, even for our tiny example codebase:
+significantly, even for your tiny example codebase:
 
 ```sh
 $ docker image ls --format="table {{.Repository}}\t{{.Size}}"
@@ -298,24 +315,23 @@ docker-incremental-build-example_bar   55.4MB
 builder                                317MB
 ```
 
-This technique is related to [multi-stage
-builds](https://docs.docker.com/develop/develop-images/multistage-build/). Due
-to the monolithic nature of the codebase, the first stage---the build stage---is
-shared between images and defined in a separate Dockerfile.
+This technique is related to multi-stage builds, but---due to the monolithic
+nature of the codebase---the first stage is shared between images and contained
+in a separate Dockerfile.
 
 ## Building incrementally
 
 ▶ **[View code](https://github.com/cjolowicz/docker-incremental-build-example/commit/277915f)**
 
-Anytime a line of source code is changed, Docker rebuilds the entire codebase
-from scratch.
+Every time a line of code is changed, Docker rebuilds the entire codebase from
+scratch. Typically, this takes anywhere from minutes to hours, depending on
+codebase and build infrastructure. Let's see why this happens.
 
-Let's see why this happens. The Dockerfile for the builder image imports the
-source tree into the image using the `COPY` instruction. When encountering a
-`COPY` instruction, Docker examines the contents of the copied files and
-calculates a checksum for each file. If the checksum of each of the files
-matches its checksum in a previous build, the image is retrieved from the
-[Docker build
+The Dockerfile for the builder image imports the source tree into the image
+using the `COPY` instruction. When encountering a `COPY` instruction, Docker
+examines the contents of the copied files and calculates a checksum for each
+file. If the checksum of each of the files matches its checksum in a previous
+build, the image is retrieved from the [Docker build
 cache](https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#leverage-build-cache).
 
 If, on the other hand, one of the files has changed, the build cache is
@@ -324,12 +340,17 @@ using the cache. As a consequence, the build tools---cmake and make---cannot
 reuse any artifacts from a previous run. The layers containing them appear after
 the `COPY` instruction and are thus no longer available.
 
-Luckily, there is an instruction that allows you to copy the build artifacts
-into the image explicitly: the `COPY --from` instruction, which you just used in
-the section [Reducing image size](#reducing-image-size). At the time the
-Dockerfile is being executed, the `builder` tag still references the last
-successful build of this image, so you can use it to copy the build tree from
-it:
+##### How to avoid building the entire source tree each time
+
+How can you get Docker to build incrementally, reusing the intermediate build
+artifacts from its last invocation? Luckily, there is an instruction that allows
+you to copy the build artifacts into the image explicitly: the `COPY --from`
+instruction, which you just used in the section [Reducing image
+size](#reducing-image-size). At the time the Dockerfile is being executed, the
+`builder` tag still references the last successful build of this image, so you
+can use it to copy the build tree.
+
+Let's add this instruction right after we copy the source tree:
 
 ```diff
 diff --git a/Dockerfile b/Dockerfile
