@@ -85,8 +85,8 @@ monolithic repository. It consists of a static library `foo` and two executables
 Don't worry if you're not familiar with the C programming language or the
 [CMake](https://cmake.org/) build system. This article does not assume any
 knowledge about these. The technique shown here applies to any programming
-language and build system, and should be straightforward to translate to your
-favorite weapon of choice.
+language and build system, and it should be straightforward to translate it to
+your weapon of choice.
 
 ## Writing Dockerfiles
 
