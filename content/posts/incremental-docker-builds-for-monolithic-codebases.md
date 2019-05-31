@@ -13,12 +13,11 @@ technique is useful for developers who need to run frequent integration tests on
 their work in progress. Sample code is available in a [GitHub
 repository](https://github.com/cjolowicz/docker-incremental-build-example).
 
-The post first shows a naive approach to building an entire codebase with
-Docker, and then an interesting and novel solution which avoids code
-duplication, reduces image size, and speeds up builds by reusing the
-intermediate build artifacts from a previous Docker run. Each section
-corresponds to a commit in the GitHub repository, linked to at the top of each
-section.
+After showing a naive approach to building an entire codebase with Docker, the
+post develops an interesting and novel solution which avoids code duplication,
+reduces image size, and speeds up builds by reusing the intermediate build
+artifacts from a previous Docker run. Each section in the post corresponds to a
+commit in the GitHub repository, linked to at the top of the section.
 
 ##### Contents
 
@@ -175,8 +174,8 @@ RUN cmake /src
 RUN make package
 ```
 
-The Dockerfile is used to build a common base image named `builder`, which can
-be referenced by the other Dockerfiles like this:
+The above Dockerfile is used to build a common base image named `builder`, which
+can be referenced by the other Dockerfiles like this:
 
 ```Dockerfile
 FROM builder
@@ -242,8 +241,9 @@ index 2202b3f..70a4be8 100644
 
 One problem you encounter when writing Dockerfiles for a monolithic codebase is
 the size of the Docker images resulting from it. Each image contains the entire
-source and build trees, including a heap of unrelated build artifacts, as well
-as the complete build toolchain. You can verify this for the example codebase:
+source and build trees, including a heap of intermediate and unrelated build
+artifacts, as well as the complete build toolchain. You can verify this for the
+example codebase:
 
 ```sh
 $ docker image ls --format="table {{.Repository}}\t{{.Size}}"
