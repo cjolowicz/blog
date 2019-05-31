@@ -243,7 +243,7 @@ index 2202b3f..70a4be8 100644
 One problem you encounter when writing Dockerfiles for a monolithic codebase is
 the size of the Docker images resulting from it. Each image contains the entire
 source and build trees, including a heap of unrelated build artifacts, as well
-as the complete build toolchain. You can verify this for your example codebase:
+as the complete build toolchain. You can verify this for the example codebase:
 
 ```sh
 $ docker image ls --format="table {{.Repository}}\t{{.Size}}"
@@ -275,7 +275,7 @@ RUN make foo
 
 FROM alpine
 COPY --from=0 /build/foo /usr/bin/
-RUN ["foo"]
+CMD ["foo"]
 ```
 
 This Dockerfile has two stages, each introduced by a `FROM` instruction. In this
@@ -290,8 +290,8 @@ But with a monolithic codebase, the build instructions for the first stage are
 identical for all images. How do you use multi-stage builds when the initial
 stage is shared between the images? This is actually rather simple. The `COPY
 --from` instruction can also be used with the name of an external image, rather
-than a build stage. In your case, this needs to be an image that builds the
-codebase and produces all the build artifacts: the builder image.
+than a build stage. You already have an image that builds the codebase,
+producing all the required build artifacts: the builder image.
 
 Let's rewrite the Dockerfiles for `bar` and `baz` using the `COPY --from`
 instruction. Instead of deriving the final images from the builder image, derive
@@ -307,7 +307,7 @@ CMD ["bar"]
 
 Images now contain only the minimum required to run the service, leaving source
 and build trees as well as build dependencies behind. This reduces image sizes
-significantly, even for your tiny example codebase:
+significantly, even for our tiny example codebase:
 
 ```sh
 $ docker image ls --format="table {{.Repository}}\t{{.Size}}"
