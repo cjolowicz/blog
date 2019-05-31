@@ -13,6 +13,12 @@ technique is useful for developers who need to run frequent integration tests on
 their work in progress. Sample code is available in a [GitHub
 repository](https://github.com/cjolowicz/docker-incremental-build-example).
 
+The post shows a naive approach to building an entire codebase with Docker, and
+an interesting and novel solution which avoids code duplication, reduces image
+size, and speeds up builds by reusing the intermediate build artifacts from a
+previous Docker run. Each section corresponds to a commit in the GitHub
+repository, linked to at the top of the section.
+
 ##### Contents
 
 1. [Introduction](#introduction)
@@ -51,13 +57,6 @@ to a branch for CI and review.
 Using Docker to build and deploy artifacts from a monolithic codebase presents
 several challenges. This is especially true if you're a developer who needs to
 frequently rebuild the codebase.
-
-This article shows the naive approach to solving this problem, and a really
-interesting and novel solution which involves avoiding code duplication,
-reducing image size, and building incrementally by reusing the intermediate
-build artifacts from a previous Docker run. Every section in the article
-corresponds to a commit in the GitHub repository, which is linked to at the top
-of the section.
 
 ##### The goal
 
