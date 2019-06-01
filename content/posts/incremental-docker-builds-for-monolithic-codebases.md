@@ -379,8 +379,8 @@ speed up Docker builds dramatically.
 
 The `COPY --from=builder` instruction references the very image that is
 currently being built: the builder image. The consequence of this
-self-referentiality is that the initial build is now broken: there is no image
-to copy the build tree from.
+[self-reference](https://en.wikipedia.org/wiki/G%C3%B6del,_Escher,_Bach) is that
+the initial build is now broken: there is no image to copy the build tree from.
 
 The following `Dockerfile.init` creates an initial builder image from which the
 "real" builder image can copy the build directory. The build directory contains
