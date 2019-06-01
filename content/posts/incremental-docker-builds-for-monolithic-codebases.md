@@ -214,8 +214,8 @@ services:
 {{< /highlight >}}
 
 The image name is specified explicitly because, by default, image names are
-constructed from the basename of the directory and the service name. By default,
-the image would end up being named `docker-incremental-build-example_builder`,
+constructed from the basename of the directory and the service name. So the
+image would end up being named `docker-incremental-build-example_builder`,
 rather than `builder`.
 
 Of course, you do not actually want Docker Compose to run a service with the
