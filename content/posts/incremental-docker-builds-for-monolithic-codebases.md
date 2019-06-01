@@ -289,10 +289,11 @@ distribution and a popular choice for Docker images.
 
 With a monolithic codebase, the build instructions for the first stage are
 identical for all images. How do you use multi-stage builds when the initial
-stage is shared between the images? This is actually rather simple. The `COPY
---from` instruction can also be used with the name of an external image, rather
-than a build stage. You already have an image that builds the codebase: the
-builder image.
+stage is shared between the images? 
+
+This is actually rather simple. The `COPY --from` instruction can also be used
+with the name of an external image, rather than a build stage. You already have
+an image that builds the codebase: the builder image.
 
 Let's rewrite the Dockerfiles for `bar` and `baz` using the `COPY --from`
 instruction. Instead of deriving the final images from the builder image, derive
