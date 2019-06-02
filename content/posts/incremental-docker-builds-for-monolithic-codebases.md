@@ -7,15 +7,16 @@ tags:
   - cmake
 ---
 
-When working on large monolithic codebases containing multiple related projects,
-how can you use [Docker](https://www.docker.com/) to build and deploy during
-development?
+As a developer working on a monolithic codebase, how can you use
+[Docker](https://www.docker.com/) to build and deploy the projects contained in
+it? If you take the naive approach, you quickly run into problems with bloated
+images and frequent rebuilds of the entire codebase.
 
-This post shows how to build images from large monorepos incrementally, reusing
-previous builds beyond the Docker build cache. The solution it describes avoids
-code duplication, reduces image size, and speeds up builds dramatically. If
-you're a developer who needs to run frequent integration tests on your work in
-progress, then this technique is for you.
+In this post, I show you how to build images from monorepos incrementally,
+reusing previous builds beyond the Docker build cache. The solution I describe
+avoids code duplication, reduces image size, and speeds up builds dramatically.
+If you're a developer who needs to run frequent integration tests on your work
+in progress, then this technique is for you.
 
 Sample code is available in a [GitHub
 repository](https://github.com/cjolowicz/docker-incremental-build-example). Each
