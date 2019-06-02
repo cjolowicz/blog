@@ -7,13 +7,17 @@ tags:
   - cmake
 ---
 
-This post demonstrates how to use Docker to incrementally build and deploy
-multiple artifacts from a large monolithic codebase during development. The
-solution described below avoids code duplication, reduces image size, and speeds
-up builds by reusing intermediate build artifacts from a previous Docker run.
+When working on large monolithic codebases containing multiple related projects,
+how can you use Docker to build and deploy during development?
 
-The technique is useful for developers who need to run frequent integration
-tests on their work in progress. Sample code is available in a [GitHub
+This post shows how you can use Docker to build large monorepos incrementally,
+reusing intermediate artifacts from previous builds, even beyond the Docker
+build cache. The solution it describes avoids code duplication, reduces image
+size, and speeds up builds dramatically. If you're a developer who needs to run
+frequent integration tests on your work in progress, then this technique is for
+you.
+
+Sample code is available in a [GitHub
 repository](https://github.com/cjolowicz/docker-incremental-build-example). Each
 section in the post corresponds to a commit in the GitHub repository, linked to
 at the top of the section.
