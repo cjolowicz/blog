@@ -10,7 +10,7 @@ tags:
 As a developer working on a monolithic codebase, how can you use
 [Docker](https://www.docker.com/) to build and deploy the projects contained in
 it? If you take the naive approach, you quickly run into problems with bloated
-images and frequent rebuilds of the entire codebase.
+images and frequent rebuilds of the entire source tree.
 
 In this post, I show you how to build images from monorepos incrementally,
 reusing previous builds beyond the Docker build cache. The solution I describe
