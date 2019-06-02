@@ -8,14 +8,14 @@ tags:
 ---
 
 When working on large monolithic codebases containing multiple related projects,
-how can you use Docker to build and deploy during development?
+how can you use [Docker](https://www.docker.com/) to build and deploy during
+development?
 
-This post shows how you can use Docker to build large monorepos incrementally,
-reusing intermediate artifacts from previous builds, even beyond the Docker
-build cache. The solution it describes avoids code duplication, reduces image
-size, and speeds up builds dramatically. If you're a developer who needs to run
-frequent integration tests on your work in progress, then this technique is for
-you.
+This post shows how to build images from large monorepos incrementally, reusing
+previous builds beyond the Docker build cache. The solution it describes avoids
+code duplication, reduces image size, and speeds up builds dramatically. If
+you're a developer who needs to run frequent integration tests on your work in
+progress, then this technique is for you.
 
 Sample code is available in a [GitHub
 repository](https://github.com/cjolowicz/docker-incremental-build-example). Each
