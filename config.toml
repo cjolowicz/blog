@@ -10,6 +10,7 @@ pygmentsCodeFences = true
 pygmentsCodeFencesGuessSyntax = true
 
 disqusShortname = "cjolowicz"
+googleAnalytics = "UA-141256188-1"
 
 [params]
     author = "Claudio Jolowicz"
