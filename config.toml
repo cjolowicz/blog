@@ -51,3 +51,7 @@ googleAnalytics = "UA-141256188-1"
     name = "Blog"
     weight = 1
     url  = "/posts/"
+[[menu.main]]
+    name = "Music"
+    weight = 2
+    url = "http://claudiojolowicz.com/"
