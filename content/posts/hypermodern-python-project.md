@@ -23,12 +23,12 @@ set for new year 2020, after more than a decade of coexistence with Python 3.
 
 The Python landscape has changed drastically over the last decade, with a host
 of new tools and best practices improving the Python developer experience. Time
-to show how to build a Python project for hypermodernists, from scratch.
+to show how to build a Python project for *hypermodernists*, from scratch.
 
 This post is aimed both at beginners who are keen to learn best practises from
-the start, and seasoned Python developers whose workflows are still determined
-by the boilerplate and workarounds associated with the legacy toolbox. The focus
-is on simplicity and minimalism.
+the start, and seasoned Python developers whose workflows are affected by
+boilerplate and workarounds required by the legacy toolbox. The focus is on
+simplicity and minimalism.
 
 > *You need a recent Linux, Unix, or Mac system with
 > [bash](https://www.gnu.org/software/bash/), [curl](https://curl.haxx.se) and
@@ -43,7 +43,7 @@ is on simplicity and minimalism.
 - [Managing dependencies with Poetry](#managing-dependencies-with-poetry)
 - [Creating a command-line interface with click](#creating-a-command-line-interface-with-click)
 - [Adding unit tests with pytest](#adding-unit-tests-with-pytest)
-- [Measuring code coverage with coverage.py](#measuring-code-coverage-with-coveragepy)
+- [Measuring code coverage with coverage.py](#measuring-code-coverage-with-coverage-py)
 - [Using nox for test automation](#using-nox-for-test-automation)
 - [Linting with flake8](#linting-with-flake8)
 - [Code formatting with Black](#code-formatting-with-black)
@@ -61,16 +61,16 @@ is on simplicity and minimalism.
 
 ## Setting up a repository on GitHub
 
-> *Throughout this tutorial, replace `hypermodern-python-project` with
-> `<your-username>-hypermodern-python-project` to avoid name collision on PyPI.*
+> *Throughout this tutorial, replace `hypermodern-python` with
+> `<your-username>-hypermodern-python` to avoid name collision on PyPI.*
 
 Create an empty repository on [GitHub](https://github.com). You can do this on
 the GitHub website, or entirely from the console using the excellent
 [hub](https://github.com/github/hub) tool:
 
 ```sh
-mkdir hypermodern-python-project
-cd hypermodern-python-project
+mkdir hypermodern-python
+cd hypermodern-python
 hub init -g
 hub create --description="The hypermodern Python project"
 ```
@@ -79,8 +79,8 @@ If you created the repository on the GitHub website, clone the repository to
 your machine, and `cd` into it.
 
 ```sh
-git clone git@github.com:<your-username>/hypermodern-python-project.git
-cd hypermodern-python-project
+git clone git@github.com:<your-username>/hypermodern-python.git
+cd hypermodern-python
 ```
 
 > As you follow the rest of this tutorial, create a series of [small, atomic
@@ -181,14 +181,13 @@ Initialize your Python project:
 poetry init --no-interaction  # short option: -n
 ```
 
-This command will create a `pyproject.toml` file, the
-[new](https://www.python.org/dev/peps/pep-0518/)
+This command will create a `pyproject.toml` file, the new
 [standard](https://www.python.org/dev/peps/pep-0517/) Python package
 configuration file.
 
 ```toml
 [tool.poetry]
-name = "hypermodern-python-project"
+name = "hypermodern-python"
 version = "0.1.0"
 description = ""
 authors = ["Your Name <you@example.com>"]
@@ -272,7 +271,7 @@ going to create a console application with `click`. Organize your package in
 
 ```sh
 src
-└── hypermodern_python_project
+└── hypermodern_python
     ├── __init__.py
     └── console.py
 
@@ -280,16 +279,16 @@ src
 ```
 
 Use [snake-case](https://en.wikipedia.org/wiki/Snake_case) for the package name
-(`hypermodern_python_project`), as opposed to the
+(`hypermodern_python`), as opposed to the
 [kebab-case](https://en.wiktionary.org/wiki/kebab_case) used for the repository
-name (`hypermodern-python-project`). In other words, replace hyphens by
-underscores. Without further ado, here's the full Python code for our package:
+name (`hypermodern-python`). In other words, replace hyphens by underscores.
+Without further ado, here's the full Python code for our package:
 
 ```python
-# src/hypermodern_python_project/__init__.py
+# src/hypermodern_python/__init__.py
 __version__ = "0.1.0"
 
-# src/hypermodern_python_project/console.py
+# src/hypermodern_python/console.py
 import click
 
 from . import __version__
@@ -308,7 +307,7 @@ Register the script in `pyproject.toml`:
 
 ```toml
 [tool.poetry.scripts]
-hypermodern-python-project = "hypermodern_python_project.console:main"
+hypermodern-python = "hypermodern_python.console:main"
 ```
 
 Finally, install the package into the virtualenv:
@@ -320,7 +319,7 @@ poetry install
 You can now run the script like this:
 
 ```sh
-poetry run hypermodern-python-project  # this doesn't do anything useful yet
+poetry run hypermodern-python  # this doesn't do anything useful yet
 ```
 
 Alternatively, you can use `poetry shell` to spawn a shell inside the
@@ -328,10 +327,10 @@ virtualenv:
 
 ```sh
 $ poetry shell
-Spawning shell within …/hypermodern-python-project-zCJBsYTX-py3.8
+Spawning shell within …/hypermodern-python-zCJBsYTX-py3.8
 
-(venv) $ hypermodern-python-project --help
-Usage: hypermodern-python-project [OPTIONS]
+(venv) $ hypermodern-python --help
+Usage: hypermodern-python [OPTIONS]
 
   The hypermodern Python project.
 
@@ -339,8 +338,8 @@ Options:
   --version  Show the version and exit.
   --help     Show this message and exit.
 
-(venv) $ hypermodern-python-project --version
-hypermodern-python-project, version 0.1.0
+(venv) $ hypermodern-python --version
+hypermodern-python, version 0.1.0
 
 (venv) $ exit
 ```
@@ -376,7 +375,7 @@ well as a test fixture:
 import click.testing
 import pytest
 
-from hypermodern_python_project import console
+from hypermodern_python import console
 
 
 @pytest.fixture
@@ -395,7 +394,7 @@ Invoke pytest to run the test suite:
 $ poetry run pytest
 ============================ test session starts =============================
 platform linux -- Python 3.8.0, pytest-5.2.1, py-1.8.0, pluggy-0.13.0
-rootdir: /hypermodern-python-project
+rootdir: /hypermodern-python
 collected 1 item
 
 tests/test_console.py .                                                 [100%]
@@ -427,7 +426,7 @@ source =
 
 [run]
 branch = true
-source = hypermodern_python_project
+source = hypermodern_python
 
 [report]
 show_missing = true
@@ -437,22 +436,22 @@ To enable coverage reporting, invoke `pytest` with the `--cov` option:
 
 ```python
 $ poetry run pytest --cov
-============================ test session starts =============================
+============================= test session starts ==============================
 platform linux -- Python 3.8.0, pytest-5.2.1, py-1.8.0, pluggy-0.13.0
-rootdir: /hypermodern-python-project
+rootdir: /hypermodern-python
 plugins: cov-2.8.1
 collected 1 item
 
 tests/test_console.py .                                                 [100%]
 
------------ coverage: platform linux, python 3.8.0-final-0 -----------
-Name                                         Stmts   Miss Branch BrPart  Cover   Missing
-----------------------------------------------------------------------------------------
-src/hypermodern_python_project/__init__.py       1      0      0      0   100%
-src/hypermodern_python_project/console.py        5      0      0      0   100%
-----------------------------------------------------------------------------------------
-TOTAL                                            6      0      0      0   100%
-============================= 1 passed in 0.09s ==============================
+--------------- coverage: platform linux, python 3.8.0-final-0 -----------------
+Name                                 Stmts   Miss Branch BrPart  Cover   Missing
+--------------------------------------------------------------------------------
+src/hypermodern_python/__init__.py       1      0      0      0   100%
+src/hypermodern_python/console.py        5      0      0      0   100%
+--------------------------------------------------------------------------------
+TOTAL                                    6      0      0      0   100%
+============================== 1 passed in 0.09s ===============================
 ```
 
 ## Using nox for test automation
@@ -570,7 +569,7 @@ max-line-length = 80
 max-complexity = 10
 select = C,E,F,W,B,B9
 ignore = E203, E501, W503
-application-import-names = hypermodern_python_project,tests
+application-import-names = hypermodern_python,tests
 ```
 
 This enables Bugbear's opinionated warnings (`B9`) and ignores some warnings
@@ -727,9 +726,9 @@ What's CI without a nice badge on your GitHub repository page? Add the following
 `README.md` file:
 
 ```markdown
-[![tests](https://github.com/<your-username>/hypermodern-python-project/workflows/tests/badge.svg)](https://github.com/<your-username>/hypermodern-python-project/actions?workflow=tests)
+[![tests](https://github.com/<your-username>/hypermodern-python/workflows/tests/badge.svg)](https://github.com/<your-username>/hypermodern-python/actions?workflow=tests)
 
-# hypermodern-python-project
+# hypermodern-python
 ```
 
 ## Coverage reporting with Codecov
@@ -785,7 +784,7 @@ jobs:
 Finally, add the Codecov badge to your `README.md`:
 
 ```markdown
-[![Codecov](https://codecov.io/gh/<your-username>/hypermodern-python-project/branch/master/graph/badge.svg)](https://codecov.io/gh/<your-username>/hypermodern-python-project)
+[![Codecov](https://codecov.io/gh/<your-username>/hypermodern-python/branch/master/graph/badge.svg)](https://codecov.io/gh/<your-username>/hypermodern-python)
 ```
 
 ## Uploading your package to PyPI
@@ -831,7 +830,7 @@ You can now trigger package uploads by pushing a release tag to GitHub, like
 this:
 
 ```sh
-git tag --message="hypermodern-python-project 1.0.0" v1.0.0
+git tag --message="hypermodern-python 1.0.0" v1.0.0
 git push --follow-tags
 ```
 
@@ -839,7 +838,7 @@ Add a badge to your `README.md` which links to your PyPI project page and always
 displays the latest release:
 
 ```markdown
-[![PyPI](https://img.shields.io/pypi/v/hypermodern-python-project.svg)](https://pypi.org/project/hypermodern-python-project/)
+[![PyPI](https://img.shields.io/pypi/v/hypermodern-python.svg)](https://pypi.org/project/hypermodern-python/)
 ```
 
 ## A typical release process
@@ -857,7 +856,7 @@ package's `__init__.py`.
 
 ```sh
 poetry version <version>  # for example: "0.2.1", "major", "minor", "patch"
-# now go update src/hypermodern-python-project/__init__.py
+# now go update src/hypermodern-python/__init__.py
 ```
 
 The second step is to update the release notes. For example, keep a
@@ -892,7 +891,7 @@ To install the hypermodern Python project, run this command in your terminal:
 
 .. code-block:: console
 
-   $ pip install hypermodern-python-project
+   $ pip install hypermodern-python
 
 Usage
 -----
@@ -901,7 +900,7 @@ The hypermodern Python project's usage looks like:
 
 .. code-block:: console
 
-    $ hypermodern-python-project [OPTIONS]
+    $ hypermodern-python [OPTIONS]
 
 .. option:: --version
 
@@ -929,7 +928,7 @@ directory:
 # docs/conf.py
 import sphinx_rtd_theme
 
-project = "hypermodern-python-project"
+project = "hypermodern-python"
 author = "Your Name"
 copyright = f"2019, {author}"
 extensions = ["sphinx_rtd_theme"]
@@ -1001,19 +1000,19 @@ RUN poetry build && /venv/bin/pip install dist/*.whl
 FROM base as final
 
 COPY --from=builder /venv /venv
-CMD ["/venv/bin/hypermodern-python-project"]
+CMD ["/venv/bin/hypermodern-python"]
 ```
 
 You can build the Dockerfile using the following command:
 
 ```sh
-docker build -t hypermodern-python-project .
+docker build -t hypermodern-python .
 ```
 
 Run a container like this:
 
 ```sh
-docker run --rm hypermodern-python-project --version
+docker run --rm hypermodern-python --version
 ```
 
 ## Conclusion
