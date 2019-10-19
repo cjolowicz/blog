@@ -25,9 +25,10 @@ TODO:
 - cookiecutter
 -->
 
-Welcome to the whirlwind tour of the Python ecosystem in late 2019! [Python
-3.8](https://docs.python.org/3/whatsnew/3.8.html) has been officially released
-this month, and the [Python 2
+Welcome to the whirlwind tour of the Python ecosystem in late 2019!
+
+[Python 3.8](https://docs.python.org/3/whatsnew/3.8.html) has been officially
+released this month, and the [Python 2
 sunset](https://www.python.org/doc/sunset-python-2/) will occur on new year
 2020, after more than a decade of coexistence with Python 3.
 
@@ -71,6 +72,15 @@ This post has a companion repository:
 - [A typical release process](#a-typical-release-process)
 - [Creating documentation with Sphinx](#creating-documentation-with-sphinx)
 - [Hosting documentation at Read the Docs](#hosting-documentation-at-read-the-docs)
+- [Reticulating splines](#reticulating-splines)
+- [Mocking with pytest-mock](#mocking-with-pytest-mock)
+- [Increasing type coverage with flake8-annotations](#increasing-type-coverage-with-flake8-annotations)
+- [Documenting code using Python docstrings](#documenting-code-using-python-docstrings)
+- [Linting code documentation with flake8-docstrings](#linting-code-documentation-with-flake8-docstrings)
+- [Linting docstrings against function signatures with darglint](#linting-docstrings-against-function-signatures-with-darglint)
+- [Running tests in docstrings with xdoctest](#running-tests-in-docstrings-with-xdoctest)
+- [Generating API documentation with autodoc](#generating-api-documentation-with-autodoc)
+- [Validating docstrings with flake8-rst-docstrings](#validating-docstrings-with-flake8-rst-docstrings)
 - [Building a Docker image](#building-a-docker-image)
 - [Awesome flake8 extensions](#awesome-flake8-extensions)
 - [Conclusion](#conclusion)
@@ -439,7 +449,7 @@ show_missing = true
 To enable coverage reporting, invoke `pytest` with the `--cov` option:
 
 ```python
-$ poetry run pytest --cov
+$ poetry run pytest -- --cov
 ============================= test session starts ==============================
 platform linux -- Python 3.8.0, pytest-5.2.1, py-1.8.0, pluggy-0.13.0
 rootdir: /hypermodern-python
@@ -646,6 +656,8 @@ ignore = E203,W503
 max-line-length = 88
 ...
 ```
+
+TODO enable flake8-black warnings in .flake8
 
 ## Static type checking with pytype
 
@@ -1002,10 +1014,10 @@ Let's also adapt the `docs` session to use this same requirements file:
 session.install("-r", "docs/requirements.txt")"
 ```
 
-Sign up at Read the Docs, and import your GitHub repository, using the `Import a
-Project` button. Read the Docs automatically starts building your documentation.
-When the build has completed, your documentation will have a public URL like
-this:
+Sign up at Read the Docs, and import your GitHub repository, using the button
+*Import a Project*. Read the Docs automatically starts building your
+documentation. When the build has completed, your documentation will have a
+public URL like this:
 
 > https://hypermodern-python.readthedocs.io/
 
@@ -1028,6 +1040,438 @@ badge to `README.md`:
 
 The badge looks like this: [![Read the
 Docs](https://readthedocs.org/projects/hypermodern-python/badge/)](https://hypermodern-python.readthedocs.io/)
+
+## Reticulating splines
+
+Right now, our package doesn't do anything useful yet. Let's change this and add
+a module that can be used to reticulate splines:
+
+```python
+# src/hypermodern_python/splines.py
+import time
+from typing import Iterator
+
+
+def reticulate(count: int = -1) -> Iterator[int]:
+    spline: int = 0
+    while count < 0 or spline < count:
+        time.sleep(1)
+        spline += 1
+        yield spline
+```
+
+This `splines` module defines a single function `splines.reticulate`. If you
+wonder what the `variable: type = value` constructs mean, read about type
+annotations. If `yield` is new to you, read about generators. If you wonder what
+the `import` statement in the first line does, how the heck did you get this
+far?
+
+Add a test case:
+
+```python
+# tests/test_splines.py
+from hypermodern_python import splines
+
+
+def test_reticulate_yields_count_times():
+    iterator = splines.reticulate(2)
+    assert sum(1 for _ in iterator) == 2
+```
+
+Call the module from the CLI:
+
+```python
+# src/hypermodern_python/console.py
+ import click
+ 
+-from . import __version__
++from . import __version__, splines
+ 
+ 
+ @click.command()
+ @click.version_option(version=__version__)
+ def main():
+     """The hypermodern Python project."""
++    for spline in splines.reticulate():
++        click.echo(f"Reticulating spline {spline}...")
+```
+
+This runs forever. Add an option to control the number of splines to reticulate:
+
+```python
+# src/hypermodern_python/console.py
+...
+ @click.command()
++@click.option("-n", "--count", default=-1, help="Number of splines to reticulate")
+ @click.version_option(version=__version__)
+-def main():
++def main(count):
+     """The hypermodern Python project."""
+-    for spline in splines.reticulate():
++    for spline in splines.reticulate(count):
+         click.echo(f"Reticulating spline {spline}...")
+```
+
+Add a test for the new console functionality:
+
+```python
+# tests/test_console.py
+def test_main_prints_progress_message(runner, mock_sleep):
+    result = runner.invoke(console.main, ["--count=1"])
+    assert result.output == "Reticulating spline 1...\n"
+```
+
+## Mocking with pytest-mock
+
+Tests are slow. 
+
+The [unittest.mock](https://docs.python.org/3/library/unittest.mock.html)
+standard library allows you to replace parts of your system under test with mock
+objects and make assertions about how they have been used.
+
+Add [pytest-mock](https://github.com/pytest-dev/pytest-mock), a `pytest` plugin
+wrapping the `unittest.mock` API with its `mocker` fixture:
+
+```sh
+poetry add --dev pytest-mock
+```
+
+Mock `time.sleep` using `mocker`. Put it into `conftest.py` to make it
+accessible to all tests without importing:
+
+```python
+# tests/conftest.py
+import pytest
+
+
+@pytest.fixture
+def mock_sleep(mocker):
+    return mocker.patch("time.sleep")
+```
+
+Use the mock in the test case:
+
+```python
+def test_reticulate_yields_count_times(mock_sleep):
+    ...
+```
+    
+Now the test passes immediately, without invoking the actual `time.sleep`.
+
+You can also check that the mock was called by the function under test:
+
+```python
+def test_reticulate_sleeps(mock_sleep):
+    for _ in splines.reticulate():
+        break
+    assert mock_sleep.called
+```
+
+## Increasing type coverage with flake8-annotations
+
+Install plugin:
+
+```python
+# noxfile.py
+session.install("flake8", "flake8-black", "flake8-annotations")
+```
+
+Enable warnings:
+
+```ini
+# .flake8
+select = C,E,F,TYP,W
+```
+
+Add type annotations:
+
+```python
+# src/hypermodern_python/console.py
+def main(count: int) -> None:
+
+# noxfile.py
+def black(session: nox.sessions.Session) -> None:
+def lint(session: nox.sessions.Session) -> None:
+def tests(session: nox.sessions.Session) -> None:
+def coverage(session: nox.sessions.Session) -> None:
+
+# tests/conftest.py
+import unittest.mock
+def mock_sleep(mocker: pytest_mock.MockFixture) -> unittest.mock.Mock:
+
+# tests/test_console.py
+import unittest.mock
+def runner() -> click.testing.CliRunner:
+def test_help_succeeds(runner: click.testing.CliRunner) -> None:
+def test_main_prints_progress_message(
+    runner: click.testing.CliRunner, mock_sleep: unittest.mock.Mock
+) -> None:
+
+# tests/test_splines.py
+import unittest.mock
+def test_reticulate_sleeps(mock_sleep: unittest.mock.Mock) -> None:
+def test_reticulate_yields_count_times(mock_sleep: unittest.mock.Mock) -> None:
+```
+
+## Documenting code using Python docstrings
+
+```python
+#   docs/conf.py
+"""Sphinx configuration."""
+...
+
+# noxfile.py
+"""Nox sessions."""
+...
+
+# src/hypermodern_python/__init__.py
+"""The hypermodern Python project."""
+...
+
+# src/hypermodern_python/console.py
+"""Command-line interface for the hypermodern Python project."""
+...
+
+# src/hypermodern_python/splines.py
+"""Utilities for spline manipulation."""
+...
+
+def reticulate(count: int = -1) -> Iterator[int]:
+    """Reticulate splines."""
+    ...
+
+# tests/__init__.py
+"""Test cases for the hypermodern_python package."""
+...
+
+# tests/conftest.py
+"""Package-wide test fixtures."""
+...
+
+@pytest.fixture
+def mock_sleep(mocker):
+    """Mock for time.sleep."""
+    ...
+# tests/test_console.py
+"""Test cases for the console module."""
+...
+
+@pytest.fixture
+def runner():
+    """Fixture for invoking command-line interfaces."""
+    ...
+ 
+ 
+def test_help_succeeds(runner):
+    """Test if --help succeeds."""
+    ... 
+ 
+
+def test_main_prints_progress_message(runner, mock_sleep):
+    """Test if main prints a progress message."""
+    ...
+
+# tests/test_splines.py
+"""Test cases for the splines module."""
+...
+ 
+ 
+def test_reticulate_sleeps(mock_sleep):
+    """Test if reticulate sleeps."""
+    ... 
+
+ 
+def test_reticulate_yields_count_times(mock_sleep):
+    """Test if reticulate yields <count> times."""
+    ...
+```
+
+## Linting code documentation with flake8-docstrings
+
+The [flake8-docstrings](https://gitlab.com/pycqa/flake8-docstrings) plugin
+checks that docstrings are compliant with [PEP
+257](https://www.python.org/dev/peps/pep-0257/) using
+[pydocstyle](https://github.com/pycqa/pydocstyle).
+
+Add `flake8-docstrings` to the `lint` session:
+
+```python
+# noxfile.py
+...
+session.install("flake8", "flake8-black", "flake8-docstrings")
+```
+
+Enable the plugin warnings (`D`) and use Google conventions for docstrings:
+
+```ini
+# .flake8
+select = C,D,E,F,W
+docstring-convention = google
+```
+
+## Linting docstrings against function signatures with darglint
+
+https://github.com/terrencepreilly/darglint checks that the docstring description matches the definition.
+
+```python
+# noxfile.py
+...
+session.install("flake8", "flake8-black", "flake8-docstrings", "flake8-rst-docstrings", "darglint")
+```
+
+Configure darglint to accept short docstrings:
+
+```init
+# .darglint
+[darglint]
+strictness=short
+```
+
+TODO Enable darglint warnings?
+
+Document function arguments and return value for `splines.reticulate` function:
+
+```python
+# src/hypermodern_python/splines.py
+...
+
+def reticulate(count: int = -1) -> Iterator[int]:
+    """Reticulate splines.
+
+    Args:
+        count: Number of splines to reticulate
+
+    Yields:
+        Reticulated splines
+
+    """
+    ...
+```
+
+## Running tests in docstrings with xdoctest
+
+A good way to explain how to use your function is to include an example in your
+docstring:
+
+```python
+# src/hypermodern_python/splines.py
+...
+
+def reticulate(count: int = -1) -> Iterator[int]:
+    """Reticulate splines.
+
+    Args:
+        count: Number of splines to reticulate
+
+    Yields:
+        Reticulated splines
+
+    Example:
+        >>> from hypermodern_python import splines
+        >>> a, b = splines.reticulate(2)
+        >>> a, b
+        (1, 2)
+
+    """
+    ...
+```
+
+The `xdoctest` package runs the examples in your docstrings and compares the
+actual output to the expected output as per the docstring. Add `xdoctest` to
+your developer dependencies:
+
+```sh
+poetry add --dev xdoctest
+```
+
+The `xdoctest` package integrates with pytest as a plugin. Invoke `pytest` with
+the `--xdoctest` option to activate the plugin:
+
+```python
+# noxfile.py
+...
+def tests(session):
+    ...
+    session.run("pytest", "--cov", "--xdoctest", *session.posargs)
+```
+
+## Generating API documentation with autodoc
+
+- autodoc
+- napoleon
+- sphinx-autodoc-typehints
+
+```requirements
+# docs/requirements.txt
+sphinx==2.2.0
+sphinx-rtd-theme==0.4.3
+sphinx-autodoc-typehints==1.8.0
+```
+
+Add the extensions to your Sphinx configuration:
+
+```python
+# docs/conf.py
+extensions = [
+    "sphinx_rtd_theme",
+    "sphinx.ext.autodoc",
+    "sphinx.ext.napoleon",
+    "sphinx_autodoc_typehints",
+]
+```
+
+Install the package when building your documentation:
+
+```python
+# noxfile.py
+...
+def docs(session):
+    ...
+    env = {"VIRTUAL_ENV": session.virtualenv.location}
+    session.run("poetry", "install", external=True, env=env)
+```
+
+Add documentation for the `splines` module:
+
+```rst
+# docs/splines.rst
+Splines
+=======
+.. py:module:: hypermodern_python.splines
+
+.. autofunction:: reticulate()
+```
+
+Add `toctree` directive to `index.rst`:
+
+```rst
+# docs/index.rst
+...
+
+.. toctree::
+  :hidden:
+  :maxdepth: 2
+
+  splines
+```
+
+## Validating docstrings with flake8-rst-docstrings
+
+The [flake8-rst-docstrings](https://github.com/peterjc/flake8-rst-docstrings)
+plugin validates docstrings as reStructuredText (RST).
+
+```python
+# noxfile.py
+...
+session.install("flake8", "flake8-black", "flake8-docstrings", "flake8-rst-docstrings")
+```
+
+Enable flake8-rst-docstrings warnings:
+
+```ini
+# .flake8
+select = C,D,E,F,RST,W
+```
 
 ## Building a Docker image
 
