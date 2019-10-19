@@ -59,29 +59,29 @@ This post has a companion repository:
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
 
-- [Setting up a repository on GitHub](#setting-up-a-repository-on-github)
+- [Setting up a GitHub repository](#setting-up-a-github-repository)
 - [Installing Python with pyenv](#installing-python-with-pyenv)
 - [Setting up a Python project using Poetry](#setting-up-a-python-project-using-poetry)
 - [Managing dependencies with Poetry](#managing-dependencies-with-poetry)
-- [Creating a command-line interface with click](#creating-a-command-line-interface-with-click)
-- [Adding unit tests with pytest](#adding-unit-tests-with-pytest)
-- [Measuring code coverage with coverage.py](#measuring-code-coverage-with-coverage-py)
-- [Using nox for test automation](#using-nox-for-test-automation)
+- [Command-line interfaces with click](#command-line-interfaces-with-click)
+- [Unit testing with pytest](#unit-testing-with-pytest)
+- [Code coverage with coverage.py](#code-coverage-with-coveragepy)
+- [Test automation with Nox](#test-automation-with-nox)
 - [Linting with flake8](#linting-with-flake8)
 - [Code formatting with Black](#code-formatting-with-black)
 - [Static type checking with pytype](#static-type-checking-with-pytype)
-- [Supporting continuous integration using GitHub Actions](#supporting-continuous-integration-using-github-actions)
+- [Continuous integration using GitHub Actions](#continuous-integration-using-github-actions)
 - [Coverage reporting with Codecov](#coverage-reporting-with-codecov)
-- [Uploading your package to PyPI](#uploading-your-package-to-pypi)
-- [A typical release process](#a-typical-release-process)
 - [Creating documentation with Sphinx](#creating-documentation-with-sphinx)
 - [Hosting documentation at Read the Docs](#hosting-documentation-at-read-the-docs)
+- [Uploading your package to PyPI](#uploading-your-package-to-pypi)
+- [A typical release process](#a-typical-release-process)
 - [Building a Docker image](#building-a-docker-image)
 - [Conclusion](#conclusion)
 
 <!-- markdown-toc end -->
 
-## Setting up a repository on GitHub
+## Setting up a GitHub repository
 
 Create a repository on [GitHub](https://github.com), and populate it with
 `README.md` and `LICENSE` files. In this tutorial, we will use the [MIT
@@ -286,7 +286,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 >>>
 ```
 
-## Creating a command-line interface with click
+## Command-line interfaces with click
 
 Time to add some actual code to the package. As you may have guessed, we're
 going to create a console application with `click`. Organize your package in
@@ -367,7 +367,7 @@ hypermodern-python, version 0.1.0
 (venv) $ exit
 ```
 
-## Adding unit tests with pytest
+## Unit testing with pytest
 
 It's never too early to add tests to a project. While the
 [unittest](https://docs.python.org/3/library/unittest.html) framework is part of
@@ -425,7 +425,7 @@ tests/test_console.py .                                                 [100%]
 ============================= 1 passed in 0.03s ==============================
 ```
 
-## Measuring code coverage with coverage.py
+## Code coverage with coverage.py
 
 [Coverage.py](https://coverage.readthedocs.io/) is a tool for measuring code
 coverage of Python programs. Install it via the
@@ -477,7 +477,7 @@ TOTAL                                    6      0      0      0   100%
 ============================== 1 passed in 0.09s ===============================
 ```
 
-## Using nox for test automation
+## Test automation with Nox
 
 One of my personal favorites, [nox](https://nox.thea.codes/) is a successor to
 the venerable [tox](https://tox.readthedocs.io/). At its core, the tool
@@ -703,7 +703,7 @@ import pytest  # pytype: disable=import-error
 ...
 ```
 
-## Supporting continuous integration using GitHub Actions
+## Continuous integration using GitHub Actions
 
 There are many good options when it comes to continuous integration (CI), too
 many to list here. What's more, most CI providers have a free plan for
