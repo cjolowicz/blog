@@ -36,6 +36,7 @@ tags:
 - [A typical release process](#a-typical-release-process)
 - [Creating documentation with Sphinx](#creating-documentation-with-sphinx)
 - [Hosting documentation at Read the Docs](#hosting-documentation-at-read-the-docs)
+- [The end](#the-end)
 
 <!-- markdown-toc end -->
 
@@ -958,6 +959,13 @@ above.
 
 Sign up at Read the Docs.
 
+## The end
+
+Thank you for reading this far. This post is dedicated to my father who
+introduced me to programming in the 1980s, and who is an avid chess book
+collector. I saw a copy of *Die hypermoderne Schachpartie* in his bookshelf,
+written by Savielly Tartakower in 1925 to modernize chess theory. That inspired
+the title of this blog post.
 
 <!--
 
