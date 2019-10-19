@@ -16,6 +16,24 @@ tags:
   - pyenv
 ---
 
+Welcome to the *tour de force* of the Python ecosystem in late 2019!
+
+Python 3.8 has been officially released last week, and the Python 2 sunset is
+set for new year 2020, after more than a decade of coexistence with Python 3.
+
+The Python landscape has changed drastically over the last decade, with a host
+of new tools and best practices improving the Python developer experience. Time
+to show how to build a Python project for hypermodernists, from scratch.
+
+This post is aimed both at beginners who are keen to learn best practises from
+the start, and seasoned Python developers whose workflows are still determined
+by the boilerplate and workarounds associated with the legacy toolbox. The focus
+is on simplicity and minimalism.
+
+> *You need a recent Linux, Unix, or Mac system with
+> [bash](https://www.gnu.org/software/bash/), [curl](https://curl.haxx.se) and
+> [git](https://www.git-scm.com) for this tutorial.*
+
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
 
@@ -36,29 +54,15 @@ tags:
 - [A typical release process](#a-typical-release-process)
 - [Creating documentation with Sphinx](#creating-documentation-with-sphinx)
 - [Hosting documentation at Read the Docs](#hosting-documentation-at-read-the-docs)
-- [The end](#the-end)
+- [Building a Docker image](#building-a-docker-image)
+- [Conclusion](#conclusion)
 
 <!-- markdown-toc end -->
 
-Welcome to the *tour de force* of the Python ecosystem in late 2019!
-
-Python 3.8 has been officially released this week, and the Python 2 sunset is
-scheduled for new year 2020.
-
-The Python landscape has changed drastically over the last decade, with a host
-of new tools and best practices improving the Python developer experience. Time
-to show how to build a Python project for hypermodernists, from scratch.
-
-This post is aimed both at beginners who are keen to learn best practises from
-the start, and seasoned Python developers whose workflows are still determined
-by the boilerplate and workarounds associated with the legacy toolbox. The focus
-is on simplicity and minimalism.
-
-> *You need a recent Linux, Unix, or Mac system with
-> [bash](https://www.gnu.org/software/bash/), [curl](https://curl.haxx.se) and
-> [git](https://www.git-scm.com) for this tutorial.*
-
 ## Setting up a repository on GitHub
+
+> *Throughout this tutorial, replace `hypermodern-python-project` with
+> `<your-username>-hypermodern-python-project` to avoid name collision on PyPI.*
 
 Create an empty repository on [GitHub](https://github.com). You can do this on
 the GitHub website, or entirely from the console using the excellent
@@ -114,7 +118,7 @@ source ~/.bashrc
 Install the Python build dependencies for your platform, using one of the
 commands listed in the [official
 instructions](https://github.com/pyenv/pyenv/wiki/Common-build-problems). For
-example, on a recent Ubuntu this would be:
+example, on a recent [Ubuntu](https://ubuntu.com) this would be:
 
 ```sh
 sudo apt update && sudo apt install -y make build-essential libssl-dev zlib1g-dev \
@@ -153,7 +157,7 @@ versions are accessible as `python3.7` and `python3.8`, respectively.
 [Poetry](https://poetry.eustace.io) is a tool to manage Python packaging and
 dependencies. Its ease of use and support for modern workflows make it the ideal
 successor to the venerable [setuptools](http://setuptools.readthedocs.io). It is
-similar to `npm` and `yarn` in the JavaScript world, and other modern package
+similar to `npm` and `yarn` in the JavaScript world, and to other modern package
 and dependency managers.
 
 With Poetry 1.0 [around the
@@ -223,10 +227,10 @@ poetry add click
 
 Several things are happening here:
 
-- Poetry creates a virtualenv for the project
-- The dependency on `click` is added to the `pyproject.toml` file
-- Poetry creates a so-called *lock file*, aptly named `poetry.lock`
-- The dependency is downloaded and installed into the virtualenv
+- Poetry creates a virtualenv for the project.
+- The dependency on `click` is added to the `pyproject.toml` file.
+- Poetry creates a so-called *lock file*, aptly named `poetry.lock`.
+- The dependency is downloaded and installed into the virtualenv.
 
 The dependency entry for `click` in `pyproject.toml` contains the [version
 constraint](https://poetry.eustace.io/docs/versions/) `^7.0`. In
@@ -714,7 +718,7 @@ jobs:
 This workflow is triggered on every push to your GitHub repository, and runs on
 the latest supported Ubuntu image. The workflow consists of four steps:
 
-1. Use [actions/checkout](https://github.com/actions/checkout) to fetch and check out the version that triggered the workflow.
+1. Use [actions/checkout](https://github.com/actions/checkout) to fetch and check out your code.
 2. Use [excitedleigh/setup-nox](https://github.com/excitedleigh/setup-nox) to activate Python and install Nox.
 3. Use [dschep/install-poetry-action](https://github.com/dschep/install-poetry-action) to install Poetry.
 4. Invoke `nox` to run your test suite.
@@ -785,6 +789,8 @@ Finally, add the Codecov badge to your `README.md`:
 ```
 
 ## Uploading your package to PyPI
+
+- TODO Add metadata for package
 
 [PyPI](https://pypi.org/) is the official Python package registry, also known by
 its affectionate nickname "the Cheeseshop". Uploading your package to PyPI allows
@@ -906,13 +912,14 @@ The hypermodern Python project's usage looks like:
     Display a short usage message and exit.
 ```
 
-Create a directory `docs` and place the above text in a file `index.rst`:
+Create a directory `docs` and place the above text in a file named `index.rst`.
 
 ```sh
 docs
+├── conf.py
 └── index.rst
 
-1 directory, 1 file
+1 directory, 2 files
 ```
 
 Add the following Sphinx configuration file, named `conf.py` to your `docs`
@@ -954,18 +961,68 @@ documentation offline.
 ## Hosting documentation at Read the Docs
 
 [Read the Docs](https://readthedocs.org/) hosts documentation for countless
-open-source Python projects. It is their theme that you used in the example
+open-source Python projects. It is their theme that was used in the example
 above.
 
-Sign up at Read the Docs.
+Sign up at Read the Docs. Import the repository.
 
-## The end
+- add documentation link to README.md
+- add documentation link to pyproject.toml
+
+## Building a Docker image
+
+Add the following `Dockerfile` to the root of your project:
+
+```Dockerfile
+FROM python:3.8.0-alpine3.10 as base
+
+ENV PYTHONFAULTHANDLER=1 \
+    PYTHONHASHSEED=random \
+    PYTHONUNBUFFERED=1
+
+WORKDIR /app
+
+FROM base as builder
+
+ENV PIP_DEFAULT_TIMEOUT=100 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PIP_NO_CACHE_DIR=1 \
+    POETRY_VERSION=1.0.0b2
+
+RUN pip install "poetry==$POETRY_VERSION"
+RUN python -m venv /venv
+
+COPY pyproject.toml poetry.lock ./
+RUN poetry export -f requirements.txt | /venv/bin/pip install -r /dev/stdin
+
+COPY . .
+RUN poetry build && /venv/bin/pip install dist/*.whl
+
+FROM base as final
+
+COPY --from=builder /venv /venv
+CMD ["/venv/bin/hypermodern-python-project"]
+```
+
+You can build the Dockerfile using the following command:
+
+```sh
+docker build -t hypermodern-python-project .
+```
+
+Run a container like this:
+
+```sh
+docker run --rm hypermodern-python-project --version
+```
+
+## Conclusion
 
 Thank you for reading this far. This post is dedicated to my father who
 introduced me to programming in the 1980s, and who is an avid chess book
-collector. I saw a copy of *Die hypermoderne Schachpartie* in his bookshelf,
-written by Savielly Tartakower in 1925 to modernize chess theory. That inspired
-the title of this blog post.
+collector. I saw a copy of *Die hypermoderne Schachpartie* (The hypermodern
+chess game) in his bookshelf, written by Savielly Tartakower in 1925 to
+modernize chess theory. That inspired the title of this blog post.
 
 <!--
 
