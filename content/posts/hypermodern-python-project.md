@@ -7,6 +7,13 @@ tags:
   - python
   - poetry
   - nox
+  - GitHub Actions
+  - pytest
+  - coverage.py
+  - Codecov
+  - PyPI
+  - black
+  - pyenv
 ---
 
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
@@ -27,6 +34,8 @@ tags:
 - [Coverage reporting with Codecov](#coverage-reporting-with-codecov)
 - [Uploading your package to PyPI](#uploading-your-package-to-pypi)
 - [A typical release process](#a-typical-release-process)
+- [Creating documentation with Sphinx](#creating-documentation-with-sphinx)
+- [Hosting documentation at Read the Docs](#hosting-documentation-at-read-the-docs)
 
 <!-- markdown-toc end -->
 
@@ -41,7 +50,8 @@ to show how to build a Python project for hypermodernists, from scratch.
 
 This post is aimed both at beginners who are keen to learn best practises from
 the start, and seasoned Python developers whose workflows are still determined
-by the boilerplate and workarounds associated with the legacy toolbox.
+by the boilerplate and workarounds associated with the legacy toolbox. The focus
+is on simplicity and minimalism.
 
 > *You need a recent Linux, Unix, or Mac system with
 > [bash](https://www.gnu.org/software/bash/), [curl](https://curl.haxx.se) and
@@ -77,10 +87,9 @@ cd hypermodern-python-project
 
 ## Installing Python with pyenv
 
-Let's start by setting up the developer environment. First we need to get a
+Let's continue by setting up the developer environment. First you need to get a
 recent Python. Don't bother with package managers or official binaries. The tool
 of choice is [pyenv](https://github.com/pyenv/pyenv), a Python version manager.
-
 Install it like this:
 
 ```sh
@@ -141,13 +150,14 @@ versions are accessible as `python3.7` and `python3.8`, respectively.
 ## Setting up a Python project using Poetry
 
 [Poetry](https://poetry.eustace.io) is a tool to manage Python packaging and
-dependencies. It's ease of use and support for modern workflows make it the
-ideal successor to the venerable [setuptools](http://setuptools.readthedocs.io).
-It is similar to `npm` and `yarn` in the JavaScript world, and other modern
-package and dependency managers.
+dependencies. Its ease of use and support for modern workflows make it the ideal
+successor to the venerable [setuptools](http://setuptools.readthedocs.io). It is
+similar to `npm` and `yarn` in the JavaScript world, and other modern package
+and dependency managers.
 
-With [Poetry 1.0](https://github.com/sdispater/poetry/projects/1) around the
-corner, I would recommend you to install the *preview* version of Poetry:
+With Poetry 1.0 [around the
+corner](https://github.com/sdispater/poetry/projects/1), I would recommend you
+install the *preview* version of Poetry:
 
 ```sh
 curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py |
@@ -230,12 +240,11 @@ easy as this:
 poetry update click
 ```
 
-By contrast, the lock file `poetry.lock` contains the exact version of `click`
-installed into the virtualenv. This file should be placed under source control.
-It allows everybody in your team to work with the same environment. Just as
-importantly, it enables you to install the exact dependencies into a production
-environment that were used during development and testing (aka [dev/prod
-parity](https://12factor.net/dev-prod-parity)).
+By contrast, `poetry.lock` contains the exact version of `click` installed into
+the virtualenv. Place this file under source control. It allows everybody in
+your team to work with the same environment. It also enables you to install the
+same dependencies into a production environment that were used during
+development ([dev/prod parity](https://12factor.net/dev-prod-parity)).
 
 Let's run a Python session inside the new virtualenv:
 
@@ -254,7 +263,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 
 Time to add some actual code to the package. As you may have guessed, we're
 going to create a console application with `click`. Organize your package in
-[`src` layout](https://hynek.me/articles/testing-packaging/), like this:
+[src layout](https://hynek.me/articles/testing-packaging/), like this:
 
 ```sh
 src
@@ -267,10 +276,9 @@ src
 
 Use [snake-case](https://en.wikipedia.org/wiki/Snake_case) for the package name
 (`hypermodern_python_project`), as opposed to the
-[kebab-case](https://en.wiktionary.org/wiki/kebab_case) commonly used for
-repository names (`hypermodern-python-project`) on GitHub and PyPI. In other
-words, convert hyphens to underscores. Without further ado, here's the full
-Python code for our package:
+[kebab-case](https://en.wiktionary.org/wiki/kebab_case) used for the repository
+name (`hypermodern-python-project`). In other words, replace hyphens by
+underscores. Without further ado, here's the full Python code for our package:
 
 ```python
 # src/hypermodern_python_project/__init__.py
@@ -304,8 +312,14 @@ Finally, install the package into the virtualenv:
 poetry install
 ```
 
-You could now use `poetry run` with the name of the script. Instead, let's use
-`poetry shell` to spawn a shell inside the virtualenv:
+You can now run the script like this:
+
+```sh
+poetry run hypermodern-python-project  # this doesn't do anything useful yet
+```
+
+Alternatively, you can use `poetry shell` to spawn a shell inside the
+virtualenv:
 
 ```sh
 $ poetry shell
@@ -348,8 +362,9 @@ tests
 1 directory, 2 files
 ```
 
-`__init__.py` is just an empty file. `test_console.py` contains a test fixture
-and a test case for the `console` module:
+The file `__init__.py` is empty and serves to declare the test suite as a
+package. `test_console.py` contains a test case for the `console` module, as
+well as a test fixture:
 
 ```python
 # tests/test_console.py
@@ -515,8 +530,8 @@ In addition, install two rather useful flake8 plugins: The
 [flake8-bugbear](https://pypi.org/project/flake8-bugbear/) plugin helps you find
 bugs and design problems in your program. The
 [flake8-import-order](https://github.com/PyCQA/flake8-import-order) plugin
-checks the [order of import
-statements](https://www.python.org/dev/peps/pep-0008/#imports).
+checks whether the order of import statements is consistent and [PEP
+8](https://www.python.org/dev/peps/pep-0008/#imports)-compliant.
 
 Instead of adding all of these as development dependencies to `pyproject.toml`,
 install them inside a Nox linting session. When linting your code, there is no
@@ -571,8 +586,7 @@ nox -rs lint
 The next addition to our toolbox is [Black](https://github.com/psf/black), the
 uncompromising Python code formatter. One of its greatest features is its lack
 of configurability. Never again lose time to nagging about formatting. Blackened
-code looks the same regardless of the project you're reading. Formatting becomes
-transparent after a while and you can focus on the content instead.
+code looks the same regardless of the project you're reading.
 
 Adding Black is straightforward:
 
@@ -667,9 +681,9 @@ import pytest  # pytype: disable=import-error
 
 There are many good options when it comes to continuous integration (CI), too
 many to list here. What's more, most CI providers have a free plan for
-open-source repositories. Lately, many open-source projects have switched from
-[Travis CI](https://travis-ci.com) to Microsoft's [Azure
-Pipelines](https://azure.microsoft.com/en-us/services/devops/pipelines/).
+open-source repositories. Traditionally, many open-source projects have used
+[Travis CI](https://travis-ci.com). Lately, some have switched to Microsoft's
+[Azure Pipelines](https://azure.microsoft.com/en-us/services/devops/pipelines/).
 
 In this tutorial, you are going to use GitHub's own brand new offering, [GitHub
 Actions](https://github.com/features/actions). This service is still in a
@@ -704,9 +718,8 @@ the latest supported Ubuntu image. The workflow consists of four steps:
 3. Use [dschep/install-poetry-action](https://github.com/dschep/install-poetry-action) to install Poetry.
 4. Invoke `nox` to run your test suite.
 
-What's CI without a nice badge on your GitHub repository page?
-
-Add the following `README.md` file:
+What's CI without a nice badge on your GitHub repository page? Add the following
+`README.md` file:
 
 ```markdown
 [![tests](https://github.com/<your-username>/hypermodern-python-project/workflows/tests/badge.svg)](https://github.com/<your-username>/hypermodern-python-project/actions?workflow=tests)
@@ -717,7 +730,7 @@ Add the following `README.md` file:
 ## Coverage reporting with Codecov
 
 Let's also display a coverage badge on your GitHub repository page. We will use
-[Codecov](https://codecov.io/) for this; another option would be
+[Codecov](https://codecov.io/) for this; another common option is
 [Coveralls](https://coveralls.io/). Sign up for the free open-source plan,
 install the GitHub app, and add your repository to Codecov. The sign up process
 will guide you through these steps.
@@ -787,9 +800,10 @@ poetry build
 poetry publish
 ```
 
-Instead of doing this manually, you should automate the release process using
-GitHub Actions. Build the package on every push, for testing purposes. Uploads
-to PyPI, on the other hand, should only be performed when a Git tag is pushed.
+Instead of doing this manually, you should automate the release process:
+
+- Build the package on every push, for testing purposes.
+- Uploads to PyPI, on the other hand, should only be performed when a Git tag is pushed.
 
 Sign up at PyPI, and generate an access token. This token will permit GitHub
 Actions to upload packages to your PyPI account. Go to your repository settings
@@ -851,6 +865,99 @@ release](https://help.github.com/en/articles/creating-releases). If your code
 changes come in via Pull Requests (PRs), this can be fully automated using the
 [release-drafter](https://github.com/marketplace/actions/release-drafter) GitHub
 Action.
+
+## Creating documentation with Sphinx
+
+[Sphinx](http://www.sphinx-doc.org/) is the documentation tool used by the
+official Python documentation and many open-source projects. Sphinx
+documentation is commonly written using
+[reStructuredText](http://docutils.sourceforge.net/rst.html), although Markdown
+is also supported. Here is a simple example:
+
+```rst
+The hypermodern Python project
+==============================
+
+Installation
+------------
+
+To install the hypermodern Python project, run this command in your terminal:
+
+.. code-block:: console
+
+   $ pip install hypermodern-python-project
+
+Usage
+-----
+
+The hypermodern Python project's usage looks like:
+
+.. code-block:: console
+
+    $ hypermodern-python-project [OPTIONS]
+
+.. option:: --version
+
+    Display the version and exit.
+
+.. option:: --help
+
+    Display a short usage message and exit.
+```
+
+Create a directory `docs` and place the above text in a file `index.rst`:
+
+```sh
+docs
+└── index.rst
+
+1 directory, 1 file
+```
+
+Add the following Sphinx configuration file, named `conf.py` to your `docs`
+directory:
+
+```python
+# docs/conf.py
+import sphinx_rtd_theme
+
+project = "hypermodern-python-project"
+author = "Your Name"
+copyright = f"2019, {author}"
+extensions = ["sphinx_rtd_theme"]
+html_theme = "sphinx_rtd_theme"
+```
+
+The configuration file sets some minimal meta information, and applies the theme
+[sphinx-rtd-theme](https://github.com/readthedocs/sphinx_rtd_theme).
+
+Add a Nox session to build the documentation:
+
+```python
+@nox.session(python="3.7")
+def docs(session):
+    """Build the documentation."""
+    session.install("sphinx", "sphinx-rtd-theme")
+    session.run("sphinx-build", "docs", "docs/_build")
+```
+
+Run the Nox session:
+
+```sh
+nox -rs docs
+```
+
+You can now open the file `docs/_build/index.html` in your browser to view your
+documentation offline.
+
+## Hosting documentation at Read the Docs
+
+[Read the Docs](https://readthedocs.org/) hosts documentation for countless
+open-source Python projects. It is their theme that you used in the example
+above.
+
+Sign up at Read the Docs.
+
 
 <!--
 
