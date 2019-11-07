@@ -1,6 +1,6 @@
 --- 
 date: 2019-11-07T12:52:59+02:00
-title: "The hypermodern Python project, pt. 2"
+title: "The hypermodern Python project, pt. 3"
 description: "Coding in Python like Savielly Tartakower."
 draft: true
 tags:
@@ -19,14 +19,14 @@ TODO:
 - cookiecutter
 -->
 
-In this second installment of the Hypermodern Python series, I'm going to
+In this third installment of the Hypermodern Python series, I'm going to
 discuss how to add static type checking to your project.
 
 For your reference, below is a list of the articles in this series.
 
 - Chapter 1: Basics
-- Chapter 2: Type Checking
-- Chapter 3: Documentation
+- Chapter 2: Documentation
+- Chapter 3: Type Checking
 
 <!--
 This post has a companion repository:
