@@ -19,7 +19,7 @@ host of new tools and best practices improving the Python developer experience.
 At the same time, their adoption has lagged behind, due to the constraints of
 legacy support.
 
-Time to show how to build a Python project for *hypermodernists*, from scratch.[^1]
+Time to show how to build a Python project for *hypermodernists*,[^1] from scratch.
 
 [^1]: *Die hypermoderne Schachpartie* (The hypermodern chess game) is a book
     written by [Savielly

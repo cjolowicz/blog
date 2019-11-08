@@ -1,6 +1,6 @@
 --- 
 date: 2019-11-07T12:52:59+02:00
-title: "Hypermodern Python 4: Continuous Integration"
+title: "Hypermodern Python 4: CI/CD"
 description: "Coding in Python like Savielly Tartakower."
 draft: true
 tags:
@@ -10,10 +10,8 @@ tags:
   - PyPI
 ---
 
-# Chapter 4: Continuous Integration
-
 In this fourth installment of the Hypermodern Python series, I'm going to
-discuss how to add continuous integration to your project.
+discuss how to add continuous integration and delivery to your project.
 
 For your reference, below is a list of the articles in this series.
 
@@ -41,10 +39,11 @@ This guide has a companion repository:
 
 ## Continuous integration using GitHub Actions
 
-*Continuous integration* (CI) refers to the practice of automating the
-integration of code changes into a software project. The CI process can trigger
-tools such as unit tests, linters, or typecheckers to verify the correctness of
-the changes.
+*Continuous integration* (CI) helps you automate the integration of code changes
+into your project. The CI server verifies the correctness of changes, triggering
+tools such as unit tests, linters, or typecheckers. GitHub displays Pull
+Requests with a green ✅if they pass CI, and with a red ❌if the CI pipeline
+failed.
 
 You have a plethora of options when it comes to continuous integration.
 Traditionally, many open-source projects have employed [Travis
