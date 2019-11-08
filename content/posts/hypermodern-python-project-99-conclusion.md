@@ -1,3 +1,15 @@
+--- 
+date: 2019-11-07T12:52:59+02:00
+title: "The hypermodern Python project, pt. final"
+description: "Coding in Python like Savielly Tartakower."
+draft: true
+tags:
+  - python
+  - sphinx
+  - readthedocs
+  - nox
+---
+
 ## Building a Docker image
 
 Add the following `Dockerfile` to the root of your project:
