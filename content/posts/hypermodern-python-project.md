@@ -21,7 +21,7 @@ tags:
 Welcome to the whirlwind tour of the Python ecosystem in late 2019!
 
 [Python 3.8](https://docs.python.org/3/whatsnew/3.8.html) has been officially
-released this month, and the [Python 2
+released last month, and the [Python 2
 sunset](https://www.python.org/doc/sunset-python-2/) will occur on new year
 2020, after more than a decade of coexistence with Python 3.
 
@@ -31,13 +31,13 @@ the same time, their adoption has lagged behind, due to the constraints of
 legacy support. Time to show how to build a Python project for
 *hypermodernists*, from scratch.
 
-This post is aimed both at beginners who are keen to learn best practises from
+This guide is aimed both at beginners who are keen to learn best practises from
 the start, and seasoned Python developers whose workflows are affected by
 boilerplate and workarounds required by the legacy toolbox. The focus is on
 simplicity and minimalism.
 
 <!--
-This post has a companion repository:
+This guide has a companion repository:
 [cjolowicz/hypermodern-python](https://github.com/cjolowicz/hypermodern-python)
 -->
 
@@ -229,8 +229,8 @@ keywords = ["hypermodern"]
 
 ## Creating a package in src layout
 
-Let's create an initial skeleton package. You should organize your package in
-[src layout](https://hynek.me/articles/testing-packaging/), like this:
+Let's create an initial skeleton package. Organize your package in [src
+layout](https://hynek.me/articles/testing-packaging/), like this:
 
 ```sh
 .
@@ -249,13 +249,13 @@ The source file contains only a version declaration:
 __version__ = "0.1.0"
 ```
 
-Use [snake-case](https://en.wikipedia.org/wiki/Snake_case) for the package name
-`hypermodern_python`, as opposed to the
-[kebab-case](https://en.wiktionary.org/wiki/kebab_case) used for the repository
-name `hypermodern-python`. In other words, take your repository name and replace
-hyphens by underscores.
+Use [snake case](https://en.wikipedia.org/wiki/Snake_case) for the package name
+`hypermodern_python`, as opposed to the [kebab
+case](https://en.wiktionary.org/wiki/kebab_case) used for the repository name
+`hypermodern-python`. In other words, name the package after your repository,
+replacing hyphens by underscores.
 
-> Replace hypermodern-python with the name of your own repository, to avoid a
+> Replace `hypermodern-python` with the name of your own repository, to avoid a
 > name collision on PyPI.
 
 ## Managing virtual environments with Poetry
@@ -287,7 +287,7 @@ Poetry created a virtual environment dedicated to your project, and installed
 your initial package into it. It also created a so-called *lock file*, named
 `poetry.lock`. You will learn more about this file in the next section.
 
-Let's run a Python session inside the new virtualenv:
+Let's run a Python session inside the new virtual environment:
 
 ```python
 $ poetry run python
@@ -333,10 +333,10 @@ Several things are happening here:
 The dependency entry in `pyproject.toml` contains a [version
 constraint](https://poetry.eustace.io/docs/versions/) for the installed package:
 `^7.0`. This means that users of the package need to have at least the current
-release, `7.0`. They can also have a newer release, as long as it doesn't
-contain breaking changes. You can edit this version constraint, for example if a
-package you depend on does not follow the [Semantic
-Versioning](https://semver.org/) scheme.
+release, `7.0`. The constraint also allows newer releases of the package, as
+long as they don't contain breaking changes (major releases). You can edit this
+version constraint, for example if a package you depend on does not follow the
+[Semantic Versioning](https://semver.org/) scheme.
 
 By contrast, `poetry.lock` contains the exact version of `click` installed into
 the virtual environment. Place this file under source control. It allows
@@ -447,8 +447,8 @@ def runner():
     return click.testing.CliRunner()
 
 
-def test_help_succeeds(runner):
-    result = runner.invoke(console.main, ["--help"])
+def test_main_succeeds(runner):
+    result = runner.invoke(console.main)
     assert result.exit_code == 0
 ```
 
@@ -554,9 +554,9 @@ def tests(session):
 > will be available with the upcoming Nox release.
 
 This file defines a session named `tests`, which installs the project
-dependencies and runs the test suite. Nox will create a virtualenv for each of
+dependencies and runs the test suite. Nox will create a virtual environment for
 the listed Python versions (3.8 and 3.7), and run the session inside each
-virtualenv.
+environment.
 
 ```python
 $ nox
@@ -580,9 +580,9 @@ nox > * tests-3.8: success
 nox > * tests-3.7: success
 ```
 
-Nox recreates the virtualenv from scratch at each invocation (a sensible
-default). You can speed things up by passing the `--reuse-existing-virtualenvs
-(-r)` option:
+Nox recreates the virtual environments from scratch at each invocation (a
+sensible default). You can speed things up by passing the
+`--reuse-existing-virtualenvs (-r)` option:
 
 ```sh
 nox -r
@@ -672,9 +672,9 @@ With the Nox session in place, you can reformat your code like this:
 nox -rs black
 ```
 
-Checking adherence to the Black code style within `nox` is nice, but you don't
-want it to reformat your source code unless you explicitly ask for it. As the
-first step, exclude Black from the sessions run by default, by setting
+Invoking `nox` without arguments now also triggers the code formatter. It would
+be better to simply check the code style without performing any actual
+formatting. You can exclude Black from the sessions run by default, by setting
 `nox.options.sessions`:
 
 ```python
@@ -686,9 +686,9 @@ nox.options.sessions = "lint", "tests"
 ...
 ```
 
-Next, check adherence to the Black code style as part of the linter session,
-without actually performing any formatting. This can be done using the
-[flake8-black](https://pypi.org/project/flake8-black/) plugin:
+Instead, check adherence to the Black code style inside the linter session. The
+[flake8-black](https://pypi.org/project/flake8-black/) plugin generates warnings
+if it detects that Black would reformat a source file:
 
 ```python
 # noxfile.py
@@ -699,10 +699,10 @@ def lint(session):
     ...
 ```
 
-Finally, configure `flake8` to enable the `flake8-black` warnings, which are
-prefixed by `BLK`. Also, some built-in warnings do not align well with Black.
-Ignore `E203` (Whitespace before ':'), and `W503` (Line break before binary
-operator), and set the maximum line length to a more permissive value:
+Configure `flake8` to enable the `flake8-black` warnings, which are prefixed by
+`BLK`. Also, some built-in warnings do not align well with Black. You need to
+ignore warnings `E203` (*Whitespace before ':'*), and `W503` (*Line break before
+binary operator*), and set the maximum line length to a more permissive value:
 
 ```ini
 # .flake8
@@ -907,4 +907,4 @@ This article is dedicated to my father who introduced me to programming in the
 hypermoderne Schachpartie* (The hypermodern chess game) in his bookshelf,
 written by [Savielly
 Tartakower](https://en.wikipedia.org/wiki/Savielly_Tartakower) in 1925 to
-modernize chess theory. That inspired the title of this blog post.
+modernize chess theory. That inspired the title of this guide.
