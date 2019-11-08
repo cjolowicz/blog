@@ -1,6 +1,6 @@
 --- 
 date: 2019-11-07T12:52:59+02:00
-title: "The hypermodern Python project, pt. 2"
+title: "Hypermodern Python, pt. 2"
 description: "Coding in Python like Savielly Tartakower."
 draft: true
 tags:
@@ -19,10 +19,11 @@ discuss how to add unit tests and linting to your project.
 
 For your reference, below is a list of the articles in this series.
 
-- [Chapter 1: Setup](../hypermodern-python-project-01-setup)
-- [Chapter 2: Testing](../hypermodern-python-project-02-testing)
-- [Chapter 3: Continuous Integration](../hypermodern-python-project-03-continuous-integration)
-- [Chapter 4: Documentation](../hypermodern-python-project-04-documentation)
+- [Chapter 1: Setup](../hypermodern-python-01-setup)
+- [Chapter 2: Testing](../hypermodern-python-02-testing)
+- [Chapter 3: Continuous Integration](../hypermodern-python-03-continuous-integration)
+- [Chapter 4: Documentation](../hypermodern-python-04-documentation)
+- [Chapter 5: Typing](../hypermodern-python-05-typing)
 
 <!--
 This guide has a companion repository:
@@ -530,4 +531,4 @@ Cheating? Not so. Assuming that `splines.reticulate` is fully covered by other
 test cases, mocking it allows us to focus on how `console.main` uses the
 function for its own purposes.
 
-<center>[Continue to the next chapter](../hypermodern-python-project-03-continuous-integration)</center>
+<center>[Continue to the next chapter](../hypermodern-python-03-continuous-integration)</center>
