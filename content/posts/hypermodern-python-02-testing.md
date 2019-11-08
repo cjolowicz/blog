@@ -42,7 +42,10 @@ This guide has a companion repository:
 
 ## Unit testing with pytest
 
-It's never too early to add unit tests to a project. While the
+It's never too early to add unit tests to a project. 
+
+Unit tests, as the name says, verify the functionality of a *unit of code*, such
+as a single function or class. While the
 [unittest](https://docs.python.org/3/library/unittest.html) framework is part of
 the Python standard library, [pytest](https://docs.pytest.org/en/latest/) has
 become somewhat of a *de facto* standard.
