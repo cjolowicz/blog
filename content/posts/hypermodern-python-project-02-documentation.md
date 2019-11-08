@@ -36,12 +36,8 @@ This post has a companion repository:
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
 
-- [Static type checking with pytype](#static-type-checking-with-pytype)
 - [Creating documentation with Sphinx](#creating-documentation-with-sphinx)
 - [Hosting documentation at Read the Docs](#hosting-documentation-at-read-the-docs)
-- [Reticulating splines](#reticulating-splines)
-- [Mocking with pytest-mock](#mocking-with-pytest-mock)
-- [Increasing type coverage with flake8-annotations](#increasing-type-coverage-with-flake8-annotations)
 - [Documenting code using Python docstrings](#documenting-code-using-python-docstrings)
 - [Linting code documentation with flake8-docstrings](#linting-code-documentation-with-flake8-docstrings)
 - [Linting docstrings against function signatures with darglint](#linting-docstrings-against-function-signatures-with-darglint)
@@ -49,7 +45,6 @@ This post has a companion repository:
 - [Generating API documentation with autodoc](#generating-api-documentation-with-autodoc)
 - [Validating docstrings with flake8-rst-docstrings](#validating-docstrings-with-flake8-rst-docstrings)
 - [Building a Docker image](#building-a-docker-image)
-- [Awesome flake8 extensions](#awesome-flake8-extensions)
 - [Conclusion](#conclusion)
 
 <!-- markdown-toc end -->
@@ -120,8 +115,7 @@ def docs(session):
     session.run("sphinx-build", "docs", "docs/_build")
 ```
 
-For good measure, include `docs/conf.py` in the linting and type checking
-sessions:
+For good measure, include `docs/conf.py` in the linting session:
 
 ```python
 # noxfile.py
