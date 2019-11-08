@@ -33,8 +33,8 @@ This guide has a companion repository:
 - [Linting with flake8](#linting-with-flake8)
 - [Code formatting with Black](#code-formatting-with-black)
 - [Checking the order of import statements with flake8-import-order](#checking-the-order-of-import-statements-with-flake8-import-order)
-- [Finding bugs and design problems with flake8-bugbear](#finding-bugs-and-design-problems-with-flake8-bugbear)
-- [Finding security issues with bandit](#finding-security-issues-with-bandit)
+- [Finding more bugs with flake8-bugbear](#finding-more-bugs-with-flake8-bugbear)
+- [Identifying security issues with bandit](#identifying-security-issues-with-bandit)
 
 <!-- markdown-toc end -->
 
@@ -147,7 +147,7 @@ nox.options.sessions = "lint", "tests"
 ```
 
 Instead, you can check adherence to the Black code style inside the linter
-session. The [flake8-black](https://pypi.org/project/flake8-black/) plugin
+session. The [flake8-black](https://github.com/peterjc/flake8-black) plugin
 generates warnings if it detects that Black would reformat a source file:
 
 ```python
@@ -177,8 +177,21 @@ max-line-length = 88
 
 The [flake8-import-order](https://github.com/PyCQA/flake8-import-order) plugin
 checks that import statements are grouped and ordered in a consistent and [PEP
-8](https://www.python.org/dev/peps/pep-0008/#imports)-compliant way. Install the
-plugin in the linter session:
+8](https://www.python.org/dev/peps/pep-0008/#imports)-compliant way. Imports
+should be arranged in three groups, like this:
+
+```python
+# standard library imports
+import time
+
+# third-party imports
+import click
+
+# local package imports
+from hypermodern_python import splines
+```
+
+Install the plugin in the linter session:
 
 ```python
 # noxfile.py
@@ -189,22 +202,37 @@ def lint(session):
     ...
 ```
 
-Enable the warnings emitted by the plugin, which are prefixed by `I`. Also
-inform the plugin about the local package name, which affects sorting order:
+Enable the warnings emitted by the plugin (`I` like *import*). 
 
 ```ini
 # .flake8
 [flake8]
-select = BLK,C,E,F,I,TYP,W
-...
+select = BLK,C,E,F,I,W
+```
+
+Inform the plugin about package names which are considered local:
+
+```ini
+# .flake8
+[flake8]
 application-import-names = hypermodern_python,tests
 ```
 
-## Finding bugs and design problems with flake8-bugbear
+Use the [Google
+styleguide](https://google.github.io/styleguide/pyguide.html?showone=Imports_formatting#313-imports-formatting)
+for grouping and ordering details:
 
-The [flake8-bugbear](https://pypi.org/project/flake8-bugbear/) plugin helps you
-finding bugs and design problems in your program. Add the plugin to the linter
-session in your `noxfile.py`:
+```ini
+# .flake8
+[flake8]
+import-order-style = google
+```
+
+## Finding more bugs with flake8-bugbear
+
+The [flake8-bugbear](https://github.com/PyCQA/flake8-bugbear) plugin helps you
+find various bugs and design problems in your programs. Add the plugin to the
+linter session in your `noxfile.py`:
 
 ```python
 # noxfile.py
@@ -213,7 +241,6 @@ def lint(session):
     ...
     session.install(
         "flake8",
-        "flake8-annotations",
         "flake8-black",
         "flake8-bugbear",
         "flake8-import-order",
@@ -221,17 +248,16 @@ def lint(session):
     ...
 ```
 
-Enable Bugbear's warnings in the `.flake8` configuration file. These warnings are
-prefixed with `B`:
+Enable the plugin warnings in Flake8's configuration file (`B` like *bugbear*):
 
 ```ini
 # .flake8
 [flake8]
-select = B,B9,BLK,C,E,F,I,TYP,W
+select = B,B9,BLK,C,E,F,I,W
 ...
 ```
 
-This also enables Bugbear's opinionated warnings (`B9`), which are disabled by
+`B9` is required for Bugbear's more opinionated warnings, which are disabled by
 default. In particular, `B950` checks the maximum line length like the built-in
 `E501`, but with a tolerance margin of 10%. Ignore the built-in error `E501` and
 set the maximum line length to a sane value:
@@ -244,11 +270,47 @@ ignore = E501
 max-line-length = 80
 ```
 
-## Finding security issues with bandit
+## Identifying security issues with bandit
 
-[bandit](https://github.com/PyCQA/bandit): Find common security issues in Python code
+[Bandit](https://github.com/PyCQA/bandit) is a tool designed to find common
+security issues in Python code. Install it via the
+[flake8-bandit](https://github.com/tylerwince/flake8-bandit) plugin:
 
-https://github.com/tylerwince/flake8-bandit: Automated security testing using
-bandit and flake8
+```python
+# noxfile.py
+...
+def lint(session):
+    ...
+    session.install(
+        "flake8",
+        "flake8-bandit",
+        "flake8-black",
+        "flake8-bugbear",
+        "flake8-import-order",
+    )
+    ...
+```
+
+
+Enable the plugin warnings in Flake8's configuration file (`S` like *security*):
+
+```ini
+# .flake8
+[flake8]
+select = B,B9,BLK,C,E,F,I,S,W
+...
+```
+
+Bandit flags uses of `assert` to enforce interface constraints because
+assertions are removed when compiling to optimized byte code. You should disable
+this warning for your test suite, as `pytest` uses assertions to verify
+expectations in tests:
+
+```ini
+# .flake8
+[flake8]
+per-file-ignores = tests/*:S101
+...
+```
 
 <center>[Continue to the next chapter](../hypermodern-python-03-continuous-integration)</center>
