@@ -1,6 +1,6 @@
 --- 
 date: 2019-11-07T12:52:59+02:00
-title: "Hypermodern Python 4: Documentation"
+title: "Hypermodern Python 5: Documentation"
 description: "Coding in Python like Savielly Tartakower."
 draft: true
 tags:
@@ -12,8 +12,8 @@ tags:
 
 # Chapter 4: Documentation
 
-In this fourth installment of the Hypermodern Python series, I'm going to
-discuss how to add documentation to your project.
+In this fifth installment of the Hypermodern Python series, I'm going to discuss
+how to add documentation to your project.
 
 For your reference, below is a list of the articles in this series.
 
@@ -21,7 +21,7 @@ For your reference, below is a list of the articles in this series.
 - [Chapter 2: Testing](../hypermodern-python-02-testing)
 - [Chapter 3: Linting](../hypermodern-python-03-linting)
 - [Chapter 4: Continuous Integration](../hypermodern-python-04-continuous-integration)
-- [Chapter 4: Documentation](../hypermodern-python-04-documentation)
+- [Chapter 5: Documentation](../hypermodern-python-05-documentation)
 - [Chapter 5: Typing](../hypermodern-python-05-typing)
 
 <!--
