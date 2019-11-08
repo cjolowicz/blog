@@ -20,6 +20,7 @@ For your reference, below is a list of the articles in this series.
 - [Chapter 1: Setup](../hypermodern-python-project-01-setup)
 - [Chapter 2: Testing](../hypermodern-python-project-02-testing)
 - [Chapter 3: Continuous Integration](../hypermodern-python-project-03-continuous-integration)
+- [Chapter 4: Documentation](../hypermodern-python-project-04-documentation)
 
 <!--
 This guide has a companion repository:
@@ -221,3 +222,5 @@ Let's walk through the entire process of creating a release.
     git tag --message="hypermodern-python 1.0.0" v1.0.0
     git push --follow-tags
     ```
+
+<center>[Continue to the next chapter](../hypermodern-python-project-04-documentation)</center>

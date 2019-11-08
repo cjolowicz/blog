@@ -5,28 +5,22 @@ description: "Coding in Python like Savielly Tartakower."
 draft: true
 tags:
   - python
-  - pytype
+  - sphinx
+  - readthedocs
   - nox
-  - GitHub Actions
 ---
 
-<!--
-TODO:
+# Chapter 4: Documentation
 
-- release-drafter
-- Dockerfile
-- Docker Hub
-- cookiecutter
--->
-
-In this second installment of the Hypermodern Python series, I'm going to
+In this fourth installment of the Hypermodern Python series, I'm going to
 discuss how to add documentation to your project.
 
 For your reference, below is a list of the articles in this series.
 
-- Chapter 1: Setup
-- Chapter 2: Documentation
-- Chapter 3: Type Checking
+- [Chapter 1: Setup](../hypermodern-python-project-01-setup)
+- [Chapter 2: Testing](../hypermodern-python-project-02-testing)
+- [Chapter 3: Continuous Integration](../hypermodern-python-project-03-continuous-integration)
+- [Chapter 4: Documentation](../hypermodern-python-project-04-documentation)
 
 <!--
 This post has a companion repository:
@@ -34,7 +28,7 @@ This post has a companion repository:
 -->
 
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
-**Table of Contents**
+**In this chapter:**
 
 - [Creating documentation with Sphinx](#creating-documentation-with-sphinx)
 - [Hosting documentation at Read the Docs](#hosting-documentation-at-read-the-docs)
@@ -44,8 +38,6 @@ This post has a companion repository:
 - [Running tests in docstrings with xdoctest](#running-tests-in-docstrings-with-xdoctest)
 - [Generating API documentation with autodoc](#generating-api-documentation-with-autodoc)
 - [Validating docstrings with flake8-rst-docstrings](#validating-docstrings-with-flake8-rst-docstrings)
-- [Building a Docker image](#building-a-docker-image)
-- [Conclusion](#conclusion)
 
 <!-- markdown-toc end -->
 
@@ -80,6 +72,11 @@ Hypermodern Python's usage looks like:
 .. code-block:: console
 
     $ hypermodern-python [OPTIONS]
+
+.. option:: -n <count>, --count <count>
+
+    Number of splines to reticulate. By default, the program reticulates
+    splines until interrupted by Ctrl+C.
 
 .. option:: --version
 
@@ -141,6 +138,7 @@ open-source Python projects.
 Create the `.readthedocs.yml` configuration file:
 
 ```yaml
+# .readthedocs.yml
 version: 2
 sphinx:
   configuration: docs/conf.py
@@ -155,6 +153,7 @@ Ensure that a recent Sphinx version is used, by adding this
 `docs/requirements.txt` file:
 
 ```python
+# docs/requirements.txt
 sphinx==2.2.0
 sphinx-rtd-theme==0.4.3
 ```
@@ -164,7 +163,10 @@ Let's also adapt the `docs` session to use this same requirements file:
 ```python
 # noxfile.py
 ...
-session.install("-r", "docs/requirements.txt")"
+def docs(session):
+    ...
+    session.install("-r", "docs/requirements.txt")"
+    ...
 ```
 
 Sign up at Read the Docs, and import your GitHub repository, using the button
@@ -175,7 +177,7 @@ public URL like this:
 > https://hypermodern-python.readthedocs.io/
 
 You can display the documentation link on PyPI by including it in your package
-metainfo:
+configuration file:
 
 ```toml
 # pyproject.toml
@@ -196,15 +198,21 @@ Docs](https://readthedocs.org/projects/hypermodern-python/badge/)](https://hyper
 
 ## Documenting code using Python docstrings
 
+[Documentation
+strings](https://www.python.org/dev/peps/pep-0257/#what-is-a-docstring), also
+known as *docstrings*, allow you to embed documentation directly into your code.
+An example of a docstring is the first line of `console.main`, which is used by
+`click` to generate the usage message of your command-line interface.
+
+More commonly, documentation strings are used to communicate the purpose and
+usage of a module, class, or function to other developers reading your code. As
+we shall see later in this chapter, they can also be used to generate API
+documentation.
+
+To get started, add one-line docstrings to the modules and functions in your
+package:
+
 ```python
-#   docs/conf.py
-"""Sphinx configuration."""
-...
-
-# noxfile.py
-"""Nox sessions."""
-...
-
 # src/hypermodern_python/__init__.py
 """The hypermodern Python project."""
 ...
@@ -217,9 +225,51 @@ Docs](https://readthedocs.org/projects/hypermodern-python/badge/)](https://hyper
 """Utilities for spline manipulation."""
 ...
 
-def reticulate(count: int = -1) -> Iterator[int]:
+def reticulate(count):
     """Reticulate splines."""
     ...
+
+```
+
+## Linting code documentation with flake8-docstrings
+
+The [flake8-docstrings](https://gitlab.com/pycqa/flake8-docstrings) plugin uses
+the tool [pydocstyle](https://github.com/pycqa/pydocstyle) to check that
+docstrings are compliant with [PEP
+257](https://www.python.org/dev/peps/pep-0257/).
+
+Add `flake8-docstrings` to the `lint` session:
+
+```python
+# noxfile.py
+...
+def lint(session):
+    ...
+    session.install("flake8", "flake8-black", "flake8-docstrings")
+    ...
+```
+
+Configure Flake8 to enable the plugin warnings (`D` for docstring):
+
+```ini
+# .flake8
+select = BLK,C,D,E,F,W
+docstring-convention = google
+```
+
+The `docstring-convention` option adopts the [Google docstring
+style](http://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings).
+ 
+Here are some more docstrings:
+
+```python
+# docs/conf.py
+"""Sphinx configuration."""
+...
+
+# noxfile.py
+"""Nox sessions."""
+...
 
 # tests/__init__.py
 """Test cases for the hypermodern_python package."""
@@ -265,29 +315,6 @@ def test_reticulate_sleeps(mock_sleep):
 def test_reticulate_yields_count_times(mock_sleep):
     """Test if reticulate yields <count> times."""
     ...
-```
-
-## Linting code documentation with flake8-docstrings
-
-The [flake8-docstrings](https://gitlab.com/pycqa/flake8-docstrings) plugin
-checks that docstrings are compliant with [PEP
-257](https://www.python.org/dev/peps/pep-0257/) using
-[pydocstyle](https://github.com/pycqa/pydocstyle).
-
-Add `flake8-docstrings` to the `lint` session:
-
-```python
-# noxfile.py
-...
-session.install("flake8", "flake8-black", "flake8-docstrings")
-```
-
-Enable the plugin warnings (`D`) and use Google conventions for docstrings:
-
-```ini
-# .flake8
-select = C,D,E,F,W
-docstring-convention = google
 ```
 
 ## Linting docstrings against function signatures with darglint
@@ -453,60 +480,3 @@ Enable flake8-rst-docstrings warnings:
 # .flake8
 select = C,D,E,F,RST,W
 ```
-
-## Building a Docker image
-
-Add the following `Dockerfile` to the root of your project:
-
-```Dockerfile
-FROM python:3.8.0-alpine3.10 as base
-
-ENV PYTHONFAULTHANDLER=1 \
-    PYTHONHASHSEED=random \
-    PYTHONUNBUFFERED=1
-
-WORKDIR /app
-
-FROM base as builder
-
-ENV PIP_DEFAULT_TIMEOUT=100 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1 \
-    PIP_NO_CACHE_DIR=1 \
-    POETRY_VERSION=1.0.0b2
-
-RUN pip install "poetry==$POETRY_VERSION"
-RUN python -m venv /venv
-
-COPY pyproject.toml poetry.lock ./
-RUN poetry export -f requirements.txt | /venv/bin/pip install -r /dev/stdin
-
-COPY . .
-RUN poetry build && /venv/bin/pip install dist/*.whl
-
-FROM base as final
-
-COPY --from=builder /venv /venv
-CMD ["/venv/bin/hypermodern-python"]
-```
-
-You can build the Dockerfile using the following command:
-
-```sh
-docker build -t hypermodern-python .
-```
-
-Run a container like this:
-
-```sh
-docker run hypermodern-python [options]
-```
-
-## Conclusion
-
-<!--
-{{< figure src="http://www.vintagecomputer.net/ctc/3300/CTC_DataPoint-3300_pic3.jpg" caption="Fun fact: Consoles have supported dark mode since 1969, exactly half a century before iOS 13." alt="DataPoint 3300 (1969)" link="https://www.youtube.com/watch?v=dEGlKpIBujc" width="80%" class="centered" >}}
--->
-
-<!--
-{{< figure src="../../images/hypermodern-python-github.png" width="90%" alt="Create a GitHub repository" class="centered" >}}
--->

@@ -20,6 +20,7 @@ For your reference, below is a list of the articles in this series.
 - [Chapter 1: Setup](../hypermodern-python-project-01-setup)
 - [Chapter 2: Testing](../hypermodern-python-project-02-testing)
 - [Chapter 3: Continuous Integration](../hypermodern-python-project-03-continuous-integration)
+- [Chapter 4: Documentation](../hypermodern-python-project-04-documentation)
 
 <!--
 This guide has a companion repository:
@@ -171,7 +172,7 @@ source ~/.poetry/env
 Initialize your Python project:
 
 ```sh
-poetry init --no-interaction  # short option: -n
+poetry init -n  # --no-interaction
 ```
 
 This command will create a `pyproject.toml` file, the new Python package
@@ -180,6 +181,7 @@ configuration file specified in [PEP
 [518](https://www.python.org/dev/peps/pep-0518/).
 
 ```toml
+# pyproject.toml
 [tool.poetry]
 name = "hypermodern-python"
 version = "0.1.0"
@@ -197,7 +199,20 @@ build-backend = "poetry.masonry.api"
 ```
 
 There you go: One declarative file in [TOML](https://github.com/toml-lang/toml)
-syntax, containing the entire package configuration.
+syntax, containing the entire package configuration. Let's add some metadata to
+the package:
+
+```toml
+# pyproject.toml
+[tool.poetry]
+...
+description = "The hypermodern Python project"
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/<your-username>/hypermodern-python"
+repository = "https://github.com/<your-username>/hypermodern-python"
+keywords = ["hypermodern"]
+```
 
 Poetry added a dependency on Python 3.8, because this is the Python version you
 ran it in. Support the previous release as well by changing this to Python 3.7:
@@ -207,17 +222,10 @@ ran it in. Support the previous release as well by changing this to Python 3.7:
 python = "^3.7"
 ```
 
-Let's also add some metadata to the package:
-
-```toml
-[tool.poetry]
-...
-license = "MIT"
-readme = "README.md"
-homepage = "https://github.com/<your-username>/hypermodern-python"
-repository = "https://github.com/<your-username>/hypermodern-python"
-keywords = ["hypermodern"]
-```
+The caret (`^`) in front of the version number means "up to the next major
+release". In other words, you are promising that your package won't break when
+users upgrade to Python 3.8 or 3.9, but you're giving no guarantees for its use
+with a future Python 4.0.
 
 ## Creating a package in src layout
 
@@ -319,14 +327,19 @@ Package operations: 1 install, 0 updates, 0 removals
 Several things are happening here:
 
 - The package is downloaded and installed into the virtual environment.
-- The installed version is added to the lock file `poetry.lock`.
+- The installed version is registered in the lock file `poetry.lock`.
 - A more general version constraint is added to `pyproject.toml`.
 
 The dependency entry in `pyproject.toml` contains a [version
 constraint](https://poetry.eustace.io/docs/versions/) for the installed package:
 `^7.0`. This means that users of the package need to have at least the current
 release, `7.0`. The constraint also allows newer releases of the package, as
-long as they don't contain breaking changes (major releases). You can edit this
+long as they don't contain breaking changes.
+
+Breaking changes are only allowed in major releases (incrementing the most
+significant version digit). Packages with a version number smaller than 1.0.0
+are a little special, in that breaking changes may occur in all releases except
+patch releases (incrementing only the least significant digit). You can edit the
 version constraint, for example if a package you depend on does not follow the
 [Semantic Versioning](https://semver.org/) scheme.
 
