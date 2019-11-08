@@ -10,25 +10,7 @@ tags:
   - click
 ---
 
-Welcome to the whirlwind tour of the Python ecosystem in late 2019! In this
-first chapter, you are going to learn how to set up a Python project using pyenv
-and Poetry. At the end of this chapter, you will have a simple command-line
-application built using click.
-
-For your reference, below is a list of the articles in this series.
-
-- [Chapter 1: Setup](../hypermodern-python-01-setup)
-- [Chapter 2: Testing](../hypermodern-python-02-testing)
-- [Chapter 3: Continuous Integration](../hypermodern-python-03-continuous-integration)
-- [Chapter 4: Documentation](../hypermodern-python-04-documentation)
-- [Chapter 5: Typing](../hypermodern-python-05-typing)
-
-<!--
-This guide has a companion repository:
-[cjolowicz/hypermodern-python](https://github.com/cjolowicz/hypermodern-python)
--->
-
-## Introduction
+Welcome to the whirlwind tour of the Python ecosystem in late 2019! 
 
 After more than a decade of coexistence with Python 3, [the Python 2 sun will
 set](https://www.python.org/doc/sunset-python-2/) on new year
@@ -48,10 +30,28 @@ simplicity and minimalism.
 > [bash](https://www.gnu.org/software/bash/), [curl](https://curl.haxx.se) and
 > [git](https://www.git-scm.com) for this tutorial.*
 
+## Overview
+
+In this first chapter, you are going to learn how to set up a Python project
+using pyenv and Poetry. At the end of this chapter, you will have a simple
+command-line application built using click.
+
+For your reference, below is a list of the articles in this series.
+
+- [Chapter 1: Setup](../hypermodern-python-01-setup)
+- [Chapter 2: Testing](../hypermodern-python-02-testing)
+- [Chapter 3: Continuous Integration](../hypermodern-python-03-continuous-integration)
+- [Chapter 4: Documentation](../hypermodern-python-04-documentation)
+- [Chapter 5: Typing](../hypermodern-python-05-typing)
+
+<!--
+This guide has a companion repository:
+[cjolowicz/hypermodern-python](https://github.com/cjolowicz/hypermodern-python)
+-->
+
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **In this chapter:**
 
-- [Introduction](#introduction)
 - [Setting up a GitHub repository](#setting-up-a-github-repository)
 - [Installing Python with pyenv](#installing-python-with-pyenv)
 - [Setting up a Python project using Poetry](#setting-up-a-python-project-using-poetry)
