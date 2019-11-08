@@ -340,13 +340,13 @@ long as they don't contain breaking changes.
 Breaking changes are only allowed in major releases (incrementing the most
 significant version digit). Packages with a version number smaller than 1.0.0
 are a little special, in that breaking changes may occur in all releases except
-patch releases (incrementing only the least significant digit). You can edit the
-version constraint, for example if a package you depend on does not follow the
-[Semantic Versioning](https://semver.org/) scheme.
+patch releases (incrementing any but the least significant version digit). You
+can edit the version constraint, for example if a package you depend on does not
+follow the [Semantic Versioning](https://semver.org/) scheme.
 
 By contrast, `poetry.lock` contains the exact version of `click` installed into
 the virtual environment. Place this file under source control. It allows
-everybody in your team to work with the same environment. It also helps you to
+everybody in your team to work with the same environment. It also helps you
 [keep production and development environments as similar as
 possible](https://12factor.net/dev-prod-parity).
 
@@ -400,6 +400,14 @@ poetry install
 ```
 
 You can now run the script like this:
+
+```sh
+$ poetry run hypermodern-python
+
+Hello, world!
+```
+
+Options for your script need to be preceded by `--`:
 
 ```sh
 $ poetry run hypermodern-python -- --help

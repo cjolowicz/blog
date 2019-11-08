@@ -1,6 +1,6 @@
 --- 
 date: 2019-11-07T12:52:59+02:00
-title: "The hypermodern Python project, pt. 3"
+title: "Hypermodern Python 5: Typing"
 description: "Coding in Python like Savielly Tartakower."
 draft: true
 tags:
@@ -175,84 +175,6 @@ import unittest.mock
 def test_reticulate_sleeps(mock_sleep: unittest.mock.Mock) -> None:
 def test_reticulate_yields_count_times(mock_sleep: unittest.mock.Mock) -> None:
 ```
-
-## Linting import order with flake8-import-order
-
-The [flake8-import-order](https://github.com/PyCQA/flake8-import-order) plugin
-checks whether the order of import statements is consistent and [PEP
-8](https://www.python.org/dev/peps/pep-0008/#imports)-compliant. Install the
-plugin in the linter session:
-
-```python
-# noxfile.py
-...
-def lint(session):
-    ...
-    session.install("flake8", "flake8-black", "flake8-annotations", "flake8-import-order")
-    ...
-```
-
-Enable the warnings emitted by the plugin, which are prefixed by `I`. Also
-inform the plugin about the local package name, which affects sorting order:
-
-```ini
-# .flake8
-[flake8]
-select = BLK,C,E,F,I,TYP,W
-...
-application-import-names = hypermodern_python,tests
-```
-
-## Linting with flake8-bugbear
-
-The [flake8-bugbear](https://pypi.org/project/flake8-bugbear/) plugin helps you
-finding bugs and design problems in your program. Add the plugin to the linter
-session in your `noxfile.py`:
-
-```python
-# noxfile.py
-...
-def lint(session):
-    ...
-    session.install(
-        "flake8",
-        "flake8-annotations",
-        "flake8-black",
-        "flake8-bugbear",
-        "flake8-import-order",
-    )
-    ...
-```
-
-Enable Bugbear's warnings in the `.flake8` configuration file. These warnings are
-prefixed with `B`:
-
-```ini
-# .flake8
-[flake8]
-select = B,B9,BLK,C,E,F,I,TYP,W
-...
-```
-
-This also enables Bugbear's opinionated warnings (`B9`), which are disabled by
-default. In particular, `B950` checks the maximum line length like the built-in
-`E501`, but with a tolerance margin of 10%. Ignore the built-in error `E501` and
-set the maximum line length to a sane value:
-
-```ini
-# .flake8
-[flake8]
-...
-ignore = E501
-max-line-length = 80
-```
-
-## Finding security issues with bandit
-
-[bandit](https://github.com/PyCQA/bandit): Find common security issues in Python code
-
-https://github.com/tylerwince/flake8-bandit: Automated security testing using
-bandit and flake8
 
 ## Conclusion
 

@@ -1,6 +1,6 @@
 --- 
 date: 2019-11-07T12:52:59+02:00
-title: "Hypermodern Python, pt. 2"
+title: "Hypermodern Python 4: Documentation"
 description: "Coding in Python like Savielly Tartakower."
 draft: true
 tags:

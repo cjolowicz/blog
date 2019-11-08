@@ -1,6 +1,6 @@
 --- 
 date: 2019-11-07T12:52:59+02:00
-title: "The hypermodern Python project, pt. final"
+title: "Hypermodern Python 9: Conclusion"
 description: "Coding in Python like Savielly Tartakower."
 draft: true
 tags:

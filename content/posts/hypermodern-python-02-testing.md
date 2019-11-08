@@ -1,6 +1,6 @@
 --- 
 date: 2019-11-07T12:52:59+02:00
-title: "Hypermodern Python, pt. 2"
+title: "Hypermodern Python 2: Testing"
 description: "Coding in Python like Savielly Tartakower."
 draft: true
 tags:
@@ -11,8 +11,6 @@ tags:
   - black
   - flake8
 ---
-
-# Chapter 2: Testing
 
 In this second installment of the Hypermodern Python series, I'm going to
 discuss how to add unit tests and linting to your project.
@@ -34,12 +32,15 @@ This guide has a companion repository:
 **In this chapter:**
 
 - [Unit testing with pytest](#unit-testing-with-pytest)
-- [Code coverage with coverage.py](#code-coverage-with-coveragepy)
+- [Code coverage with coverage.py](#code-coverage-with-coverage-py)
 - [Test automation with Nox](#test-automation-with-nox)
 - [Linting with flake8](#linting-with-flake8)
 - [Code formatting with Black](#code-formatting-with-black)
 - [Reticulating splines](#reticulating-splines)
 - [Mocking with pytest-mock](#mocking-with-pytest-mock)
+- [Linting import order with flake8-import-order](#linting-import-order-with-flake8-import-order)
+- [Linting with flake8-bugbear](#linting-with-flake8-bugbear)
+- [Finding security issues with bandit](#finding-security-issues-with-bandit)
 
 <!-- markdown-toc end -->
 
@@ -123,7 +124,7 @@ Invoke `pytest` to run the test suite:
 ```python
 $ poetry run pytest
 ============================ test session starts =============================
-platform linux -- Python 3.8.0, pytest-5.2.1, py-1.8.0, pluggy-0.13.0
+platform linux -- Python 3.8.0, pytest-5.2.2, py-1.8.0, pluggy-0.13.0
 rootdir: /hypermodern-python
 collected 1 item
 
@@ -169,7 +170,7 @@ To enable coverage reporting, invoke `pytest` with the `--cov` option:
 ```python
 $ poetry run pytest -- --cov
 ============================= test session starts ==============================
-platform linux -- Python 3.8.0, pytest-5.2.1, py-1.8.0, pluggy-0.13.0
+platform linux -- Python 3.8.0, pytest-5.2.2, py-1.8.0, pluggy-0.13.0
 rootdir: /hypermodern-python
 plugins: cov-2.8.1
 collected 1 item
@@ -180,9 +181,9 @@ tests/test_console.py .                                                 [100%]
 Name                                 Stmts   Miss Branch BrPart  Cover   Missing
 --------------------------------------------------------------------------------
 src/hypermodern_python/__init__.py       1      0      0      0   100%
-src/hypermodern_python/console.py        5      0      0      0   100%
+src/hypermodern_python/console.py        6      0      0      0   100%
 --------------------------------------------------------------------------------
-TOTAL                                    6      0      0      0   100%
+TOTAL                                    7      0      0      0   100%
 ============================== 1 passed in 0.09s ===============================
 ```
 
@@ -342,7 +343,15 @@ def black(session):
 With the Nox session in place, you can reformat your code like this:
 
 ```sh
-nox -rs black
+$ nox -rs black
+
+nox > Running session black
+nox > Creating virtual environment (virtualenv) using python3.8 in .nox/black
+nox > pip install black
+nox > black src tests noxfile.py
+All done! ✨ 🍰 ✨
+5 files left unchanged.
+nox > Session black was successful.
 ```
 
 Invoking `nox` without arguments now also triggers the code formatter. It would
@@ -389,14 +398,15 @@ max-line-length = 88
 ## Reticulating splines
 
 The Hypermodern Python package doesn't do anything useful yet. Let's add a
-module for [reticulating splines](https://qr.ae/TW46Fj):
+module for [reticulating
+splines](https://www.quora.com/What-does-reticulating-splines-mean/answer/Matt-Sephton?ch=10&share=4d9cf44a&srid=uSlxC):
 
 ```python
 # src/hypermodern_python/splines.py
 import time
 
 
-def reticulate(count = -1):
+def reticulate(count=-1):
     spline = 0
     while count < 0 or spline < count:
         time.sleep(1)
@@ -428,45 +438,67 @@ def main(count):
         click.echo(f"Reticulating spline {spline}...")
 ```
 
+Let's see the program in action:
+
+```sh
+$ poetry run hypermodern-python -- --count=3
+
+Reticulating spline 1...
+Reticulating spline 2...
+Reticulating spline 3...
+```
+
 ## Mocking with pytest-mock
 
-Let's add some tests for the new feature. First, add a test file for the
-`splines` module:
+Unfortunately, the test suite now appears to hang. The program reticulates
+splines forever and ever when invoked without options. Restrict the number of
+splines in the test case to three:
 
 ```python
-# tests/test_splines.py
-from hypermodern_python import splines
-
-
-def test_reticulate_yields_count_times():
-    iterator = splines.reticulate(2)
-    assert sum(1 for _ in iterator) == 2
+def test_main_succeeds(runner):
+    result = runner.invoke(console.main, ["--count=3"])
+    assert result.exit_code == 0
 ```
 
-Next, add another test case for the `console` module:
+Now the test suite completes, but it still takes rather long, because each
+iteration of `splines.reticulate` invokes `time.sleep` to wait for one second
+before yielding a spline. Reticulating splines is a complicated and
+time-consuming process. Not a reason to skip these tests altogether!
 
-```python
-# tests/test_console.py
-def test_main_prints_progress_message(runner):
-    result = runner.invoke(console.main, ["--count=1"])
-    assert result.output == "Reticulating spline 1...\n"
-```
-
-Reticulating splines being a complicated and time-consuming process, your test
-suite is getting rather slow. Not a reason to skip these tests altogether! The
-[unittest.mock](https://docs.python.org/3/library/unittest.mock.html) standard
-library allows you to replace parts of your system under test with mock objects.
-Add the [pytest-mock](https://github.com/pytest-dev/pytest-mock) plugin, which
-integrates the library with `pytest`.
+The [unittest.mock](https://docs.python.org/3/library/unittest.mock.html)
+standard library allows you to replace parts of your system under test with mock
+objects. Add the [pytest-mock](https://github.com/pytest-dev/pytest-mock)
+plugin, which integrates the library with `pytest`:
 
 ```sh
 poetry add --dev pytest-mock
 ```
 
-You can now mock out the `time.sleep` function using the `mocker` fixture
-provided by the plugin. Create a new fixture named `mock_sleep`, and place it in
-the file `conftest.py`, as shown below. Fixtures in this file are accessible to
-all tests without requiring an explicit import.
+The plugin provides a `mocker` fixture which can be used to replace a function
+by a mock object. Create a new fixture named `mock_sleep` to mock out the
+`time.sleep` function, and use the mock in your test case by adding it as a
+function parameter:
+
+```python
+# tests/test_console.py
+...
+
+@pytest.fixture
+def mock_sleep(mocker):
+    return mocker.patch("time.sleep")
+
+
+def test_main_succeeds(runner, mock_sleep):
+    ...
+```
+    
+Now the tests pass immediately, without invoking the actual `time.sleep`
+function.
+
+While the code coverage is still reported as 100%, the tests do not yet cover
+much of the possible behaviour of your program. Before adding more test cases,
+move the `mock_sleep` fixture to a separate file named `conftest.py`. Fixtures
+in this file are accessible to all tests without requiring an explicit import.
 
 ```python
 # tests/conftest.py
@@ -477,21 +509,27 @@ import pytest
 def mock_sleep(mocker):
     return mocker.patch("time.sleep")
 ```
+    
+Now add a test file for the `splines` module:
 
-Use the mock in your test cases by adding it as a function parameter:
+```python
+# tests/test_splines.py
+from hypermodern_python import splines
+
+
+def test_reticulate_yields_count_times(mock_sleep):
+    iterator = splines.reticulate(2)
+    assert sum(1 for _ in iterator) == 2
+```
+
+Next, add another test case for the `console` module:
 
 ```python
 # tests/test_console.py
 def test_main_prints_progress_message(runner, mock_sleep):
-    ...
-
-# tests/test_splines.py
-def test_reticulate_yields_count_times(mock_sleep):
-    ...
+    result = runner.invoke(console.main, ["--count=1"])
+    assert result.output == "Reticulating spline 1...\n"
 ```
-    
-Now the tests pass immediately, without invoking the actual `time.sleep`
-function.
 
 You can also check that a mock object was called by the function under test:
 
@@ -503,14 +541,10 @@ def test_reticulate_sleeps(mock_sleep):
     assert mock_sleep.called
 ```
 
-Unfortunately, the original `test_main_succeeds` test case no longer completes,
-because the program reticulates splines forever and ever when invoked without
-options. Maybe you already guessed how we can fix this: Mock out
-`splines.reticulate`!
-
-But this time, the mock object needs to return something meaningful, because
-`console.main` expects a sequence of splines which it can print to the screen.
-You can configure the mock object to return a specific value, effectively
+Sometimes, a mock object needs to return something meaningful. Suppose we wanted
+to mock out `splines.reticulate` in the `console` test cases. `console.main`
+expects a sequence of splines which it can print to the screen. You can
+configure the mock object to return a specific value, effectively
 short-circuiting the call to the real function. Here's how you do it:
 
 ```python
@@ -530,5 +564,83 @@ def test_main_succeeds(runner, mock_splines_reticulate):
 Cheating? Not so. Assuming that `splines.reticulate` is fully covered by other
 test cases, mocking it allows us to focus on how `console.main` uses the
 function for its own purposes.
+
+## Linting import order with flake8-import-order
+
+The [flake8-import-order](https://github.com/PyCQA/flake8-import-order) plugin
+checks whether the order of import statements is consistent and [PEP
+8](https://www.python.org/dev/peps/pep-0008/#imports)-compliant. Install the
+plugin in the linter session:
+
+```python
+# noxfile.py
+...
+def lint(session):
+    ...
+    session.install("flake8", "flake8-black", "flake8-annotations", "flake8-import-order")
+    ...
+```
+
+Enable the warnings emitted by the plugin, which are prefixed by `I`. Also
+inform the plugin about the local package name, which affects sorting order:
+
+```ini
+# .flake8
+[flake8]
+select = BLK,C,E,F,I,TYP,W
+...
+application-import-names = hypermodern_python,tests
+```
+
+## Linting with flake8-bugbear
+
+The [flake8-bugbear](https://pypi.org/project/flake8-bugbear/) plugin helps you
+finding bugs and design problems in your program. Add the plugin to the linter
+session in your `noxfile.py`:
+
+```python
+# noxfile.py
+...
+def lint(session):
+    ...
+    session.install(
+        "flake8",
+        "flake8-annotations",
+        "flake8-black",
+        "flake8-bugbear",
+        "flake8-import-order",
+    )
+    ...
+```
+
+Enable Bugbear's warnings in the `.flake8` configuration file. These warnings are
+prefixed with `B`:
+
+```ini
+# .flake8
+[flake8]
+select = B,B9,BLK,C,E,F,I,TYP,W
+...
+```
+
+This also enables Bugbear's opinionated warnings (`B9`), which are disabled by
+default. In particular, `B950` checks the maximum line length like the built-in
+`E501`, but with a tolerance margin of 10%. Ignore the built-in error `E501` and
+set the maximum line length to a sane value:
+
+```ini
+# .flake8
+[flake8]
+...
+ignore = E501
+max-line-length = 80
+```
+
+## Finding security issues with bandit
+
+[bandit](https://github.com/PyCQA/bandit): Find common security issues in Python code
+
+https://github.com/tylerwince/flake8-bandit: Automated security testing using
+bandit and flake8
 
 <center>[Continue to the next chapter](../hypermodern-python-03-continuous-integration)</center>
