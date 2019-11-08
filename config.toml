@@ -9,7 +9,7 @@ canonifyURLs = true
 pygmentsCodeFences = true
 pygmentsCodeFencesGuessSyntax = true
 
-disqusShortname = "cjolowicz"
+# disqusShortname = "cjolowicz"
 googleAnalytics = "UA-141256188-1"
 
 [params]
