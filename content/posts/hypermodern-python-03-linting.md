@@ -42,8 +42,8 @@ This guide has a companion repository:
 
 Linters analyze source code to flag programming errors, bugs, stylistic errors,
 and suspicious constructs. The most common ones for Python are
-[pylint](https://www.pylint.org) and [flake8](http://flake8.pycqa.org). In this
-chapter, you will use Flake8.
+[pylint](https://www.pylint.org), [flake8](http://flake8.pycqa.org), and
+[pylama](https://github.com/klen/pylama). In this chapter, you will use Flake8.
 
 Add a Nox session to run Flake8 on your codebase:
 
@@ -79,7 +79,6 @@ letters. These prefixes group the errors into so-called violation classes:
 
 Configure Flake8 using the `.flake8` configuration file, enabling all the
 built-in violation classes and setting the complexity limit:
-
 
 ```ini
 # .flake8
@@ -133,10 +132,10 @@ All done! ✨ 🍰 ✨
 nox > Session black was successful.
 ```
 
-Invoking `nox` without arguments now also triggers the code formatter. It would
-be better to simply check the code style without performing any actual
-formatting. You can exclude Black from the sessions run by default, by setting
-`nox.options.sessions`:
+Invoking `nox` without arguments triggers all the sessions, including Black. It
+would be better to only validate the coding style without modifying the
+conflicting files. You can exclude Black from the sessions run by default, by
+setting `nox.options.sessions`:
 
 ```python
 # noxfile.py
@@ -147,9 +146,9 @@ nox.options.sessions = "lint", "tests"
 ...
 ```
 
-Instead, check adherence to the Black code style inside the linter session. The
-[flake8-black](https://pypi.org/project/flake8-black/) plugin generates warnings
-if it detects that Black would reformat a source file:
+Instead, you can check adherence to the Black code style inside the linter
+session. The [flake8-black](https://pypi.org/project/flake8-black/) plugin
+generates warnings if it detects that Black would reformat a source file:
 
 ```python
 # noxfile.py
@@ -177,8 +176,8 @@ max-line-length = 88
 ## Checking the order of import statements with flake8-import-order
 
 The [flake8-import-order](https://github.com/PyCQA/flake8-import-order) plugin
-checks whether the order of import statements is consistent and [PEP
-8](https://www.python.org/dev/peps/pep-0008/#imports)-compliant. Install the
+checks that import statements are grouped and ordered in a consistent and [PEP
+8](https://www.python.org/dev/peps/pep-0008/#imports)-compliant way. Install the
 plugin in the linter session:
 
 ```python

@@ -12,14 +12,19 @@ tags:
 
 Welcome to the whirlwind tour of the Python ecosystem in late 2019! 
 
-After more than a decade of coexistence with Python 3, [the Python 2 sun will
-set](https://www.python.org/doc/sunset-python-2/) on new year
+After more than a decade of coexistence with Python 3, [Python 2 will be
+sunset](https://www.python.org/doc/sunset-python-2/) on new year
 2020. The Python landscape has changed significantly over this decade, with a
 host of new tools and best practices improving the Python developer experience.
 At the same time, their adoption has lagged behind, due to the constraints of
 legacy support.
 
-Time to show how to build a Python project for *hypermodernists*, from scratch.
+Time to show how to build a Python project for *hypermodernists*, from scratch.[^1]
+
+[^1]: *Die hypermoderne Schachpartie* (The hypermodern chess game) is a book
+    written by [Savielly
+    Tartakower](https://en.wikipedia.org/wiki/Savielly_Tartakower) in 1925 to
+    modernize chess theory. It inspired the title of this guide.
 
 This guide is aimed both at beginners who are keen to learn best practises from
 the start, and seasoned Python developers whose workflows are affected by
