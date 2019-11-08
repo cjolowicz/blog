@@ -43,7 +43,7 @@ This guide has a companion repository:
 Linters analyze source code to flag programming errors, bugs, stylistic errors,
 and suspicious constructs. The most common ones for Python are
 [pylint](https://www.pylint.org) and [flake8](http://flake8.pycqa.org). In this
-guide, you will use Flake8.
+chapter, you will use Flake8.
 
 Add a Nox session to run Flake8 on your codebase:
 
