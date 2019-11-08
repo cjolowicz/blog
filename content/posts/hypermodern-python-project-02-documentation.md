@@ -24,7 +24,7 @@ discuss how to add documentation to your project.
 
 For your reference, below is a list of the articles in this series.
 
-- Chapter 1: Basics
+- Chapter 1: Setup
 - Chapter 2: Documentation
 - Chapter 3: Type Checking
 
