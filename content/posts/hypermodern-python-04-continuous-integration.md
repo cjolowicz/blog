@@ -1,6 +1,6 @@
 --- 
 date: 2019-11-07T12:52:59+02:00
-title: "Hypermodern Python 3: Continuous Integration"
+title: "Hypermodern Python 4: Continuous Integration"
 description: "Coding in Python like Savielly Tartakower."
 draft: true
 tags:
@@ -10,16 +10,17 @@ tags:
   - PyPI
 ---
 
-# Chapter 3: Continuous Integration
+# Chapter 4: Continuous Integration
 
-In this third installment of the Hypermodern Python series, I'm going to discuss
-how to add continuous integration to your project.
+In this fourth installment of the Hypermodern Python series, I'm going to
+discuss how to add continuous integration to your project.
 
 For your reference, below is a list of the articles in this series.
 
 - [Chapter 1: Setup](../hypermodern-python-01-setup)
 - [Chapter 2: Testing](../hypermodern-python-02-testing)
-- [Chapter 3: Continuous Integration](../hypermodern-python-03-continuous-integration)
+- [Chapter 3: Linting](../hypermodern-python-03-linting)
+- [Chapter 4: Continuous Integration](../hypermodern-python-04-continuous-integration)
 - [Chapter 4: Documentation](../hypermodern-python-04-documentation)
 - [Chapter 5: Typing](../hypermodern-python-05-typing)
 
@@ -40,10 +41,10 @@ This guide has a companion repository:
 
 ## Continuous integration using GitHub Actions
 
-Continuous integration (CI) refers to the practice of automating the integration
-of code changes into a software project. The CI process can trigger tools such
-as unit tests, linters, or typecheckers to verify the correctness of the
-changes.
+*Continuous integration* (CI) refers to the practice of automating the
+integration of code changes into a software project. The CI process can trigger
+tools such as unit tests, linters, or typecheckers to verify the correctness of
+the changes.
 
 You have a plethora of options when it comes to continuous integration.
 Traditionally, many open-source projects have employed [Travis
@@ -70,6 +71,7 @@ jobs:
       with:
         preview: true
     - run: nox
+    - run: poetry build
 ```
 
 This file defines a so-called *workflow*, which is triggered on every push to
@@ -80,6 +82,7 @@ workflow consists of four steps:
 2. Use [excitedleigh/setup-nox](https://github.com/excitedleigh/setup-nox) to activate Python and install Nox.
 3. Use [dschep/install-poetry-action](https://github.com/dschep/install-poetry-action) to install Poetry.
 4. Invoke `nox` to run your test suite.
+5. Build the package.
 
 You can add a GitHub Actions badge to your repository page:
 
@@ -139,6 +142,7 @@ jobs:
     - run: nox -e coverage
       env:
         CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
+    - run: poetry build
 ```
 
 Finally, add the Codecov badge to your `README.md`:
@@ -172,18 +176,41 @@ Add the following lines to the bottom of your GitHub workflow:
 ```yaml
 # .github/workflows/main.yml
 ...
-    - run: poetry build
     - if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
       run: |
         poetry publish --username=__token__ --password=${{ secrets.PYPI_TOKEN }}
 ```
 
-You can now trigger package uploads by pushing a release tag to GitHub. In
-addition to this, the package is built on every push to GitHub, for testing
-purposes.
+You can now trigger a PyPI release by creating and pushing an annotated Git tag.
+By convention, these tags have the form `v<version>`:
 
-Add a badge to your `README.md` which links to your PyPI project page and always
-displays the latest release:
+```sh
+git tag --message="hypermodern-python 0.1.0" v0.1.0
+git push --follow-tags
+```
+
+When releasing the next version of your package, you will need to bump the
+version of your package. Use Poetry to update the version declared in
+`pyproject.toml`:
+
+```sh
+poetry version minor  # or: major, patch, 0.2.0, etc.
+```
+
+Don't forget to also update the version in your package's `__init__.py`:
+
+```python
+# src/hypermodern_python/__init__.py
+__version__ = "0.2.0"  # or: 0.1.1, 1.0.0
+```
+
+You should also document your release. For example, add a `CHANGELOG.md` file to
+your repository, using the format specified at [Keep a
+Changelog](https://keepachangelog.com/). Another option is to use [GitHub
+Releases](https://help.github.com/en/github/administering-a-repository/creating-releases).
+
+Add a badge to `README.md` which links to your PyPI project page and displays
+the latest release:
 
 ```markdown
 [![PyPI](https://img.shields.io/pypi/v/hypermodern-python.svg)](https://pypi.org/project/hypermodern-python/)
@@ -191,37 +218,5 @@ displays the latest release:
 
 The badge looks like this: 
 [![PyPI](https://img.shields.io/pypi/v/hypermodern-python.svg)](https://pypi.org/project/hypermodern-python/)
-
-## A typical release process
-
-Let's walk through the entire process of creating a release.
-
-1. **Bump the version**
-
-    Skip this step if you are releasing the initial version of your package.
-    Otherwise, use Poetry to update the version declared in `pyproject.toml`:
-
-    ```sh
-    poetry version <version>  # for example: "major", "minor", "patch", "0.2.1"
-    ```
-
-    Don't forget to also update the version in your package's `__init__.py`.
-
-2. **Update the changelog**
-
-    The second step is to document the release. For example, add a
-    `CHANGELOG.md` file to your repository, using the format specified at [Keep
-    a Changelog](https://keepachangelog.com/). Another option is to use [GitHub
-    Releases](https://help.github.com/en/github/administering-a-repository/creating-releases).
-
-3. **Push a release tag**
-
-    The third step is to create and push an annotated Git tag. By convention,
-    these tags have the form `v<version>`.
-
-    ```sh
-    git tag --message="hypermodern-python 1.0.0" v1.0.0
-    git push --follow-tags
-    ```
 
 <center>[Continue to the next chapter](../hypermodern-python-04-documentation)</center>
