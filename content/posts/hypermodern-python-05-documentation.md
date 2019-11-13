@@ -36,7 +36,6 @@ This post has a companion repository:
 - [Running tests in docstrings with xdoctest](#running-tests-in-docstrings-with-xdoctest)
 - [Creating documentation with Sphinx](#creating-documentation-with-sphinx)
 - [Generating API documentation with autodoc](#generating-api-documentation-with-autodoc)
-- [Validating docstrings with flake8-rst-docstrings](#validating-docstrings-with-flake8-rst-docstrings)
 
 <!-- markdown-toc end -->
 
@@ -473,23 +472,5 @@ Include the new file in a `toctree` directive at the end of `docs/index.rst`:
 
 Rebuild the documentation using `nox -rs docs`, and open the file
 `docs/_build/index.html` in your browser to view your API documentation.
-
-## Validating docstrings with flake8-rst-docstrings
-
-The [flake8-rst-docstrings](https://github.com/peterjc/flake8-rst-docstrings)
-plugin validates docstrings as reStructuredText (RST).
-
-```python
-# noxfile.py
-...
-session.install("flake8", "flake8-black", "flake8-docstrings", "flake8-rst-docstrings")
-```
-
-Enable flake8-rst-docstrings warnings:
-
-```ini
-# .flake8
-select = C,D,E,F,RST,W
-```
 
 <center>[Continue to the next chapter](../hypermodern-python-05-ci-cd)</center>
