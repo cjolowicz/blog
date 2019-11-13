@@ -32,7 +32,7 @@ This guide has a companion repository:
 
 - [Linting with flake8](#linting-with-flake8)
 - [Code formatting with Black](#code-formatting-with-black)
-- [Checking the order of import statements with flake8-import-order](#checking-the-order-of-import-statements-with-flake8-import-order)
+- [Checking imports with flake8-import-order](#checking-imports-with-flake8-import-order)
 - [Finding more bugs with flake8-bugbear](#finding-more-bugs-with-flake8-bugbear)
 - [Identifying security issues with bandit](#identifying-security-issues-with-bandit)
 
@@ -49,19 +49,15 @@ Add a Nox session to run Flake8 on your codebase:
 
 ```python
 # noxfile.py
-import nox
-
-
 locations = "src", "tests", "noxfile.py"
 
 
 @nox.session(python=["3.8", "3.7"])
 def lint(session):
     """Lint using flake8."""
+    args = session.posargs or locations
     session.install("flake8")
-    session.run("flake8", *locations)
-
-...
+    session.run("flake8", *args)
 ```
 
 Flake8 assigns each of its messages an error code, prefixed by one or more
@@ -105,17 +101,16 @@ uncompromising Python code formatter. One of its greatest features is its lack
 of configurability. Blackened code looks the same regardless of the project
 you're reading.
 
-Adding Black is straightforward:
+Adding Black as a Nox session is straightforward:
 
 ```python
 # noxfile.py
-...
-
 @nox.session(python="3.8")
 def black(session):
     """Run black code formatter."""
+    args = session.posargs or locations
     session.install("black")
-    session.run("black", *locations)
+    session.run("black", *args)
 ```
 
 With the Nox session in place, you can reformat your code like this:
@@ -139,25 +134,22 @@ setting `nox.options.sessions`:
 
 ```python
 # noxfile.py
-import nox
-
-
 nox.options.sessions = "lint", "tests"
-...
 ```
 
-Instead, you can check adherence to the Black code style inside the linter
-session. The [flake8-black](https://github.com/peterjc/flake8-black) plugin
-generates warnings if it detects that Black would reformat a source file:
+Instead, check adherence to the Black code style inside the linter session. The
+[flake8-black](https://github.com/peterjc/flake8-black) plugin generates
+warnings if it detects that Black would reformat a source file:
 
-```python
+{{< highlight python "hl_lines=6" >}}
 # noxfile.py
-...
+@nox.session(python=["3.8", "3.7"])
 def lint(session):
-    ...
+    """Lint using flake8."""
+    args = session.posargs or locations
     session.install("flake8", "flake8-black")
-    ...
-```
+    session.run("flake8", *args)
+{{< /highlight >}}
 
 Configure Flake8 to enable the `flake8-black` warnings, which are prefixed by
 `BLK`. Also, some built-in warnings do not align well with Black. You need to
@@ -170,10 +162,9 @@ binary operator*), and set the maximum line length to a more permissive value:
 select = BLK,C,E,F,W
 ignore = E203,W503
 max-line-length = 88
-...
 ```
 
-## Checking the order of import statements with flake8-import-order
+## Checking imports with flake8-import-order
 
 The [flake8-import-order](https://github.com/PyCQA/flake8-import-order) plugin
 checks that import statements are grouped and ordered in a consistent and [PEP
@@ -181,26 +172,27 @@ checks that import statements are grouped and ordered in a consistent and [PEP
 should be arranged in three groups, like this:
 
 ```python
-# standard library imports
+# standard library
 import time
 
-# third-party imports
+# third-party packages
 import click
 
-# local package imports
+# local packages
 from hypermodern_python import splines
 ```
 
 Install the plugin in the linter session:
 
-```python
+{{< highlight python "hl_lines=6" >}}
 # noxfile.py
-...
+@nox.session(python=["3.8", "3.7"])
 def lint(session):
-    ...
+    """Lint using flake8."""
+    args = session.posargs or locations
     session.install("flake8", "flake8-black", "flake8-import-order")
-    ...
-```
+    session.run("flake8", *args)
+{{< /highlight >}}
 
 Enable the warnings emitted by the plugin (`I` like *import*). 
 
@@ -218,9 +210,9 @@ Inform the plugin about package names which are considered local:
 application-import-names = hypermodern_python,tests
 ```
 
-Use the [Google
+Adopt the [Google
 styleguide](https://google.github.io/styleguide/pyguide.html?showone=Imports_formatting#313-imports-formatting)
-for grouping and ordering details:
+with respect to the grouping and ordering details:
 
 ```ini
 # .flake8
@@ -236,16 +228,12 @@ linter session in your `noxfile.py`:
 
 ```python
 # noxfile.py
-...
+@nox.session(python=["3.8", "3.7"])
 def lint(session):
-    ...
-    session.install(
-        "flake8",
-        "flake8-black",
-        "flake8-bugbear",
-        "flake8-import-order",
-    )
-    ...
+    """Lint using flake8."""
+    args = session.posargs or locations
+    session.install("flake8", "flake8-black", "flake8-bugbear", "flake8-import-order")
+    session.run("flake8", *args)
 ```
 
 Enable the plugin warnings in Flake8's configuration file (`B` like *bugbear*):
@@ -254,7 +242,6 @@ Enable the plugin warnings in Flake8's configuration file (`B` like *bugbear*):
 # .flake8
 [flake8]
 select = B,B9,BLK,C,E,F,I,W
-...
 ```
 
 `B9` is required for Bugbear's more opinionated warnings, which are disabled by
@@ -265,8 +252,7 @@ set the maximum line length to a sane value:
 ```ini
 # .flake8
 [flake8]
-...
-ignore = E501
+ignore = E203,E501,W503
 max-line-length = 80
 ```
 
@@ -278,9 +264,10 @@ security issues in Python code. Install it via the
 
 ```python
 # noxfile.py
-...
+@nox.session(python=["3.8", "3.7"])
 def lint(session):
-    ...
+    """Lint using flake8."""
+    args = session.posargs or locations
     session.install(
         "flake8",
         "flake8-bandit",
@@ -288,9 +275,8 @@ def lint(session):
         "flake8-bugbear",
         "flake8-import-order",
     )
-    ...
+    session.run("flake8", *args)
 ```
-
 
 Enable the plugin warnings in Flake8's configuration file (`S` like *security*):
 
