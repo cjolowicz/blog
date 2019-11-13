@@ -32,10 +32,9 @@ This post has a companion repository:
 
 - [Documenting code using Python docstrings](#documenting-code-using-python-docstrings)
 - [Linting code documentation with flake8-docstrings](#linting-code-documentation-with-flake8-docstrings)
-- [Linting docstrings against function signatures with darglint](#linting-docstrings-against-function-signatures-with-darglint)
+- [Validating docstrings against function signatures with darglint](#validating-docstrings-against-function-signatures-with-darglint)
 - [Running tests in docstrings with xdoctest](#running-tests-in-docstrings-with-xdoctest)
 - [Creating documentation with Sphinx](#creating-documentation-with-sphinx)
-- [Hosting documentation at Read the Docs](#hosting-documentation-at-read-the-docs)
 - [Generating API documentation with autodoc](#generating-api-documentation-with-autodoc)
 - [Validating docstrings with flake8-rst-docstrings](#validating-docstrings-with-flake8-rst-docstrings)
 
@@ -46,8 +45,8 @@ This post has a companion repository:
 [Documentation
 strings](https://www.python.org/dev/peps/pep-0257/#what-is-a-docstring), also
 known as *docstrings*, allow you to embed documentation directly into your code.
-An example of a docstring is the first line of `console.main`, which is used by
-`click` to generate the usage message of your command-line interface:
+An example of a docstring is the first line of `console.main`, used by `click`
+to generate the usage message of your command-line interface:
 
 ```python
 # src/hypermodern_python/console.py
@@ -57,27 +56,37 @@ def main(count: int) -> None:
         click.echo(f"Reticulating spline {spline}...")
 ```
 
-More commonly, documentation strings are used to communicate the purpose and
-usage of a module, class, or function to other developers reading your code. As
-we shall see later in this chapter, they can also be used to generate API
-documentation.
+More commonly, documentation strings communicate the purpose and usage of a
+module, class, or function to other developers reading your code. As we shall
+see later in this chapter, they can also be used to generate API documentation.
 
-To get started, add one-line docstrings to the modules and functions in your
-package:
+Document your entire package by adding a docstring to the top of `__init__.py`:
 
 ```python
 # src/hypermodern_python/__init__.py
 """The hypermodern Python project."""
 ...
+```
 
+Document the modules in the package by adding docstrings to the top of their
+respective source files:
+
+```python
 # src/hypermodern_python/console.py
 """Command-line interface for the hypermodern Python project."""
 ...
+```
 
+```python
 # src/hypermodern_python/splines.py
 """Utilities for spline manipulation."""
 ...
+```
 
+Document functions by adding docstrings to the first line of the function body:
+
+```python
+# src/hypermodern_python/splines.py
 def reticulate(count: int = -1) -> Iterator[int]:
     """Reticulate splines."""
     ...
@@ -204,7 +213,9 @@ and
 [NumPy](https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_numpy.html#example-numpy)
 formats.
 
-Let's add usage information for the `splines.reticulate` function:
+Let's add usage information for the `splines.reticulate` function. This function
+accepts the number of splines as an optional parameter, and yields splines at
+each iteration:
 
 ```python
 # src/hypermodern_python/splines.py
@@ -361,6 +372,7 @@ provides meta information about your project, and applies the theme
 
 ```python
 # docs/conf.py
+"""Sphinx configuration."""
 project = "hypermodern-python"
 author = "Your Name"
 copyright = f"2019, {author}"
@@ -383,9 +395,7 @@ For good measure, include `docs/conf.py` in the linting session:
 
 ```python
 # noxfile.py
-...
 locations = "src", "tests", "noxfile.py", "docs/conf.py"
-...
 ```
 
 Run the Nox session:
@@ -399,18 +409,34 @@ documentation offline.
 
 ## Generating API documentation with autodoc
 
-- autodoc
-- napoleon
-- sphinx-autodoc-typehints
+In this section, you are going to use Sphinx to generate API documentation from
+the documentation strings and type annotations in your package, using three
+Sphinx extensions:
 
-```requirements
-# docs/requirements.txt
-sphinx==2.2.0
-sphinx-rtd-theme==0.4.3
-sphinx-autodoc-typehints==1.8.0
+- [autodoc](https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html)
+  enables Sphinx to generate API documentation from the docstrings in your
+  package.
+- [napoleon](https://www.sphinx-doc.org/en/master/usage/extensions/napoleon.html)
+  pre-processes your Google-style documentation strings to reStructuredText.
+- [sphinx-autodoc-typehints](https://github.com/agronholm/sphinx-autodoc-typehints)
+  allows Sphinx to include type annotations on function parameters and return
+  values in the generated API documentation.
+
+While the first two extensions are included with Sphinx, the third one needs to
+be added to the docs session. You also need to install your package to allow
+Sphinx to import it and pull its docstrings:
+
+```python
+# noxfile.py
+@nox.session(python="3.8")
+def docs(session: Session) -> None:
+    """Build the documentation."""
+    session.run("poetry", "install", external=True)
+    session.install("sphinx", "sphinx-rtd-theme", "sphinx-autodoc-typehints")
+    session.run("sphinx-build", "docs", "docs/_build")
 ```
 
-Add the extensions to your Sphinx configuration:
+You also need add the extensions to your Sphinx configuration:
 
 ```python
 # docs/conf.py
@@ -422,20 +448,12 @@ extensions = [
 ]
 ```
 
-Install the package when building your documentation:
+You can now reference docstrings using special Sphinx directives.
 
-```python
-# noxfile.py
-...
-def docs(session):
-    ...
-    session.run("poetry", "install", external=True)
-```
-
-Add documentation for the `splines` module:
+Create the file `docs/splines.rst`, with API documentation for the `splines`
+module:
 
 ```rst
-# docs/splines.rst
 Splines
 =======
 .. py:module:: hypermodern_python.splines
@@ -443,18 +461,18 @@ Splines
 .. autofunction:: reticulate()
 ```
 
-Add `toctree` directive to `index.rst`:
+Include the new file in a `toctree` directive at the end of `docs/index.rst`:
 
 ```rst
-# docs/index.rst
-...
-
 .. toctree::
   :hidden:
   :maxdepth: 2
 
   splines
 ```
+
+Rebuild the documentation using `nox -rs docs`, and open the file
+`docs/_build/index.html` in your browser to view your API documentation.
 
 ## Validating docstrings with flake8-rst-docstrings
 

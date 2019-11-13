@@ -241,6 +241,13 @@ python:
 Ensure that a recent Sphinx version is used, by adding this
 `docs/requirements.txt` file:
 
+```requirements
+# docs/requirements.txt
+sphinx==2.2.0
+sphinx-rtd-theme==0.4.3
+sphinx-autodoc-typehints==1.8.0
+```
+
 ```python
 # docs/requirements.txt
 sphinx==2.2.0
