@@ -62,11 +62,13 @@ hierarchy](http://doc.pytest.org/en/latest/goodpractices.html#tests-outside-appl
 next to `src`, named `tests`:
 
 ```sh
-tests
-├── __init__.py
-└── test_console.py
+.
+├── src
+└── tests
+    ├── __init__.py
+    └── test_console.py
 
-1 directory, 2 files
+2 directories, 2 files
 ```
 
 The file `__init__.py` is empty and serves to declare the test suite as a
@@ -214,13 +216,16 @@ import nox
 def tests(session):
     """Run the test suite."""
     session.run("poetry", "install", external=True)
-    session.run("pytest", "--cov", *session.posargs)
+    session.run("pytest", "--cov")
 ```
 
 This file defines a session named `tests`, which installs the project
-dependencies and runs the test suite. Nox creates virtual environments for the
-listed Python versions (3.8 and 3.7), and runs the session inside each
-environment.
+dependencies and runs the test suite. Poetry is not a part of the environment
+created by Nox, so we specify `external` to avoid warnings about external
+commands leaking into the isolated test environments.
+
+Nox creates virtual environments for the listed Python versions (3.8 and 3.7),
+and runs the session inside each environment:
 
 ```python
 $ nox
@@ -244,12 +249,35 @@ nox > * tests-3.8: success
 nox > * tests-3.7: success
 ```
 
-Nox recreates the virtual environments from scratch at each invocation (a
+Nox recreates the virtual environments from scratch on each invocation (a
 sensible default). You can speed things up by passing the
 `--reuse-existing-virtualenvs (-r)` option:
 
 ```sh
 nox -r
+```
+
+Sometimes, you need to pass additional options to `pytest`, for example to
+select specific test cases. Change the session to allow overriding the options
+passed to `pytest`, via the `session.posargs` variable:
+
+```python
+# noxfile.py
+import nox
+
+
+@nox.session(python=["3.8", "3.7"])
+def tests(session):
+    """Run the test suite."""
+    args = session.posargs or ["--cov"]
+    session.run("poetry", "install", external=True)
+    session.run("pytest", *args)
+```
+
+Now you can run a specific test module inside the environments:
+
+```sh
+nox -- tests/test_console.py
 ```
 
 ## Mocking with pytest-mock
