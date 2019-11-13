@@ -29,49 +29,113 @@ This post has a companion repository:
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **In this chapter:**
 
-- [Static typing and Python](#static-typing-and-python)
+- [Static type checkers and type annotations](#static-type-checkers-and-type-annotations)
+- [Static type checking with mypy](#static-type-checking-with-mypy)
 - [Static type checking with pytype](#static-type-checking-with-pytype)
-- [Adding type annotations to the package](#adding-type-annotations-to-the-package)
 - [Increasing type coverage with flake8-annotations](#increasing-type-coverage-with-flake8-annotations)
 - [Adding type annotations to the test suite](#adding-type-annotations-to-the-test-suite)
-- [Static type checking with mypy](#static-type-checking-with-mypy)
-- [Static type checking with pyre](#static-type-checking-with-pyre)
 
 <!-- markdown-toc end -->
 
-## Static typing and Python
+## Static type checkers and type annotations
 
 Static type checkers analyze your source code for type errors (like treating a
 string as an integer) without executing it. While Python is a dynamically typed
 language--it verifies the types of your program at runtime--, Python 3.5 and 3.6
 have introduced a way to [annotate functions and variables with
-types](https://docs.python.org/3/library/typing.html), paving the way for an
-entire generation of static type checkers:
+types](https://docs.python.org/3/library/typing.html). Type annotations make
+your programs easier to understand, debug, and maintain.
 
-- [mypy](http://mypy-lang.org/), announced in 2012, may be considered the
-  pioneer and de facto reference implementation of Python type checking. Its
-  developer team, led by Jukka Lehtosalo, is employed by Dropbox and includes
-  Guido van Rossum and other Python core developers.
-- Google's [pytype](https://google.github.io/pytype/) (2016) is able to infer
-  types for unannotated code, giving you some of the benefits of type checking
-  right from the start at minimal cost. It supports generating typing stubs in
-  separate `.pyi` files, and can also merge these stubs into your codebase. It
-  uses [ninja](https://ninja-build.org/) internally to support parallel
-  execution and incremental checking, reducing the memory footprint.
-- Facebook's [pyre](https://pyre-check.org/) (2018) is written in OCaml with a
-  Python client. It supports incremental checking with
-  [Watchman](https://facebook.github.io/watchman/), type inference and stub
-  generation.
-- Microsoft's [pyright](https://github.com/microsoft/pyright) (2019) is written
-  in TypeScript and supports type inference. It may be interesting for you if
-  you use the Microsoft Visual Code editor.
-- JetBrain's [PyCharm](https://www.jetbrains.com/pycharm/) IDE has been shipping
-  with its own static type checker since 2015.
+Type annotations are entirely optional: They do not interfere when running your
+program, and type checkers do not require your code to be fully annotated. Some
+type checkers are able to infer types for unannotated code, but all support the
+coexistence of dynamically and statically typed Python.
+
+The introduction of type annotations has paved the way for an entire generation
+of static type checkers: [mypy](http://mypy-lang.org/) can be considered the
+pioneer and *de facto* reference implementation of Python type checking; several
+core Python developers are involved in its development. Google, Facebook, and
+Microsoft have each announced their own static type checkers for Python:
+[pytype](https://google.github.io/pytype/), [pyre](https://pyre-check.org/), and
+[pyright](https://github.com/microsoft/pyright), respectively. JetBrain's Python
+IDE [PyCharm](https://www.jetbrains.com/pycharm/) also ships with a static type
+checker.
+
+Let's add type annotations to the `console.main` function. This is a simple
+function which accepts an `int` and returns `None` by falling off its end:
+
+```python
+# src/hypermodern_python/console.py
+def main(count: int) -> None:
+    ...
+```
+
+The `splines.reticulate` function is a more complex example: It accepts an
+optional parameter of type `int` and yields values of type `int`, in other
+words, it returns a generator. You can express this using the `typing.Iterator`
+type, as shown below. The function body contains a local variable named
+`spline`, which is also an `int`.
+
+```python
+# src/hypermodern_python/splines.py
+import time
+from typing import Iterator
+
+
+def reticulate(count: int = -1) -> Iterator[int]:
+    spline: int = 0
+    while count < 0 or spline < count:
+        time.sleep(1)
+        spline += 1
+        yield spline
+```
+
+## Static type checking with mypy
+
+Add the following session to `noxfile.py` to type-check your source code with
+[mypy](http://mypy-lang.org/):
+
+```python
+@nox.session(python=["3.8", "3.7"])
+def mypy(session: Session) -> None:
+    args = session.posargs or locations
+    session.install("mypy")
+    session.run("mypy", *args)
+```
+
+Include mypy in the default Nox sessions:
+
+```python
+nox.options.sessions = "lint", "mypy", "pytype", "tests"
+```
+
+mypy generates warnings if it does not find types for a third-party package. You
+can ignore these errors globally using the `mypy.ini` configuration file:
+
+```ini
+# mypy.ini
+[mypy]
+ignore_missing_imports = True
+```
+
+Even better, you can disable the warning for specific packages only, as shown
+below. This helps you keep track which of your dependencies are currently out of
+scope of the type checker:
+
+```ini
+# mypy.ini
+[mypy]
+
+[mypy-nox.*,pytest,pytest_mock]
+ignore_missing_imports = True
+```
 
 ## Static type checking with pytype
 
-Pytype's type inference makes it a nice tool to start with. Add the following
-session to `noxfile.py`:
+Google's [pytype](https://google.github.io/pytype/) supports type inference,
+giving you some of the benefits of static typing even before you start adding
+type annotations to your code. Add the following session to `noxfile.py` to run
+pytype:
 
 ```python
 # noxfile.py
@@ -83,14 +147,13 @@ def pytype(session):
     session.run("pytype", *args)
 ```
 
-This session runs in Python 3.7 only, because Python 3.8 is [not yet
+The session runs in Python 3.7 only, because Python 3.8 is [not yet
 supported](https://github.com/google/pytype/issues/440) in pytype.
 
-Some third-party packages are distributed without type annotations, resulting in
-import errors reported by pytype. You could add a `# pytype:
-disable=import-error` comment to the `import` statements of offending packages,
-but this can get pretty repetitive. Instead, create the `pytype.cfg`
-configuration file and disable import errors globally:
+Like mypy, pytype reports import errors for third-party packages without type
+annotations. You could add a `# pytype: disable=import-error` comment to imports
+of offending packages, but this can get pretty repetitive. Instead, create the
+`pytype.cfg` configuration file and disable import errors globally:
 
 ```ini
 # pytype.cfg
@@ -121,39 +184,7 @@ Update `nox.options.session` to include static type checking in the default Nox
 sessions:
 
 ```python
-nox.options.sessions = "lint", "pytype", "tests"
-```
-
-## Adding type annotations to the package
-
-While pytype uses type inference to validate Python code even in the absence of
-type annotations, it can clearly perform a much better job if you add [type
-annotations](https://docs.python.org/3/library/typing.html) to your codebase.
-
-The `splines.reticulate` function accepts an optional `int`, and yields values
-of type `int`. The local variable `spline` is also an `int`.
-
-```python
-# src/hypermodern_python/splines.py
-import time
-from typing import Iterator
-
-
-def reticulate(count: int = -1) -> Iterator[int]:
-    spline: int = 0
-    while count < 0 or spline < count:
-        time.sleep(1)
-        spline += 1
-        yield spline
-```
-
-The `console.main` function looks scary with its many decorators. But at its
-core, it is a simple function accepting an `int` and returning `None`.
-
-```python
-# src/hypermodern_python/console.py
-def main(count: int) -> None:
-    ...
+nox.options.sessions = "lint", "mypy", "pytype", "tests"
 ```
 
 ## Increasing type coverage with flake8-annotations
@@ -260,52 +291,6 @@ from unittest.mock import Mock
 def test_reticulate_yields_count_times(mock_sleep: Mock) -> None:
 
 def test_reticulate_sleeps(mock_sleep: Mock) -> None:
-```
-
-## Static type checking with mypy
-
-Jukka Lehtosalo's [mypy](http://mypy-lang.org/) may be considered the pioneer
-and de facto reference implementation of Python type checking. Its core team is
-employed by Dropbox and includes several Python core developers, such as a
-certain Guido van Rossum. By contrast with pytype, mypy enables gradual adoption
-by checking only annotated code.
-
-Add the following session to `noxfile.py` to run mypy:
-
-```python
-@nox.session(python=["3.8", "3.7"])
-def mypy(session: Session) -> None:
-    args = session.posargs or locations
-    session.install("mypy")
-    session.run("mypy", *args)
-```
-
-Include mypy in the default Nox sessions:
-
-```python
-nox.options.sessions = "lint", "mypy", "pytype", "tests"
-```
-
-Like pytype, mypy generates warnings every time it does not find types for a
-third-party package. You can ignore these errors globally using the `mypy.ini`
-configuration file:
-
-```ini
-# mypy.ini
-[mypy]
-ignore_missing_imports = True
-```
-
-Even better, you can disable the warning for specific packages only, as shown
-below. This helps you keep track which of your dependencies are currently out of
-scope of the type checker:
-
-```ini
-# mypy.ini
-[mypy]
-
-[mypy-nox.*,pytest,pytest_mock]
-ignore_missing_imports = True
 ```
 
 <center>[Continue to the next chapter](../hypermodern-python-05-documentation)</center>
