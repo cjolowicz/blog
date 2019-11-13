@@ -30,16 +30,16 @@ This post has a companion repository:
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **In this chapter:**
 
-- [Documenting code using Python docstrings](#documenting-code-using-python-docstrings)
+- [Documenting code with Python docstrings](#documenting-code-with-python-docstrings)
 - [Linting code documentation with flake8-docstrings](#linting-code-documentation-with-flake8-docstrings)
 - [Validating docstrings against function signatures with darglint](#validating-docstrings-against-function-signatures-with-darglint)
-- [Running tests in docstrings with xdoctest](#running-tests-in-docstrings-with-xdoctest)
+- [Running examples in docstrings with xdoctest](#running-examples-in-docstrings-with-xdoctest)
 - [Creating documentation with Sphinx](#creating-documentation-with-sphinx)
 - [Generating API documentation with autodoc](#generating-api-documentation-with-autodoc)
 
 <!-- markdown-toc end -->
 
-## Documenting code using Python docstrings
+## Documenting code with Python docstrings
 
 [Documentation
 strings](https://www.python.org/dev/peps/pep-0257/#what-is-a-docstring), also
@@ -57,7 +57,8 @@ def main(count: int) -> None:
 
 More commonly, documentation strings communicate the purpose and usage of a
 module, class, or function to other developers reading your code. As we shall
-see later in this chapter, they can also be used to generate API documentation.
+see at the end of this chapter, they can also be used to generate API
+documentation.
 
 Document your entire package by adding a docstring to the top of `__init__.py`:
 
@@ -96,7 +97,7 @@ def reticulate(count: int = -1) -> Iterator[int]:
 
 The [flake8-docstrings](https://gitlab.com/pycqa/flake8-docstrings) plugin uses
 the tool [pydocstyle](https://github.com/pycqa/pydocstyle) to check that
-docstrings are compliant with [PEP
+docstrings are compliant with the style recommendations of [PEP
 257](https://www.python.org/dev/peps/pep-0257/). Warnings range from missing
 docstrings to issues with whitespace, quoting, and docstring content.
 
@@ -129,6 +130,8 @@ style](http://google.github.io/styleguide/pyguide.html#38-comments-and-docstring
 select = B,B9,BLK,C,D,E,F,I,S,TYP,W
 docstring-convention = google
 ```
+
+## Adding more docstrings to the project
 
 Running `nox -rs lint` finds missing docstrings outside of the package, such as
 in `noxfile.py` itself. Let's fix this one first:
@@ -272,7 +275,7 @@ short docstrings, using the `.darglint` configuration file:
 strictness=short
 ```
 
-## Running tests in docstrings with xdoctest
+## Running examples in docstrings with xdoctest
 
 A good way to explain how to use your function is to include an example in your
 docstring:
@@ -421,9 +424,9 @@ Sphinx extensions:
   allows Sphinx to include type annotations on function parameters and return
   values in the generated API documentation.
 
-While the first two extensions are included with Sphinx, the third one needs to
-be added to the docs session. You also need to install your package to allow
-Sphinx to import it and pull its docstrings:
+While the first two extensions are included with Sphinx, you need to install the
+third one separately within the docs session. You also need to install your own
+package, to allow Sphinx to pull its docstrings:
 
 ```python
 # noxfile.py
@@ -435,7 +438,7 @@ def docs(session: Session) -> None:
     session.run("sphinx-build", "docs", "docs/_build")
 ```
 
-You also need add the extensions to your Sphinx configuration:
+Activate the extensions by declaring them in the Sphinx configuration file:
 
 ```python
 # docs/conf.py
@@ -447,7 +450,8 @@ extensions = [
 ]
 ```
 
-You can now reference docstrings using special Sphinx directives.
+You can now reference docstrings using special Sphinx directives, such as
+`autoclass` and `autofunction`.
 
 Create the file `docs/splines.rst`, with API documentation for the `splines`
 module:
