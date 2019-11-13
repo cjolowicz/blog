@@ -48,7 +48,7 @@ checkers for Python have come into existence.
   includes or has included several Python core developers, such as a certain
   Guido van Rossum.
 
-- JetBrain's [PyCharm](https://www.jetbrains.com/pycharm/) editor includes its
+- JetBrain's [PyCharm](https://www.jetbrains.com/pycharm/) editor comes with its
   own static type checker (2015).
 
 - Google's [pytype](https://google.github.io/pytype/) (2016) is able to [infer
