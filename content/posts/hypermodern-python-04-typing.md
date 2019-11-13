@@ -41,27 +41,37 @@ This post has a companion repository:
 
 ## Static typing and Python
 
-With the advent of [type
-annotations](https://docs.python.org/3/library/typing.html), several static type
-checkers for Python have come into existence:
+Static type checkers analyze your source code for type errors (like treating a
+string as an integer) without executing it. While Python is a dynamically typed
+language--it verifies the types of your program at runtime--, Python 3.5 and 3.6
+have introduced a way to [annotate functions and variables with
+types](https://docs.python.org/3/library/typing.html), paving the way for an
+entire generation of static type checkers:
 
-- Jukka Lehtosalo's [mypy](http://mypy-lang.org/) (2012)
-- JetBrain's [PyCharm](https://www.jetbrains.com/pycharm/) (2015)
-- Google's [pytype](https://google.github.io/pytype/) (2016)
-- Facebook's [pyre](https://pyre-check.org/) (2018)
-- Microsoft's [pyright](https://github.com/microsoft/pyright) (2019)
-
-Pyright is written in JavaScript and may be interesting for you if you use the
-Microsoft Visual Code editor, but I won't cover it here.
+- [mypy](http://mypy-lang.org/), announced in 2012, may be considered the
+  pioneer and de facto reference implementation of Python type checking. Its
+  developer team, led by Jukka Lehtosalo, is employed by Dropbox and includes
+  Guido van Rossum and other Python core developers.
+- Google's [pytype](https://google.github.io/pytype/) (2016) is able to infer
+  types for unannotated code, giving you some of the benefits of type checking
+  right from the start at minimal cost. It supports generating typing stubs in
+  separate `.pyi` files, and can also merge these stubs into your codebase. It
+  uses [ninja](https://ninja-build.org/) internally to support parallel
+  execution and incremental checking, reducing the memory footprint.
+- Facebook's [pyre](https://pyre-check.org/) (2018) is written in OCaml with a
+  Python client. It supports incremental checking with
+  [Watchman](https://facebook.github.io/watchman/), type inference and stub
+  generation.
+- Microsoft's [pyright](https://github.com/microsoft/pyright) (2019) is written
+  in TypeScript and supports type inference. It may be interesting for you if
+  you use the Microsoft Visual Code editor.
+- JetBrain's [PyCharm](https://www.jetbrains.com/pycharm/) IDE has been shipping
+  with its own static type checker since 2015.
 
 ## Static type checking with pytype
 
-Google's [pytype](https://google.github.io/pytype/) is able to [infer types for
-unannotated
-code](https://docs.google.com/presentation/d/1GYqLeLkknjYaYX2JrMzxX8LGw_rlO-6kTk-VNPVG9gY/edit?usp=sharing),
-giving you some of the benefits of type checking at minimal cost. Pytype's type
-inference makes it a nice tool to start with. Add the following session to
-`noxfile.py` to add run pytype:
+Pytype's type inference makes it a nice tool to start with. Add the following
+session to `noxfile.py`:
 
 ```python
 # noxfile.py
@@ -254,11 +264,11 @@ def test_reticulate_sleeps(mock_sleep: Mock) -> None:
 
 ## Static type checking with mypy
 
-Jukka Lehtosalo's [mypy](http://mypy-lang.org/) may be considered the pioneer of
-Python type checking. Its core team is employed by Dropbox and includes or has
-included several Python core developers, such as a certain Guido van Rossum. By
-contrast with pytype, mypy enables gradual adoption by checking only annotated
-code.
+Jukka Lehtosalo's [mypy](http://mypy-lang.org/) may be considered the pioneer
+and de facto reference implementation of Python type checking. Its core team is
+employed by Dropbox and includes several Python core developers, such as a
+certain Guido van Rossum. By contrast with pytype, mypy enables gradual adoption
+by checking only annotated code.
 
 Add the following session to `noxfile.py` to run mypy:
 
@@ -297,11 +307,5 @@ scope of the type checker:
 [mypy-nox.*,pytest,pytest_mock]
 ignore_missing_imports = True
 ```
-
-## Static type checking with pyre
-
-Facebook's [pyre](https://pyre-check.org/) supports incremental checking with
-[Watchman](https://facebook.github.io/watchman/) and, like pytype, type
-inference and stub generation.
 
 <center>[Continue to the next chapter](../hypermodern-python-05-documentation)</center>
