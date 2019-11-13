@@ -419,22 +419,38 @@ Sphinx extensions:
   enables Sphinx to generate API documentation from the docstrings in your
   package.
 - [napoleon](https://www.sphinx-doc.org/en/master/usage/extensions/napoleon.html)
-  pre-processes your Google-style documentation strings to reStructuredText.
+  pre-processes Google-style docstrings to reStructuredText.
 - [sphinx-autodoc-typehints](https://github.com/agronholm/sphinx-autodoc-typehints)
-  allows Sphinx to include type annotations on function parameters and return
-  values in the generated API documentation.
+  allows Sphinx to include type annotations in the generated API documentation.
 
-While the first two extensions are included with Sphinx, you need to install the
-third one separately within the docs session. You also need to install your own
-package, to allow Sphinx to pull its docstrings:
+For Sphinx to be able to read the documentation strings and type annotations in
+your package, you need to install your package before building the
+documentation. As the documentation dependencies include the package itself, it
+makes sense to declare them as *extra dependencies* of your package, rather than
+simply installing them in the Nox session. This has the following advantages:
+
+- You can use Poetry to manage dependencies.
+- You can build the documentation from within CI, using the same environment.
+- Extra dependencies are kept separate from the main package dependencies.
+
+Add the documentation dependencies with Poetry, like this:
+
+```sh
+poetry add --extras=docs sphinx sphinx-rtd-theme sphinx-autodoc-typehints
+```
+
+In case you wonder, the `autodoc` and `napoleon` extensions are distributed with
+Sphinx, so there is no need to install them explicitly.
+
+In the Nox session, you can now simply install your package with the
+`--extras=docs` option:
 
 ```python
 # noxfile.py
 @nox.session(python="3.8")
 def docs(session: Session) -> None:
     """Build the documentation."""
-    session.run("poetry", "install", external=True)
-    session.install("sphinx", "sphinx-rtd-theme", "sphinx-autodoc-typehints")
+    session.run("poetry", "install", "--extras=docs", external=True)
     session.run("sphinx-build", "docs", "docs/_build")
 ```
 
@@ -450,8 +466,8 @@ extensions = [
 ]
 ```
 
-You can now reference docstrings using special Sphinx directives, such as
-`autoclass` and `autofunction`.
+From now on, you can reference docstrings in your Sphinx documentation using
+directives such as `autoclass` and `autofunction`.
 
 Create the file `docs/splines.rst`, with API documentation for the `splines`
 module:
@@ -475,6 +491,7 @@ Include the new file in a `toctree` directive at the end of `docs/index.rst`:
 ```
 
 Rebuild the documentation using `nox -rs docs`, and open the file
-`docs/_build/index.html` in your browser to view your API documentation.
+`docs/_build/index.html` in your browser. Navigate to the `splines` module to
+view its API documentation.
 
 <center>[Continue to the next chapter](../hypermodern-python-06-ci-cd)</center>
