@@ -433,17 +433,27 @@ simply installing them in the Nox session. This has the following advantages:
 - You can build the documentation from within CI, using the same environment.
 - Extra dependencies are kept separate from the main package dependencies.
 
-Add the documentation dependencies with Poetry, like this:
+Add the documentation dependencies with Poetry using the `--optional` option,
+like this:
 
 ```sh
-poetry add --extras=docs sphinx sphinx-rtd-theme sphinx-autodoc-typehints
+poetry add --optional sphinx sphinx-rtd-theme sphinx-autodoc-typehints
 ```
 
 In case you wonder, the `autodoc` and `napoleon` extensions are distributed with
 Sphinx, so there is no need to install them explicitly.
 
-In the Nox session, you can now simply install your package with the
-`--extras=docs` option:
+Declare the documentation dependencies in `pyproject.toml`, as an extra named
+`docs`:
+
+```toml
+# pyproject.toml
+[tool.poetry.extras]
+docs = ["sphinx", "sphinx-rtd-theme", "sphinx-autodoc-typehints"]
+```
+
+You can now simply install your package with the `--extras=docs` option. Update
+the Nox session:
 
 ```python
 # noxfile.py
