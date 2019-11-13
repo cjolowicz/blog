@@ -5,9 +5,8 @@ description: "Coding in Python like Savielly Tartakower."
 draft: true
 tags:
   - python
+  - mytype
   - pytype
-  - nox
-  - GitHub Actions
 ---
 
 In this fourth installment of the Hypermodern Python series, I'm going to
@@ -65,7 +64,7 @@ checkers for Python have come into existence.
   Code editor, but I won't cover it here.
 
 Pytype's type inference makes it a nice tool to start with. Add the following
-session to `noxfile.py` to add a pytype session:
+session to `noxfile.py` to add run pytype:
 
 ```python
 # noxfile.py
@@ -260,5 +259,46 @@ def test_reticulate_sleeps(mock_sleep: Mock) -> None:
 
 By contrast with pytype, mypy enables gradual adoption by checking only
 annotated code.
+
+Add the following session to `noxfile.py` to run mypy:
+
+```python
+@nox.session(python=["3.8", "3.7"])
+def mypy(session: Session) -> None:
+    args = session.posargs or locations
+    session.install("mypy")
+    session.run("mypy", *args)
+```
+
+Include mypy in the default Nox sessions:
+
+```python
+nox.options.sessions = "lint", "mypy", "pytype", "tests"
+```
+
+Like pytype, mypy generates warnings every time it does not find types for a
+third-party package. You can ignore these errors globally using the `mypy.ini`
+configuration file:
+
+```ini
+# mypy.ini
+[mypy]
+ignore_missing_imports = True
+```
+
+Even better, you can disable the warning for specific packages only:
+
+```ini
+# mypy.ini
+[mypy]
+
+[mypy-nox.*,pytest,pytest_mock]
+ignore_missing_imports = True
+```
+
+This helps you keep track which of your dependencies are out of scope of the
+type checker.
+
+## Static type checking with pyre
 
 <center>[Continue to the next chapter](../hypermodern-python-05-documentation)</center>
