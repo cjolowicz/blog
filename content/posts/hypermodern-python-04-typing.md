@@ -176,18 +176,19 @@ per-file-ignores =
 
 But don't functions without type annotations look *naked* to you.
 
-So let's do this. Here are type annotations for the Nox sessions:
+Here are type annotations for the Nox sessions:
 
 ```python
 # noxfile.py
-def black(session: nox.sessions.Session) -> None:
+from nox.sessions import Session
 
-def lint(session: nox.sessions.Session) -> None:
+def black(session: Session) -> None:
 
-def tests(session: nox.sessions.Session) -> None:
+def lint(session: Session) -> None:
 
-def coverage(session: nox.sessions.Session) -> None:
+def tests(session: Session) -> None:
 
+def coverage(session: Session) -> None:
 ```
 
 Annotating the test suite requires only a little research:
@@ -200,37 +201,36 @@ With this out of the way, annotating the test suite becomes pretty straightforwa
 
 ```python
 # tests/conftest.py
-import unittest.mock
+from unittest.mock import Mock
 
 from pytest_mock import MockFixture
 
-def mock_sleep(mocker: MockFixture) -> unittest.mock.Mock:
+def mock_sleep(mocker: MockFixture) -> Mock:
 ```
 
 ```python
 # tests/test_console.py
-import unittest.mock
+from unittest.mock import Mock
 
+from click.testing import CliRunner
 from pytest_mock import MockFixture
 
-def runner() -> click.testing.CliRunner:
+def runner() -> CliRunner:
 
-def mock_splines_reticulate(mocker: MockFixture) -> unittest.mock.Mock:
+def mock_splines_reticulate(mocker: MockFixture) -> Mock:
 
-def test_main_succeeds(runner: click.testing.CliRunner) -> None:
+def test_main_succeeds(runner: CliRunner, mock_splines_reticulate: Mock) -> None:
 
-def test_main_prints_progress_message(
-    runner: click.testing.CliRunner, mock_sleep: unittest.mock.Mock
-) -> None:
+def test_main_prints_progress_message(runner: CliRunner, mock_sleep: Mock) -> None:
 ```
 
 ```python
 # tests/test_splines.py
-import unittest.mock
+from unittest.mock import Mock
 
-def test_reticulate_yields_count_times(mock_sleep: unittest.mock.Mock) -> None:
+def test_reticulate_yields_count_times(mock_sleep: Mock) -> None:
 
-def test_reticulate_sleeps(mock_sleep: unittest.mock.Mock) -> None:
+def test_reticulate_sleeps(mock_sleep: Mock) -> None:
 ```
 
 <center>[Continue to the next chapter](../hypermodern-python-05-documentation)</center>
