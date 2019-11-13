@@ -236,32 +236,14 @@ python:
     - requirements: docs/requirements.txt
 ```
 
-Ensure that a recent Sphinx version is used, by adding this
-`docs/requirements.txt` file:
+Generate the requirements file using the following command:
 
-```requirements
-# docs/requirements.txt
-sphinx==2.2.0
-sphinx-rtd-theme==0.4.3
-sphinx-autodoc-typehints==1.8.0
+```sh
+poetry export -f requirements.txt -E docs > docs/requirements.txt
 ```
 
-```python
-# docs/requirements.txt
-sphinx==2.2.0
-sphinx-rtd-theme==0.4.3
-```
-
-Let's also adapt the `docs` session to use this same requirements file:
-
-```python
-# noxfile.py
-...
-def docs(session):
-    ...
-    session.install("-r", "docs/requirements.txt")"
-    ...
-```
+You need to place this file under source control to ensure that it is available
+when Read the Docs installs your documentation dependencies.
 
 Sign up at Read the Docs, and import your GitHub repository, using the button
 *Import a Project*. Read the Docs automatically starts building your
