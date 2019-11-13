@@ -51,7 +51,7 @@ An example of a docstring is the first line of `console.main`, which is used by
 
 ```python
 # src/hypermodern_python/console.py
-def main(count):
+def main(count: int) -> None:
     """The hypermodern Python project."""
     for spline in splines.reticulate(count):
         click.echo(f"Reticulating spline {spline}...")
@@ -78,7 +78,7 @@ package:
 """Utilities for spline manipulation."""
 ...
 
-def reticulate(count):
+def reticulate(count: int = -1) -> Iterator[int]:
     """Reticulate splines."""
     ...
 
@@ -97,10 +97,12 @@ Add `flake8-docstrings` to the `lint` session:
 ```python
 # noxfile.py
 @nox.session(python=["3.8", "3.7"])
-def lint(session):
+def lint(session: Session) -> None:
+    """Lint using flake8."""
     args = session.posargs or locations
     session.install(
         "flake8",
+        "flake8-annotations",
         "flake8-bandit",
         "flake8-black",
         "flake8-bugbear",
@@ -116,7 +118,7 @@ style](http://google.github.io/styleguide/pyguide.html#38-comments-and-docstring
  
 ```ini
 # .flake8
-select = BLK,C,D,E,F,W
+select = B,B9,BLK,C,D,E,F,I,S,TYP,W
 docstring-convention = google
 ```
 
@@ -127,13 +129,19 @@ in `noxfile.py` itself. Let's fix this one first:
 # noxfile.py
 """Nox sessions."""
 
-def black(session):
+def black(session: Session) -> None:
     """Run black code formatter."""
 
-def lint(session):
+def lint(session: Session) -> None:
     """Lint using flake8."""
 
-def tests(session):
+def mypy(session: Session) -> None:
+    """Type-check using mypy."""
+
+def pytype(session: Session) -> None:
+    """Type-check using pytype."""
+
+def tests(session: Session) -> None:
     """Run the test suite."""
 ```
 
@@ -150,7 +158,7 @@ modules, test cases, and fixtures.
 """Package-wide test fixtures."""
 
 @pytest.fixture
-def mock_sleep(mocker):
+def mock_sleep(mocker: MockFixture) -> Mock:
     """Mock for time.sleep."""
 ```
 
@@ -159,17 +167,17 @@ def mock_sleep(mocker):
 """Test cases for the console module."""
 
 @pytest.fixture
-def runner():
+def runner() -> CliRunner:
     """Fixture for invoking command-line interfaces."""
  
 @pytest.fixture
-def mock_splines_reticulate(mocker):
+def mock_splines_reticulate(mocker: MockFixture) -> Mock:
     """Mock for splines.reticulate."""
 
-def test_main_succeeds(runner):
+def test_main_succeeds(runner: CliRunner, mock_splines_reticulate: Mock) -> None:
     """Test if console.main succeeds."""
  
-def test_main_prints_progress_message(runner, mock_sleep):
+def test_main_prints_progress_message(runner: CliRunner, mock_sleep: Mock) -> None:
     """Test if console.main prints a progress message."""
 ```
 
@@ -177,10 +185,10 @@ def test_main_prints_progress_message(runner, mock_sleep):
 # tests/test_splines.py
 """Test cases for the splines module."""
  
-def test_reticulate_yields_count_times(mock_sleep):
+def test_reticulate_yields_count_times(mock_sleep: Mock) -> None:
     """Test if reticulate yields <count> times."""
  
-def test_reticulate_sleeps(mock_sleep):
+def test_reticulate_sleeps(mock_sleep: Mock) -> None:
     """Test if reticulate sleeps."""
 ```
 
@@ -200,14 +208,14 @@ Let's add usage information for the `splines.reticulate` function:
 
 ```python
 # src/hypermodern_python/splines.py
-def reticulate(count):
+def reticulate(count: int = -1) -> Iterator[int]:
     """Reticulate splines.
 
     Args:
-        count (int): Number of splines to reticulate
+        count: Number of splines to reticulate
 
     Yields:
-        int: A reticulated spline
+        A reticulated spline
 
     """
 ```
@@ -219,11 +227,12 @@ plugin. Add the plugin to the lint session:
 ```python
 # noxfile.py
 @nox.session(python=["3.8", "3.7"])
-def lint(session):
+def lint(session: Session) -> None:
     """Lint using flake8."""
     args = session.posargs or locations
     session.install(
         "flake8",
+        "flake8-annotations",
         "flake8-bandit",
         "flake8-black",
         "flake8-bugbear",
@@ -241,7 +250,7 @@ warnings explicitly (`DAR` like *darglint*):
 ```ini
 # .flake8
 [flake8]
-select = B,B9,BLK,C,D,DAR,E,F,I,S,W
+select = B,B9,BLK,C,D,DAR,E,F,I,S,TYP,W
 ```
 
 Sometimes one-line docstrings are quite sufficient. Configure darglint to accept
@@ -260,14 +269,14 @@ docstring:
 
 ```python
 # src/hypermodern_python/splines.py
-def reticulate(count=-1):
+def reticulate(count: int = -1) -> Iterator[int]:
     """Reticulate splines.
 
     Args:
-        count (int): Number of splines to reticulate
+        count: Number of splines to reticulate
 
     Yields:
-        int: A reticulated spline
+        A reticulated spline
 
     Example:
         >>> from hypermodern_python import splines
@@ -292,7 +301,7 @@ the `--xdoctest` option to activate the plugin:
 ```python
 # noxfile.py
 @nox.session(python=["3.8", "3.7"])
-def tests(session):
+def tests(session: Session) -> None:
     """Run the test suite."""
     args = session.posargs or ["--cov", "--xdoctest"]
     session.run("poetry", "install", external=True)
