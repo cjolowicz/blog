@@ -28,16 +28,10 @@ This post has a companion repository:
 -->
 
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
-**Table of Contents**
+**In this chapter:**
 
-- [Reticulating splines](#reticulating-splines)
-- [Mocking with pytest-mock](#mocking-with-pytest-mock)
 - [Static type checking with pytype](#static-type-checking-with-pytype)
 - [Increasing type coverage with flake8-annotations](#increasing-type-coverage-with-flake8-annotations)
-- [Linting import order with flake8-import-order](#linting-import-order-with-flake8-import-order)
-- [Linting with flake8-bugbear](#linting-with-flake8-bugbear)
-- [Finding security issues with bandit](#finding-security-issues-with-bandit)
-- [Conclusion](#conclusion)
 
 <!-- markdown-toc end -->
 
@@ -47,16 +41,53 @@ With the advent of [type
 annotations](https://docs.python.org/3/library/typing.html), several static type
 checkers for Python have come into existence: [mypy](http://mypy-lang.org/),
 Google's [pytype](https://google.github.io/pytype/), and Microsoft's
-[pyright](https://github.com/microsoft/pyright).
+[pyright](https://github.com/microsoft/pyright). In contrast to other type
+checkers, pytype is able to infer types for unannotated code.
 
 Add the following session to `noxfile.py` to add `pytype`:
 
 ```python
-@nox.session(python=["3.8", "3.7"])
+# noxfile.py
+@nox.session(python="3.7")
 def pytype(session):
     """Run the static type checker."""
+    args = session.posargs or locations
     session.install("pytype")
-    session.run("pytype", "--config=pytype.cfg", *locations)
+    session.run("pytype", *args)
+```
+
+This session runs in Python 3.7 only, because Python 3.8 is [not yet
+supported](https://github.com/google/pytype/issues/440) in pytype.
+
+Some third-party packages are distributed without type annotations, resulting in
+import errors reported by pytype. You could add a `# pytype:
+disable=import-error` comment to the `import` statements of offending packages,
+but this can get pretty repetitive. Instead, create the `pytype.cfg`
+configuration file and disable import errors globally:
+
+```ini
+# pytype.cfg
+[pytype]
+disable = import-error
+```
+
+You need to specify the configuration file explicitly when invoking pytype:
+
+```python
+# noxfile.py
+@nox.session(python="3.7")
+def pytype(session):
+    """Run the static type checker."""
+    args = session.posargs or locations
+    session.install("pytype")
+    session.run("pytype", "--config=pytype.cfg", *args)
+```
+
+With this in place, the static checker should be happy with the current state of
+affairs:
+
+```sh
+nox -rs pytype
 ```
 
 Update `nox.options.session` to include static type checking in the default Nox
@@ -66,30 +97,14 @@ sessions:
 nox.options.sessions = "lint", "pytype", "tests"
 ```
 
-Create the `pytype.cfg` configuration file and disable import errors. Some
-third-party packages are still distributed without type annotations:
-
-```ini
-# pytype.cfg
-[pytype]
-disable = import-error
-```
-
-You could also add a `# pytype: disable=import-error` comment to the `import`
-statements of offending packages, but this can get pretty repetitive.
-
-With this in place, the static checker should be happy with the current state of
-affairs:
-
-```sh
-nox -rs pytype
-```
+## Adding type annotations
 
 While pytype uses type inference to validate Python code even in the absence of
-type annotations, it can clearly perform a much better job if you add type
-information to your code base.
+type annotations, it can clearly perform a much better job if you add [type
+annotations](https://docs.python.org/3/library/typing.html) to your codebase.
 
-Add type annotations to the `splines` module:
+The `splines.reticulate` function accepts an optional `int`, and yields values
+of type `int`. The local variable `spline` is also an `int`.
 
 ```python
 # src/hypermodern_python/splines.py
@@ -105,11 +120,13 @@ def reticulate(count: int = -1) -> Iterator[int]:
         yield spline
 ```
 
-Add type annotations to the `console` module:
+The `console.main` function looks scary with its many decorators. But at its
+core, it is a simple function accepting an `int` and returning `None`.
 
 ```python
 # src/hypermodern_python/console.py
 def main(count: int) -> None:
+    ...
 ```
 
 ## Increasing type coverage with flake8-annotations
