@@ -19,7 +19,7 @@ For your reference, below is a list of the articles in this series.
 - [Chapter 2: Testing](../hypermodern-python-02-testing)
 - [Chapter 3: Linting](../hypermodern-python-03-linting)
 - [Chapter 4: Typing](../hypermodern-python-04-typing)
-- [Chapter 5: Documentation](../hypermodern-python-04-documentation)
+- [Chapter 5: Documentation](../hypermodern-python-05-documentation)
 - [Chapter 6: CI/CD](../hypermodern-python-05-ci-cd)
 
 <!--
@@ -170,8 +170,4 @@ def test_reticulate_sleeps(mock_sleep: unittest.mock.Mock) -> None:
 def test_reticulate_yields_count_times(mock_sleep: unittest.mock.Mock) -> None:
 ```
 
-## Conclusion
-
-<!--
-{{< figure src="http://www.vintagecomputer.net/ctc/3300/CTC_DataPoint-3300_pic3.jpg" caption="Fun fact: Consoles have supported dark mode since 1969, exactly half a century before iOS 13." alt="DataPoint 3300 (1969)" link="https://www.youtube.com/watch?v=dEGlKpIBujc" width="80%" class="centered" >}}
--->
+<center>[Continue to the next chapter](../hypermodern-python-05-documentation)</center>

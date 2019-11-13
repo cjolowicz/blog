@@ -21,7 +21,7 @@ For your reference, below is a list of the articles in this series.
 - [Chapter 2: Testing](../hypermodern-python-02-testing)
 - [Chapter 3: Linting](../hypermodern-python-03-linting)
 - [Chapter 4: Typing](../hypermodern-python-04-typing)
-- [Chapter 5: Documentation](../hypermodern-python-04-documentation)
+- [Chapter 5: Documentation](../hypermodern-python-05-documentation)
 - [Chapter 6: CI/CD](../hypermodern-python-05-ci-cd)
 
 <!--

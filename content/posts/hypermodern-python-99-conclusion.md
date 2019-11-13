@@ -76,3 +76,7 @@ hypermoderne Schachpartie* (The hypermodern chess game) in his bookshelf,
 written by [Savielly
 Tartakower](https://en.wikipedia.org/wiki/Savielly_Tartakower) in 1925 to
 modernize chess theory. That inspired the title of this guide.
+
+<!--
+{{< figure src="http://www.vintagecomputer.net/ctc/3300/CTC_DataPoint-3300_pic3.jpg" caption="Fun fact: Consoles have supported dark mode since 1969, exactly half a century before iOS 13." alt="DataPoint 3300 (1969)" link="https://www.youtube.com/watch?v=dEGlKpIBujc" width="80%" class="centered" >}}
+-->
