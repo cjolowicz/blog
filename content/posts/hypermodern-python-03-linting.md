@@ -54,7 +54,6 @@ locations = "src", "tests", "noxfile.py"
 
 @nox.session(python=["3.8", "3.7"])
 def lint(session):
-    """Lint using flake8."""
     args = session.posargs or locations
     session.install("flake8")
     session.run("flake8", *args)
@@ -107,7 +106,6 @@ Adding Black as a Nox session is straightforward:
 # noxfile.py
 @nox.session(python="3.8")
 def black(session):
-    """Run black code formatter."""
     args = session.posargs or locations
     session.install("black")
     session.run("black", *args)
@@ -141,11 +139,10 @@ Instead, check adherence to the Black code style inside the linter session. The
 [flake8-black](https://github.com/peterjc/flake8-black) plugin generates
 warnings if it detects that Black would reformat a source file:
 
-{{< highlight python "hl_lines=6" >}}
+{{< highlight python "hl_lines=5" >}}
 # noxfile.py
 @nox.session(python=["3.8", "3.7"])
 def lint(session):
-    """Lint using flake8."""
     args = session.posargs or locations
     session.install("flake8", "flake8-black")
     session.run("flake8", *args)
@@ -184,11 +181,10 @@ from hypermodern_python import splines
 
 Install the plugin in the linter session:
 
-{{< highlight python "hl_lines=6" >}}
+{{< highlight python "hl_lines=5" >}}
 # noxfile.py
 @nox.session(python=["3.8", "3.7"])
 def lint(session):
-    """Lint using flake8."""
     args = session.posargs or locations
     session.install("flake8", "flake8-black", "flake8-import-order")
     session.run("flake8", *args)
@@ -230,7 +226,6 @@ linter session in your `noxfile.py`:
 # noxfile.py
 @nox.session(python=["3.8", "3.7"])
 def lint(session):
-    """Lint using flake8."""
     args = session.posargs or locations
     session.install("flake8", "flake8-black", "flake8-bugbear", "flake8-import-order")
     session.run("flake8", *args)
@@ -266,7 +261,6 @@ security issues in Python code. Install it via the
 # noxfile.py
 @nox.session(python=["3.8", "3.7"])
 def lint(session):
-    """Lint using flake8."""
     args = session.posargs or locations
     session.install(
         "flake8",

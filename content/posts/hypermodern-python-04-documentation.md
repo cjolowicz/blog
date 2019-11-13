@@ -30,171 +30,16 @@ This post has a companion repository:
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **In this chapter:**
 
-- [Creating documentation with Sphinx](#creating-documentation-with-sphinx)
-- [Hosting documentation at Read the Docs](#hosting-documentation-at-read-the-docs)
 - [Documenting code using Python docstrings](#documenting-code-using-python-docstrings)
 - [Linting code documentation with flake8-docstrings](#linting-code-documentation-with-flake8-docstrings)
 - [Linting docstrings against function signatures with darglint](#linting-docstrings-against-function-signatures-with-darglint)
 - [Running tests in docstrings with xdoctest](#running-tests-in-docstrings-with-xdoctest)
+- [Creating documentation with Sphinx](#creating-documentation-with-sphinx)
+- [Hosting documentation at Read the Docs](#hosting-documentation-at-read-the-docs)
 - [Generating API documentation with autodoc](#generating-api-documentation-with-autodoc)
 - [Validating docstrings with flake8-rst-docstrings](#validating-docstrings-with-flake8-rst-docstrings)
 
 <!-- markdown-toc end -->
-
-## Creating documentation with Sphinx
-
-[Sphinx](http://www.sphinx-doc.org/) is the documentation tool used by the
-official Python documentation and many open-source projects. Sphinx
-documentation is commonly written using
-[reStructuredText](http://docutils.sourceforge.net/rst.html), although Markdown
-is also supported. 
-
-Create a directory `docs` and place the text below in the file `docs/index.rst`:
-
-```rst
-The hypermodern Python project
-==============================
-
-Installation
-------------
-
-To install the hypermodern Python project, run this command in your terminal:
-
-.. code-block:: console
-
-   $ pip install hypermodern-python
-
-Usage
------
-
-Hypermodern Python's usage looks like:
-
-.. code-block:: console
-
-    $ hypermodern-python [OPTIONS]
-
-.. option:: -n <count>, --count <count>
-
-    Number of splines to reticulate. By default, the program reticulates
-    splines until interrupted by Ctrl+C.
-
-.. option:: --version
-
-    Display the version and exit.
-
-.. option:: --help
-
-    Display a short usage message and exit.
-```
-
-Create the Sphinx configuration file `docs/conf.py`, in the same directory. This
-provides meta information about your project, and applies the theme
-[sphinx-rtd-theme](https://github.com/readthedocs/sphinx_rtd_theme):
-
-
-```python
-# docs/conf.py
-project = "hypermodern-python"
-author = "Your Name"
-copyright = f"2019, {author}"
-extensions = ["sphinx_rtd_theme"]
-html_theme = "sphinx_rtd_theme"
-```
-
-Add a Nox session to build the documentation:
-
-```python
-# noxfile.py
-@nox.session(python="3.8")
-def docs(session):
-    """Build the documentation."""
-    session.install("sphinx", "sphinx-rtd-theme")
-    session.run("sphinx-build", "docs", "docs/_build")
-```
-
-For good measure, include `docs/conf.py` in the linting session:
-
-```python
-# noxfile.py
-...
-locations = "src", "tests", "noxfile.py", "docs/conf.py"
-...
-```
-
-Run the Nox session:
-
-```sh
-nox -rs docs
-```
-
-You can now open the file `docs/_build/index.html` in your browser to view your
-documentation offline.
-
-## Hosting documentation at Read the Docs
-
-[Read the Docs](https://readthedocs.org/) hosts documentation for countless
-open-source Python projects. 
-
-Create the `.readthedocs.yml` configuration file:
-
-```yaml
-# .readthedocs.yml
-version: 2
-sphinx:
-  configuration: docs/conf.py
-formats: all
-python:
-  version: 3.7
-  install:
-    - requirements: docs/requirements.txt
-```
-
-Ensure that a recent Sphinx version is used, by adding this
-`docs/requirements.txt` file:
-
-```python
-# docs/requirements.txt
-sphinx==2.2.0
-sphinx-rtd-theme==0.4.3
-```
-
-Let's also adapt the `docs` session to use this same requirements file:
-
-```python
-# noxfile.py
-...
-def docs(session):
-    ...
-    session.install("-r", "docs/requirements.txt")"
-    ...
-```
-
-Sign up at Read the Docs, and import your GitHub repository, using the button
-*Import a Project*. Read the Docs automatically starts building your
-documentation. When the build has completed, your documentation will have a
-public URL like this:
-
-> https://hypermodern-python.readthedocs.io/
-
-You can display the documentation link on PyPI by including it in your package
-configuration file:
-
-```toml
-# pyproject.toml
-[tool.poetry]
-...
-documentation = "https://hypermodern-python.readthedocs.io"
-```
-
-Let's also add the link to the GitHub repository page, by adding a Read the Docs
-badge to `README.md`:
-
-```markdown
-[![Read the Docs](https://readthedocs.org/projects/hypermodern-python/badge/)](https://hypermodern-python.readthedocs.io/)
-```
-
-The badge looks like this: [![Read the
-Docs](https://readthedocs.org/projects/hypermodern-python/badge/)](https://hypermodern-python.readthedocs.io/)
 
 ## Documenting code using Python docstrings
 
@@ -202,7 +47,15 @@ Docs](https://readthedocs.org/projects/hypermodern-python/badge/)](https://hyper
 strings](https://www.python.org/dev/peps/pep-0257/#what-is-a-docstring), also
 known as *docstrings*, allow you to embed documentation directly into your code.
 An example of a docstring is the first line of `console.main`, which is used by
-`click` to generate the usage message of your command-line interface.
+`click` to generate the usage message of your command-line interface:
+
+```python
+# src/hypermodern_python/console.py
+def main(count):
+    """The hypermodern Python project."""
+    for spline in splines.reticulate(count):
+        click.echo(f"Reticulating spline {spline}...")
+```
 
 More commonly, documentation strings are used to communicate the purpose and
 usage of a module, class, or function to other developers reading your code. As
@@ -242,11 +95,18 @@ Add `flake8-docstrings` to the `lint` session:
 
 ```python
 # noxfile.py
-...
+@nox.session(python=["3.8", "3.7"])
 def lint(session):
-    ...
-    session.install("flake8", "flake8-black", "flake8-docstrings")
-    ...
+    args = session.posargs or locations
+    session.install(
+        "flake8",
+        "flake8-bandit",
+        "flake8-black",
+        "flake8-bugbear",
+        "flake8-docstrings",
+        "flake8-import-order",
+    )
+    session.run("flake8", *args)
 ```
 
 Configure Flake8 to enable the plugin warnings (`D` for docstring):
@@ -402,6 +262,161 @@ def tests(session):
     ...
     session.run("pytest", "--cov", "--xdoctest", *session.posargs)
 ```
+
+## Creating documentation with Sphinx
+
+[Sphinx](http://www.sphinx-doc.org/) is the documentation tool used by the
+official Python documentation and many open-source projects. Sphinx
+documentation is commonly written using
+[reStructuredText](http://docutils.sourceforge.net/rst.html), although Markdown
+is also supported. 
+
+Create a directory `docs` and place the text below in the file `docs/index.rst`:
+
+```rst
+The hypermodern Python project
+==============================
+
+Installation
+------------
+
+To install the hypermodern Python project, run this command in your terminal:
+
+.. code-block:: console
+
+   $ pip install hypermodern-python
+
+Usage
+-----
+
+Hypermodern Python's usage looks like:
+
+.. code-block:: console
+
+    $ hypermodern-python [OPTIONS]
+
+.. option:: -n <count>, --count <count>
+
+    Number of splines to reticulate. By default, the program reticulates
+    splines until interrupted by Ctrl+C.
+
+.. option:: --version
+
+    Display the version and exit.
+
+.. option:: --help
+
+    Display a short usage message and exit.
+```
+
+Create the Sphinx configuration file `docs/conf.py`, in the same directory. This
+provides meta information about your project, and applies the theme
+[sphinx-rtd-theme](https://github.com/readthedocs/sphinx_rtd_theme):
+
+
+```python
+# docs/conf.py
+project = "hypermodern-python"
+author = "Your Name"
+copyright = f"2019, {author}"
+extensions = ["sphinx_rtd_theme"]
+html_theme = "sphinx_rtd_theme"
+```
+
+Add a Nox session to build the documentation:
+
+```python
+# noxfile.py
+@nox.session(python="3.8")
+def docs(session):
+    """Build the documentation."""
+    session.install("sphinx", "sphinx-rtd-theme")
+    session.run("sphinx-build", "docs", "docs/_build")
+```
+
+For good measure, include `docs/conf.py` in the linting session:
+
+```python
+# noxfile.py
+...
+locations = "src", "tests", "noxfile.py", "docs/conf.py"
+...
+```
+
+Run the Nox session:
+
+```sh
+nox -rs docs
+```
+
+You can now open the file `docs/_build/index.html` in your browser to view your
+documentation offline.
+
+## Hosting documentation at Read the Docs
+
+[Read the Docs](https://readthedocs.org/) hosts documentation for countless
+open-source Python projects. 
+
+Create the `.readthedocs.yml` configuration file:
+
+```yaml
+# .readthedocs.yml
+version: 2
+sphinx:
+  configuration: docs/conf.py
+formats: all
+python:
+  version: 3.7
+  install:
+    - requirements: docs/requirements.txt
+```
+
+Ensure that a recent Sphinx version is used, by adding this
+`docs/requirements.txt` file:
+
+```python
+# docs/requirements.txt
+sphinx==2.2.0
+sphinx-rtd-theme==0.4.3
+```
+
+Let's also adapt the `docs` session to use this same requirements file:
+
+```python
+# noxfile.py
+...
+def docs(session):
+    ...
+    session.install("-r", "docs/requirements.txt")"
+    ...
+```
+
+Sign up at Read the Docs, and import your GitHub repository, using the button
+*Import a Project*. Read the Docs automatically starts building your
+documentation. When the build has completed, your documentation will have a
+public URL like this:
+
+> https://hypermodern-python.readthedocs.io/
+
+You can display the documentation link on PyPI by including it in your package
+configuration file:
+
+```toml
+# pyproject.toml
+[tool.poetry]
+...
+documentation = "https://hypermodern-python.readthedocs.io"
+```
+
+Let's also add the link to the GitHub repository page, by adding a Read the Docs
+badge to `README.md`:
+
+```markdown
+[![Read the Docs](https://readthedocs.org/projects/hypermodern-python/badge/)](https://hypermodern-python.readthedocs.io/)
+```
+
+The badge looks like this: [![Read the
+Docs](https://readthedocs.org/projects/hypermodern-python/badge/)](https://hypermodern-python.readthedocs.io/)
 
 ## Generating API documentation with autodoc
 
