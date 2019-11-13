@@ -429,8 +429,7 @@ Install the package when building your documentation:
 ...
 def docs(session):
     ...
-    env = {"VIRTUAL_ENV": session.virtualenv.location}
-    session.run("poetry", "install", external=True, env=env)
+    session.run("poetry", "install", external=True)
 ```
 
 Add documentation for the `splines` module:
