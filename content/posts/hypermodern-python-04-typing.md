@@ -29,42 +29,39 @@ This post has a companion repository:
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **In this chapter:**
 
+- [Static typing and Python](#static-typing-and-python)
 - [Static type checking with pytype](#static-type-checking-with-pytype)
 - [Adding type annotations to the package](#adding-type-annotations-to-the-package)
 - [Increasing type coverage with flake8-annotations](#increasing-type-coverage-with-flake8-annotations)
 - [Adding type annotations to the test suite](#adding-type-annotations-to-the-test-suite)
+- [Static type checking with mypy](#static-type-checking-with-mypy)
+- [Static type checking with pyre](#static-type-checking-with-pyre)
 
 <!-- markdown-toc end -->
 
-## Static type checking with pytype
+## Static typing and Python
 
 With the advent of [type
 annotations](https://docs.python.org/3/library/typing.html), several static type
-checkers for Python have come into existence.
+checkers for Python have come into existence:
 
-- Jukka Lehtosalo's [mypy](http://mypy-lang.org/) (2012) may be considered the
-  pioneer of Python type checking. Its core team is employed by Dropbox and
-  includes or has included several Python core developers, such as a certain
-  Guido van Rossum.
+- Jukka Lehtosalo's [mypy](http://mypy-lang.org/) (2012)
+- JetBrain's [PyCharm](https://www.jetbrains.com/pycharm/) (2015)
+- Google's [pytype](https://google.github.io/pytype/) (2016)
+- Facebook's [pyre](https://pyre-check.org/) (2018)
+- Microsoft's [pyright](https://github.com/microsoft/pyright) (2019)
 
-- JetBrain's [PyCharm](https://www.jetbrains.com/pycharm/) editor comes with its
-  own static type checker (2015).
+Pyright is written in JavaScript and may be interesting for you if you use the
+Microsoft Visual Code editor, but I won't cover it here.
 
-- Google's [pytype](https://google.github.io/pytype/) (2016) is able to [infer
-  types for unannotated
-  code](https://docs.google.com/presentation/d/1GYqLeLkknjYaYX2JrMzxX8LGw_rlO-6kTk-VNPVG9gY/edit?usp=sharing),
-  giving you some of the benefits of type checking at minimal cost.
-  
-- Facebook's [pyre](https://pyre-check.org/) (2018) supports incremental
-  checking with [Watchman](https://facebook.github.io/watchman/) and, like
-  pytype, type inference and stub generation.
+## Static type checking with pytype
 
-- Microsoft's [pyright](https://github.com/microsoft/pyright) (2019) is written
-  in JavaScript and may be interesting for you if you use the Microsoft Visual
-  Code editor, but I won't cover it here.
-
-Pytype's type inference makes it a nice tool to start with. Add the following
-session to `noxfile.py` to add run pytype:
+Google's [pytype](https://google.github.io/pytype/) is able to [infer types for
+unannotated
+code](https://docs.google.com/presentation/d/1GYqLeLkknjYaYX2JrMzxX8LGw_rlO-6kTk-VNPVG9gY/edit?usp=sharing),
+giving you some of the benefits of type checking at minimal cost. Pytype's type
+inference makes it a nice tool to start with. Add the following session to
+`noxfile.py` to add run pytype:
 
 ```python
 # noxfile.py
@@ -257,8 +254,11 @@ def test_reticulate_sleeps(mock_sleep: Mock) -> None:
 
 ## Static type checking with mypy
 
-By contrast with pytype, mypy enables gradual adoption by checking only
-annotated code.
+Jukka Lehtosalo's [mypy](http://mypy-lang.org/) may be considered the pioneer of
+Python type checking. Its core team is employed by Dropbox and includes or has
+included several Python core developers, such as a certain Guido van Rossum. By
+contrast with pytype, mypy enables gradual adoption by checking only annotated
+code.
 
 Add the following session to `noxfile.py` to run mypy:
 
@@ -286,7 +286,9 @@ configuration file:
 ignore_missing_imports = True
 ```
 
-Even better, you can disable the warning for specific packages only:
+Even better, you can disable the warning for specific packages only, as shown
+below. This helps you keep track which of your dependencies are currently out of
+scope of the type checker:
 
 ```ini
 # mypy.ini
@@ -296,9 +298,10 @@ Even better, you can disable the warning for specific packages only:
 ignore_missing_imports = True
 ```
 
-This helps you keep track which of your dependencies are out of scope of the
-type checker.
-
 ## Static type checking with pyre
+
+Facebook's [pyre](https://pyre-check.org/) supports incremental checking with
+[Watchman](https://facebook.github.io/watchman/) and, like pytype, type
+inference and stub generation.
 
 <center>[Continue to the next chapter](../hypermodern-python-05-documentation)</center>
