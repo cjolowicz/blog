@@ -18,8 +18,8 @@ For your reference, below is a list of the articles in this series.
 - [Chapter 1: Setup](../hypermodern-python-01-setup)
 - [Chapter 2: Testing](../hypermodern-python-02-testing)
 - [Chapter 3: Linting](../hypermodern-python-03-linting)
+- [Chapter 4: Documentation](../hypermodern-python-04-documentation)
 - [Chapter 4: CI/CD](../hypermodern-python-04-continuous-integration)
-- [Chapter 5: Documentation](../hypermodern-python-05-documentation)
 - [Chapter 5: Typing](../hypermodern-python-05-typing)
 
 <!--
@@ -299,4 +299,4 @@ per-file-ignores = tests/*:S101
 ...
 ```
 
-<center>[Continue to the next chapter](../hypermodern-python-04-continuous-integration)</center>
+<center>[Continue to the next chapter](../hypermodern-python-04-documentation)</center>
