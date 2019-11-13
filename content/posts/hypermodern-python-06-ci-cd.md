@@ -76,19 +76,22 @@ jobs:
 
 This file defines a so-called *workflow*, which is triggered on every push to
 your GitHub repository, and runs on the latest supported Ubuntu image. The
-workflow consists of four steps:
+workflow consists of five steps, either using preexisting GitHub Actions or
+invoking shell commands:
 
-1. Use [actions/checkout](https://github.com/actions/checkout) to fetch and check out your code.
-2. Use [excitedleigh/setup-nox](https://github.com/excitedleigh/setup-nox) to activate Python and install Nox.
-3. Use [dschep/install-poetry-action](https://github.com/dschep/install-poetry-action) to install Poetry.
-4. Invoke `nox` to run your test suite.
-5. Build the package.
+1. Fetch and check out your code, using [actions/checkout](https://github.com/actions/checkout).
+2. Activate Python and install Nox using [excitedleigh/setup-nox](https://github.com/excitedleigh/setup-nox).
+3. Install Poetry using [dschep/install-poetry-action](https://github.com/dschep/install-poetry-action).
+4. Run your test suite by invoking `nox`.
+5. Build the package using `poetry build`.
 
-You can add a GitHub Actions badge to your repository page:
+You should also add a GitHub Actions badge to your repository page. The badge
+indicates whether the tests are passing or failing, and links to the GitHub
+Actions dashboard for your project. It looks like this:
 
 > [![tests](https://github.com/cjolowicz/hypermodern-python/workflows/tests/badge.svg)](https://github.com/cjolowicz/hypermodern-python/actions?workflow=tests)
 
-Add the line below to the top of your `README.md` to get the badge:
+Add the line below to the top of your `README.md` to display the badge:
 
 ```markdown
 [![tests](https://github.com/<your-username>/hypermodern-python/workflows/tests/badge.svg)](https://github.com/<your-username>/hypermodern-python/actions?workflow=tests)
@@ -118,10 +121,12 @@ def coverage(session: Session) -> None:
     session.run("codecov", *session.posargs)
 ```
 
-Next, grant GitHub Actions access to upload to Codecov. On Codecov, copy the
-*Repository Upload Token* from the settings page of your repository. On GitHub,
-go to the settings page of your repository, and add a secret named
-`CODECOV_TOKEN` with the token you copied.
+Next, grant GitHub Actions access to upload to Codecov:
+
+1. On Codecov, copy the *Repository Upload Token* from the settings page of your
+   repository.
+2. On GitHub, go to the settings page of your repository, and add a secret named
+   `CODECOV_TOKEN` with the token you copied.
 
 Invoke the session from the GitHub Actions workflow, providing the
 `CODECOV_TOKEN` secret as an environment variable:
@@ -165,9 +170,14 @@ like so:
 pip install hypermodern-python
 ```
 
-Sign up at PyPI, and generate an API token on the Account Settings page. This
-token permits GitHub Actions to upload packages to your PyPI account. Go to your
-repository settings on GitHub, and add the token as a secret named `PYPI_TOKEN`.
+Sign up at PyPI, if you do not have an account yet.
+
+Next, grant GitHub Actions permission to upload to PyPI:
+
+1. On PyPI, go to the Account Settings page, and generate and copy an *API
+   Token*.
+2. On GitHub, go to the settings page of your repository, and add a secret named
+   `PYPI_TOKEN` with the token you copied.
 
 Add the following lines to the bottom of your GitHub workflow:
 
@@ -258,7 +268,6 @@ configuration file:
 ```toml
 # pyproject.toml
 [tool.poetry]
-...
 documentation = "https://hypermodern-python.readthedocs.io"
 ```
 
