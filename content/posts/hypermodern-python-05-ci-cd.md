@@ -218,4 +218,70 @@ the latest release:
 The badge looks like this: 
 [![PyPI](https://img.shields.io/pypi/v/hypermodern-python.svg)](https://pypi.org/project/hypermodern-python/)
 
+## Hosting documentation at Read the Docs
+
+[Read the Docs](https://readthedocs.org/) hosts documentation for countless
+open-source Python projects. 
+
+Create the `.readthedocs.yml` configuration file:
+
+```yaml
+# .readthedocs.yml
+version: 2
+sphinx:
+  configuration: docs/conf.py
+formats: all
+python:
+  version: 3.7
+  install:
+    - requirements: docs/requirements.txt
+```
+
+Ensure that a recent Sphinx version is used, by adding this
+`docs/requirements.txt` file:
+
+```python
+# docs/requirements.txt
+sphinx==2.2.0
+sphinx-rtd-theme==0.4.3
+```
+
+Let's also adapt the `docs` session to use this same requirements file:
+
+```python
+# noxfile.py
+...
+def docs(session):
+    ...
+    session.install("-r", "docs/requirements.txt")"
+    ...
+```
+
+Sign up at Read the Docs, and import your GitHub repository, using the button
+*Import a Project*. Read the Docs automatically starts building your
+documentation. When the build has completed, your documentation will have a
+public URL like this:
+
+> https://hypermodern-python.readthedocs.io/
+
+You can display the documentation link on PyPI by including it in your package
+configuration file:
+
+```toml
+# pyproject.toml
+[tool.poetry]
+...
+documentation = "https://hypermodern-python.readthedocs.io"
+```
+
+Let's also add the link to the GitHub repository page, by adding a Read the Docs
+badge to `README.md`:
+
+```markdown
+[![Read the Docs](https://readthedocs.org/projects/hypermodern-python/badge/)](https://hypermodern-python.readthedocs.io/)
+```
+
+The badge looks like this: [![Read the
+Docs](https://readthedocs.org/projects/hypermodern-python/badge/)](https://hypermodern-python.readthedocs.io/)
+
 <center>[Continue to the next chapter](../hypermodern-python-05-typing)</center>

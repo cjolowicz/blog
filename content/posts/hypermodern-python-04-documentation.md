@@ -89,7 +89,8 @@ def reticulate(count):
 The [flake8-docstrings](https://gitlab.com/pycqa/flake8-docstrings) plugin uses
 the tool [pydocstyle](https://github.com/pycqa/pydocstyle) to check that
 docstrings are compliant with [PEP
-257](https://www.python.org/dev/peps/pep-0257/).
+257](https://www.python.org/dev/peps/pep-0257/). Warnings range from missing
+docstrings to issues with whitespace, quoting, and docstring content.
 
 Add `flake8-docstrings` to the `lint` session:
 
@@ -109,111 +110,147 @@ def lint(session):
     session.run("flake8", *args)
 ```
 
-Configure Flake8 to enable the plugin warnings (`D` for docstring):
-
+Configure Flake8 to enable the plugin warnings (`D` for docstring) and adopt the
+[Google docstring
+style](http://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings):
+ 
 ```ini
 # .flake8
 select = BLK,C,D,E,F,W
 docstring-convention = google
 ```
 
-The `docstring-convention` option adopts the [Google docstring
-style](http://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings).
- 
-Here are some more docstrings:
+Running `nox -rs lint` finds missing docstrings outside of the package, such as
+in `noxfile.py` itself. Let's fix this one first:
 
 ```python
-# docs/conf.py
-"""Sphinx configuration."""
-...
-
 # noxfile.py
 """Nox sessions."""
-...
 
+def black(session):
+    """Run black code formatter."""
+
+def lint(session):
+    """Lint using flake8."""
+
+def tests(session):
+    """Run the test suite."""
+```
+
+Next, improve the readability of the test suite by adding docstrings to its
+modules, test cases, and fixtures.
+
+```python
 # tests/__init__.py
-"""Test cases for the hypermodern_python package."""
-...
+"""Test suite for the hypermodern_python package."""
+```
 
+```python
 # tests/conftest.py
 """Package-wide test fixtures."""
-...
 
 @pytest.fixture
 def mock_sleep(mocker):
     """Mock for time.sleep."""
-    ...
+```
+
+```python
 # tests/test_console.py
 """Test cases for the console module."""
-...
 
 @pytest.fixture
 def runner():
     """Fixture for invoking command-line interfaces."""
-    ...
  
- 
-def test_help_succeeds(runner):
-    """Test if --help succeeds."""
-    ... 
- 
+@pytest.fixture
+def mock_splines_reticulate(mocker):
+    """Mock for splines.reticulate."""
 
+def test_main_succeeds(runner):
+    """Test if console.main succeeds."""
+ 
 def test_main_prints_progress_message(runner, mock_sleep):
-    """Test if main prints a progress message."""
-    ...
+    """Test if console.main prints a progress message."""
+```
 
+```python
 # tests/test_splines.py
 """Test cases for the splines module."""
-...
- 
- 
-def test_reticulate_sleeps(mock_sleep):
-    """Test if reticulate sleeps."""
-    ... 
-
  
 def test_reticulate_yields_count_times(mock_sleep):
     """Test if reticulate yields <count> times."""
-    ...
+ 
+def test_reticulate_sleeps(mock_sleep):
+    """Test if reticulate sleeps."""
 ```
 
-## Linting docstrings against function signatures with darglint
+## Validating docstrings against function signatures with darglint
 
-https://github.com/terrencepreilly/darglint checks that the docstring description matches the definition.
+Documentation strings can include useful information about parameters accepted
+by a function, its return value, and any exceptions raised. A common format for
+this with good tooling support is the [Google docstring
+style](https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings).
+Other options are the
+[Sphinx](https://sphinx-rtd-tutorial.readthedocs.io/en/latest/docstrings.html)
+and
+[NumPy](https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_numpy.html#example-numpy)
+formats.
 
-```python
-# noxfile.py
-...
-session.install("flake8", "flake8-black", "flake8-docstrings", "flake8-rst-docstrings", "darglint")
-```
-
-Configure darglint to accept short docstrings:
-
-```init
-# .darglint
-[darglint]
-strictness=short
-```
-
-TODO Enable darglint warnings?
-
-Document function arguments and return value for `splines.reticulate` function:
+Let's add usage information for the `splines.reticulate` function:
 
 ```python
 # src/hypermodern_python/splines.py
-...
-
-def reticulate(count: int = -1) -> Iterator[int]:
+def reticulate(count):
     """Reticulate splines.
 
     Args:
-        count: Number of splines to reticulate
+        count (int): Number of splines to reticulate
 
     Yields:
-        Reticulated splines
+        int: A reticulated spline
 
     """
-    ...
+```
+
+[darglint](https://github.com/terrencepreilly/darglint) checks that the
+docstring description matches the definition, and integrates with Flake8 as a
+plugin. Add the plugin to the lint session:
+
+```python
+# noxfile.py
+@nox.session(python=["3.8", "3.7"])
+def lint(session):
+    """Lint using flake8."""
+    args = session.posargs or locations
+    session.install(
+        "flake8",
+        "flake8-bandit",
+        "flake8-black",
+        "flake8-bugbear",
+        "flake8-docstrings",
+        "flake8-import-order",
+        "darglint",
+    )
+    session.run("flake8", *args)
+```
+
+Unlike other plugins, darglint enables most of its warnings by default. For
+consistency and to future-proof your Flake8 configuration, enable the plugin
+warnings explicitly (`DAR` like *darglint*):
+
+```ini
+# .flake8
+[flake8]
+select = B,B9,BLK,C,D,DAR,E,F,I,S,W
+```
+
+Sometimes one-line docstrings are quite sufficient. Configure darglint to accept
+short docstrings, using the `.darglint` configuration file:
+
+```ini
+# .darglint
+[darglint]
+strictness=short
 ```
 
 ## Running tests in docstrings with xdoctest
@@ -223,16 +260,14 @@ docstring:
 
 ```python
 # src/hypermodern_python/splines.py
-...
-
-def reticulate(count: int = -1) -> Iterator[int]:
+def reticulate(count=-1):
     """Reticulate splines.
 
     Args:
-        count: Number of splines to reticulate
+        count (int): Number of splines to reticulate
 
     Yields:
-        Reticulated splines
+        int: A reticulated spline
 
     Example:
         >>> from hypermodern_python import splines
@@ -241,7 +276,6 @@ def reticulate(count: int = -1) -> Iterator[int]:
         (1, 2)
 
     """
-    ...
 ```
 
 The `xdoctest` package runs the examples in your docstrings and compares the
@@ -257,10 +291,12 @@ the `--xdoctest` option to activate the plugin:
 
 ```python
 # noxfile.py
-...
+@nox.session(python=["3.8", "3.7"])
 def tests(session):
-    ...
-    session.run("pytest", "--cov", "--xdoctest", *session.posargs)
+    """Run the test suite."""
+    args = session.posargs or ["--cov", "--xdoctest"]
+    session.run("poetry", "install", external=True)
+    session.run("pytest", *args)
 ```
 
 ## Creating documentation with Sphinx
@@ -351,72 +387,6 @@ nox -rs docs
 
 You can now open the file `docs/_build/index.html` in your browser to view your
 documentation offline.
-
-## Hosting documentation at Read the Docs
-
-[Read the Docs](https://readthedocs.org/) hosts documentation for countless
-open-source Python projects. 
-
-Create the `.readthedocs.yml` configuration file:
-
-```yaml
-# .readthedocs.yml
-version: 2
-sphinx:
-  configuration: docs/conf.py
-formats: all
-python:
-  version: 3.7
-  install:
-    - requirements: docs/requirements.txt
-```
-
-Ensure that a recent Sphinx version is used, by adding this
-`docs/requirements.txt` file:
-
-```python
-# docs/requirements.txt
-sphinx==2.2.0
-sphinx-rtd-theme==0.4.3
-```
-
-Let's also adapt the `docs` session to use this same requirements file:
-
-```python
-# noxfile.py
-...
-def docs(session):
-    ...
-    session.install("-r", "docs/requirements.txt")"
-    ...
-```
-
-Sign up at Read the Docs, and import your GitHub repository, using the button
-*Import a Project*. Read the Docs automatically starts building your
-documentation. When the build has completed, your documentation will have a
-public URL like this:
-
-> https://hypermodern-python.readthedocs.io/
-
-You can display the documentation link on PyPI by including it in your package
-configuration file:
-
-```toml
-# pyproject.toml
-[tool.poetry]
-...
-documentation = "https://hypermodern-python.readthedocs.io"
-```
-
-Let's also add the link to the GitHub repository page, by adding a Read the Docs
-badge to `README.md`:
-
-```markdown
-[![Read the Docs](https://readthedocs.org/projects/hypermodern-python/badge/)](https://hypermodern-python.readthedocs.io/)
-```
-
-The badge looks like this: [![Read the
-Docs](https://readthedocs.org/projects/hypermodern-python/badge/)](https://hypermodern-python.readthedocs.io/)
 
 ## Generating API documentation with autodoc
 
