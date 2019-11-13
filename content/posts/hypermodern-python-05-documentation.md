@@ -10,8 +10,6 @@ tags:
   - nox
 ---
 
-# Chapter 4: Documentation
-
 In this fifth installment of the Hypermodern Python series, I'm going to discuss
 how to add documentation to your project.
 
@@ -20,7 +18,7 @@ For your reference, below is a list of the articles in this series.
 - [Chapter 1: Setup](../hypermodern-python-01-setup)
 - [Chapter 2: Testing](../hypermodern-python-02-testing)
 - [Chapter 3: Linting](../hypermodern-python-03-linting)
-- [Chapter 4: Continuous Integration](../hypermodern-python-04-continuous-integration)
+- [Chapter 4: CI/CD](../hypermodern-python-04-continuous-integration)
 - [Chapter 5: Documentation](../hypermodern-python-05-documentation)
 - [Chapter 5: Typing](../hypermodern-python-05-typing)
 

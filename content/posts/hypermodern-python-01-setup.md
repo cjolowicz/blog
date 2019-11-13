@@ -10,7 +10,8 @@ tags:
   - click
 ---
 
-Welcome to the whirlwind tour of the Python ecosystem in late 2019! 
+Welcome to the whirlwind tour of the Python ecosystem in late 2019! This is a
+guide to modern Python tooling with a focus on simplicity and minimalism.
 
 After more than a decade of coexistence with Python 3, [Python 2 will be
 sunset](https://www.python.org/doc/sunset-python-2/) on new year
@@ -28,8 +29,7 @@ Time to show how to build a Python project for *hypermodernists*,[^1] from scrat
 
 This guide is aimed both at beginners who are keen to learn best practises from
 the start, and seasoned Python developers whose workflows are affected by
-boilerplate and workarounds required by the legacy toolbox. The focus is on
-simplicity and minimalism.
+boilerplate and workarounds required by the legacy toolbox.
 
 > *You need a recent Linux, Unix, or Mac system with
 > [bash](https://www.gnu.org/software/bash/), [curl](https://curl.haxx.se) and
@@ -46,7 +46,7 @@ For your reference, below is a list of the articles in this series.
 - [Chapter 1: Setup](../hypermodern-python-01-setup)
 - [Chapter 2: Testing](../hypermodern-python-02-testing)
 - [Chapter 3: Linting](../hypermodern-python-03-linting)
-- [Chapter 4: Continuous Integration](../hypermodern-python-04-continuous-integration)
+- [Chapter 4: CI/CD](../hypermodern-python-04-continuous-integration)
 - [Chapter 5: Documentation](../hypermodern-python-05-documentation)
 - [Chapter 5: Typing](../hypermodern-python-05-typing)
 

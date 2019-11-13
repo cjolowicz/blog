@@ -18,7 +18,7 @@ For your reference, below is a list of the articles in this series.
 - [Chapter 1: Setup](../hypermodern-python-01-setup)
 - [Chapter 2: Testing](../hypermodern-python-02-testing)
 - [Chapter 3: Linting](../hypermodern-python-03-linting)
-- [Chapter 4: Continuous Integration](../hypermodern-python-04-continuous-integration)
+- [Chapter 4: CI/CD](../hypermodern-python-04-continuous-integration)
 - [Chapter 5: Documentation](../hypermodern-python-05-documentation)
 - [Chapter 5: Typing](../hypermodern-python-05-typing)
 
@@ -42,7 +42,7 @@ This guide has a companion repository:
 *Continuous integration* (CI) helps you automate the integration of code changes
 into your project. The CI server verifies the correctness of changes, triggering
 tools such as unit tests, linters, or typecheckers. GitHub displays Pull
-Requests with a green ✅if they pass CI, and with a red ❌if the CI pipeline
+Requests with a green tick if they pass CI, and with a red x if the CI pipeline
 failed.
 
 You have a plethora of options when it comes to continuous integration.
