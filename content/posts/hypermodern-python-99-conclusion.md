@@ -10,6 +10,15 @@ tags:
   - nox
 ---
 
+<!--
+TODO:
+
+- release-drafter
+- Dockerfile
+- Docker Hub
+- cookiecutter
+-->
+
 ## Building a Docker image
 
 Add the following `Dockerfile` to the root of your project:
