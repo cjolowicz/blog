@@ -50,14 +50,14 @@ You have a plethora of options when it comes to continuous integration.
 Traditionally, many open-source projects have employed [Travis
 CI](https://travis-ci.com). Another popular choice are Microsoft's [Azure
 Pipelines](https://azure.microsoft.com/en-us/services/devops/pipelines/). In
-this guide, you are going to use GitHub's brand new offering, [GitHub
+this guide, you are going to use GitHub's own offering, [GitHub
 Actions](https://github.com/features/actions).
 
 Configure GitHub Actions by adding the following [YAML](https://yaml.org) file
 to the `.github/workflows` directory:
 
 ```yaml
-# .github/workflows/main.yml
+# .github/workflows/tests.yml
 name: tests
 on: push
 jobs:
@@ -110,10 +110,8 @@ data.
 
 ```python
 # noxfile.py
-...
-
 @nox.session(python="3.8")
-def coverage(session):
+def coverage(session: Session) -> None:
     """Upload coverage data."""
     session.install("coverage", "codecov")
     session.run("coverage", "xml")
@@ -129,7 +127,7 @@ Invoke the session from the GitHub Actions workflow, providing the
 `CODECOV_TOKEN` secret as an environment variable:
 
 ```yaml
-# .github/workflows/main.yml
+# .github/workflows/tests.yml
 name: tests
 on: push
 jobs:
@@ -174,7 +172,7 @@ repository settings on GitHub, and add the token as a secret named `PYPI_TOKEN`.
 Add the following lines to the bottom of your GitHub workflow:
 
 ```yaml
-# .github/workflows/main.yml
+# .github/workflows/tests.yml
 ...
     - if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
       run: |
