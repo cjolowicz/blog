@@ -11,8 +11,8 @@ tags:
   - readthedocs
 ---
 
-In this sixth installment of the Hypermodern Python series, I'm going to discuss
-how to add continuous integration and delivery to your project.
+In this sixth and last installment of the Hypermodern Python series, I'm going
+to discuss how to add continuous integration and delivery to your project.
 
 For your reference, below is a list of the articles in this series.
 
@@ -22,7 +22,6 @@ For your reference, below is a list of the articles in this series.
 - [Chapter 4: Typing](../hypermodern-python-04-typing)
 - [Chapter 5: Documentation](../hypermodern-python-05-documentation)
 - [Chapter 6: CI/CD](../hypermodern-python-06-ci-cd)
-- [Chapter 7: Deployment](../hypermodern-python-07-deployment)
 
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **In this chapter:**
@@ -296,4 +295,14 @@ badge to `README.md`:
 The badge looks like this: [![Read the
 Docs](https://readthedocs.org/projects/hypermodern-python/badge/)](https://hypermodern-python.readthedocs.io/)
 
-<center>[Continue to the next chapter](../hypermodern-python-07-deployment)</center>
+## Conclusion
+
+Thank you for reading this far. This chapter concludes the Hypermodern Python
+series.
+
+This series of articles is dedicated to my father who introduced me to
+programming in the 1980s, and who is an avid chess book collector. I saw a copy
+of *Die hypermoderne Schachpartie* (The hypermodern chess game) in his
+bookshelf, written by [Savielly
+Tartakower](https://en.wikipedia.org/wiki/Savielly_Tartakower) in 1925 to
+modernize chess theory. That inspired the title of this guide.

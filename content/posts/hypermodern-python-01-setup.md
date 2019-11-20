@@ -49,7 +49,6 @@ For your reference, below is a list of the articles in this series.
 - [Chapter 4: Typing](../hypermodern-python-04-typing)
 - [Chapter 5: Documentation](../hypermodern-python-05-documentation)
 - [Chapter 6: CI/CD](../hypermodern-python-06-ci-cd)
-- [Chapter 7: Deployment](../hypermodern-python-07-deployment)
 
 <!--
 This guide has a companion repository:
