@@ -22,6 +22,7 @@ For your reference, below is a list of the articles in this series.
 - [Chapter 4: Typing](../hypermodern-python-04-typing) (this article)
 - [Chapter 5: Documentation](../hypermodern-python-05-documentation)
 - [Chapter 6: CI/CD](../hypermodern-python-06-ci-cd)
+- [Appendix: Docker](../hypermodern-python-07-deployment)
 
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **In this chapter:**
