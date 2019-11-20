@@ -79,7 +79,8 @@ invoking shell commands:
 2. Activate Python and install Nox using [excitedleigh/setup-nox](https://github.com/excitedleigh/setup-nox).
 3. Install Poetry using [dschep/install-poetry-action](https://github.com/dschep/install-poetry-action).
 4. Run your test suite by invoking `nox`.
-5. Build the package using `poetry build`.
+5. Build the package by invoking [poetry
+   build](https://poetry.eustace.io/docs/cli/#build).
 
 You should also add a GitHub Actions badge to your repository page. The badge
 indicates whether the tests are passing or failing, and links to the GitHub
@@ -166,14 +167,15 @@ like so:
 pip install hypermodern-python
 ```
 
-Sign up at PyPI, if you do not have an account yet.
+Poetry supports uploading your package to PyPI with the command [poetry
+publish](https://poetry.eustace.io/docs/cli/#publish).
 
-Next, grant GitHub Actions permission to upload to PyPI:
+Sign up at PyPI, if you do not have an account yet. Next, grant GitHub Actions
+permission to upload to PyPI:
 
-1. On PyPI, go to the Account Settings page, and generate and copy an *API
-   Token*.
-2. On GitHub, go to the settings page of your repository, and add a secret named
-   `PYPI_TOKEN` with the token you copied.
+1. On PyPI, go to the Account Settings page. Generate an API token, and copy it.
+2. On GitHub, go to the repository settings. Add a secret named `PYPI_TOKEN`
+   with the token you copied.
 
 Add the following lines to the bottom of your GitHub workflow:
 
@@ -194,8 +196,9 @@ git push --follow-tags
 ```
 
 When releasing the next version of your package, you will need to bump the
-version of your package. Use Poetry to update the version declared in
-`pyproject.toml`:
+version of your package. Use [poetry
+version](https://poetry.eustace.io/docs/cli/#version) to update the version
+declared in `pyproject.toml`:
 
 ```sh
 poetry version minor  # or: major, patch, 0.2.0, etc.

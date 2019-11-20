@@ -246,7 +246,8 @@ nox > * tests-3.7: success
 
 Nox recreates the virtual environments from scratch on each invocation (a
 sensible default). You can speed things up by passing the
-`--reuse-existing-virtualenvs (-r)` option:
+[-\-reuse-existing-virtualenvs
+(-r)](https://nox.thea.codes/en/stable/usage.html#re-using-virtualenvs) option:
 
 ```sh
 nox -r
@@ -254,7 +255,9 @@ nox -r
 
 Sometimes, you need to pass additional options to `pytest`, for example to
 select specific test cases. Change the session to allow overriding the options
-passed to `pytest`, via the `session.posargs` variable:
+passed to `pytest`, via the
+[session.posargs](https://nox.thea.codes/en/stable/config.html#passing-arguments-into-sessions)
+variable:
 
 ```python
 # noxfile.py

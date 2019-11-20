@@ -80,7 +80,9 @@ max-complexity = 10
 ```
 
 By default, Nox runs all sessions defined in `noxfile.py`, but you can restrict
-it to the lint session using the `--session (-s)` option:
+it to the lint session using the [-\-session
+(-s)](https://nox.thea.codes/en/stable/usage.html#specifying-one-or-more-sessions)
+option:
 
 ```sh
 nox -rs lint

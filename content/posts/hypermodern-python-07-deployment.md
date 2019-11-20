@@ -37,6 +37,10 @@ application anywhere using containers. Containers are a lightweight
 virtualization technology, packaging your application with its dependencies, and
 allowing it to be executed in an isolated environment.
 
+Download and install [Docker Desktop](https://docker.com/get-started). If on
+Linux, download [Docker
+Engine](https://hub.docker.com/search?type=edition&offering=community).
+
 Add the following `Dockerfile` to the root of your project:
 
 ```Dockerfile
@@ -44,7 +48,7 @@ FROM python:3.8.0-alpine3.10 as base
 FROM base as builder
 
 WORKDIR /app
-ENV POETRY_VERSION=1.0.0b5
+ENV POETRY_VERSION=1.0.0b6
 RUN wget -qO- https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
 RUN python -m venv /venv
 
@@ -61,7 +65,32 @@ ENV PYTHONUNBUFFERED=1
 ENTRYPOINT ["/venv/bin/hypermodern-python"]
 ```
 
-This Dockerfile defines a so-called [multi-stage
+Build the Docker image using the following command:
+
+```sh
+docker build -t hypermodern-python .
+```
+
+Run your image like this:
+
+```sh
+docker run hypermodern-python
+```
+
+You can pass options to `hypermodern-python` by appending them to the end of the
+command-line:
+
+```sh
+$ docker run hypermodern-python --count=4
+Reticulating spline 1...
+Reticulating spline 2...
+Reticulating spline 3...
+Reticulating spline 4...
+```
+
+## The Dockerfile in detail
+
+The Dockerfile defines a so-called [multi-stage
 build](https://docs.docker.com/develop/develop-images/multistage-build/), an
 elegant way to reduce the size and complexity of your images:
 
@@ -75,41 +104,126 @@ environments. In a nutshell, the build stage installs everything into a virtual
 environment, and the final stage simply copies the virtual environment over into
 a small base image.
 
-Here are a few more observations about the Dockerfile:
+Let's dissect the Dockerfile bit by bit.
 
-- The image is based on the official Python image for
-  [Alpine](https://alpinelinux.org/), a security-oriented, lightweight Linux
-  distribution.
-- Use `poetry export` to install your pinned requirements first, before copying
-  your code. This will allow you to leverage the [Docker build
-  cache](https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#leverage-build-cache),
-  and never reinstall dependencies just because you changed a line in your code.
-- Use `poetry build` to build a wheel, and then pip-install that into your
-  virtualenv. Do not use `poetry install` to install your code, because it will
-  perform an [editable
-  install](https://pip.pypa.io/en/stable/reference/pip_install/#editable-installs).
-- The final stage sets the
-  [PYTHONUNBUFFERED](https://docs.python.org/3/using/cmdline.html#envvar-PYTHONUNBUFFERED)
-  environment variable to disable buffering for the standard output stream. This
-  makes sense for Docker images as [stdout is typically used for log
-  messages](https://12factor.net/logs).
+The image is based on the [official Python
+image](https://hub.docker.com/_/python) for [Alpine](https://alpinelinux.org/),
+a security-oriented, lightweight Linux distribution:
 
-Build the Docker image using the following command:
-
-```sh
-docker build -t hypermodern-python .
+```Dockerfile
+FROM python:3.8.0-alpine3.10 as base
 ```
 
-Run your image like this:
+The second `FROM` statement starts the build stage:
+
+```Dockerfile
+FROM base as builder
+```
+
+In the build stage, create the directory for your source code and make it the
+working directory:
+
+```Dockerfile
+WORKDIR /app
+```
+
+Install Poetry and create a virtual environment:
+
+```Dockerfile
+ENV POETRY_VERSION=1.0.0b6
+RUN wget -qO- https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
+RUN python -m venv /venv
+```
+
+Copy the package configuration and lock file first, before copying your code.
+Use [poetry export](https://poetry.eustace.io/docs/cli/#export) to install your
+pinned requirements. This will allow you to leverage the [Docker build
+cache](https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#leverage-build-cache),
+and never reinstall dependencies just because you changed a line in your code.
+
+```Dockerfile
+COPY pyproject.toml poetry.lock ./
+RUN /root/.poetry/bin/poetry export -f requirements.txt | /venv/bin/pip install -r /dev/stdin
+```
+
+Copy your source code, and use [poetry
+build](https://poetry.eustace.io/docs/cli/#build) to build a wheel. Then
+pip-install the wheel into your virtualenv. Do not use [poetry
+install](https://poetry.eustace.io/docs/cli/#install) to install your code,
+because it will perform an [editable
+install](https://pip.pypa.io/en/stable/reference/pip_install/#editable-installs).
+
+```Dockerfile
+COPY . ./
+RUN /root/.poetry/bin/poetry build && /venv/bin/pip install dist/*.whl
+```
+
+The third `FROM` statement introduces the final stage:
+
+```Dockerfile
+FROM base as final
+```
+
+The final stage copies the virtual environment from the build stage:
+
+```Dockerfile
+COPY --from=builder /venv /venv
+```
+
+Set the
+[PYTHONUNBUFFERED](https://docs.python.org/3/using/cmdline.html#envvar-PYTHONUNBUFFERED)
+environment variable to disable buffering for the standard output stream. This
+makes sense for Docker images as [stdout is typically used for log
+messages](https://12factor.net/logs).
+
+```Dockerfile
+ENV PYTHONUNBUFFERED=1
+```
+
+Set the entrypoint to the console script, which is located in the virtual
+environment:
+
+```Dockerfile
+ENTRYPOINT ["/venv/bin/hypermodern-python"]
+```
+
+## Hosting images at Docker Hub
+
+[Docker Hub](https://hub.docker.com/) is the official Docker image registry.
+Uploading your image to Docker Hub means other users can download and run your
+image with a single command:
 
 ```sh
 docker run hypermodern-python [options]
 ```
 
-You can pass options to `hypermodern-python` by appending them to the end of the
-command-line.
+Sign up for Docker Hub. On your Account Settings, under Linked Accounts, link
+your Docker ID to your GitHub user account. You will be asked to grant access to
+the Docker GitHub app.
 
-## Hosting images at Docker Hub
+In the Repositories section on Docker Hub, create the `hypermodern-python`
+repository. In the Builds tab of the new repository, select GitHub as the code
+repository service, and select your GitHub repository as the source repository.
+Click *Save and Build* to confirm.
+
+Docker Hub will build a Docker image with every git push to your GitHub
+repository. Your image now also has a public page on Docker Hub:
+
+> https://hub.docker.com/r/&lt;user&gt;/hypermodern-python
+
+Add the Docker Hub badge to your repository:
+
+```markdown
+# README.md
+[![Docker Hub](https://img.shields.io/docker/cloud/build/<your-username>/hypermodern-python.svg)](https://hub.docker.com/r/<your-username>/hypermodern-python)
+```
+
+The badge looks like this: [![Docker
+Hub](https://img.shields.io/docker/cloud/build/cjolowicz/hypermodern-python.svg)](https://hub.docker.com/r/cjolowicz/hypermodern-python)
+
+## Deploying an app to Heroku
+
+[Heroku](https://heroku.com/)
 
 ## Conclusion
 

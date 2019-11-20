@@ -275,7 +275,8 @@ of your current project do not interfere with the system-wide Python
 installation, or other projects you're working on.
 
 Poetry manages virtual environments for your projects. To see this in action,
-install the skeleton package using Poetry:
+install the skeleton package using [poetry
+install](https://poetry.eustace.io/docs/cli/#install):
 
 ```sh
 $ poetry install
@@ -295,7 +296,8 @@ Poetry created a virtual environment dedicated to your project, and installed
 your initial package into it. It also created a so-called *lock file*, named
 `poetry.lock`. You will learn more about this file in the next section.
 
-Let's run a Python session inside the new virtual environment:
+Let's run a Python session inside the new virtual environment, using [poetry
+run](https://poetry.eustace.io/docs/cli/#run):
 
 ```python
 $ poetry run python
@@ -314,7 +316,8 @@ Type "help", "copyright", "credits" or "license" for more information.
 Let's install the first dependency, the
 [click](https://click.palletsprojects.com/) package. This Python package allows
 you to create beautiful command-line interfaces in a composable way with as
-little code as necessary.
+little code as necessary. You can install dependencies using [poetry
+add](https://poetry.eustace.io/docs/cli/#add):
 
 ```sh
 $ poetry add click
@@ -357,7 +360,9 @@ everybody in your team to work with the same environment. It also helps you
 [keep production and development environments as similar as
 possible](https://12factor.net/dev-prod-parity).
 
-Upgrading the dependency to a new minor or patch release is now as easy as this:
+Upgrading the dependency to a new minor or patch release is now as easy as
+invoking [poetry update](https://poetry.eustace.io/docs/cli/#update) with the
+package name:
 
 ```sh
 poetry update click
