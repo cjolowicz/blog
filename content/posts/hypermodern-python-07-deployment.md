@@ -8,8 +8,8 @@ tags:
   - docker
 ---
 
-In this seventh and last installment of the Hypermodern Python series, I'm going
-to discuss various options to deploy your project.
+In this appendix to the Hypermodern Python series, I'm going to discuss how
+to deploy your project with Docker.
 
 For your reference, below is a list of the articles in this series.
 
@@ -19,7 +19,7 @@ For your reference, below is a list of the articles in this series.
 - [Chapter 4: Typing](../hypermodern-python-04-typing)
 - [Chapter 5: Documentation](../hypermodern-python-05-documentation)
 - [Chapter 6: CI/CD](../hypermodern-python-06-ci-cd)
-- [Chapter 7: Deployment](../hypermodern-python-07-deployment)
+- [Appendix: Docker](../hypermodern-python-07-deployment)
 
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **In this chapter:**
@@ -27,10 +27,14 @@ For your reference, below is a list of the articles in this series.
 - [Building a Docker image](#building-a-docker-image)
 - [The Dockerfile in detail](#the-dockerfile-in-detail)
 - [Hosting images at Docker Hub](#hosting-images-at-docker-hub)
-- [Deploying an app to Heroku](#deploying-an-app-to-heroku)
-- [Conclusion](#conclusion)
 
 <!-- markdown-toc end -->
+
+This guide has a companion repository:
+[cjolowicz/hypermodern-python](https://github.com/cjolowicz/hypermodern-python).
+Here is the link for the changes contained in this chapter:
+
+▶ **[View code](https://github.com/cjolowicz/hypermodern-python/compare/chapter06...chapter07)**
 
 ## Building a Docker image
 
@@ -242,29 +246,3 @@ Add the Docker Hub badge to your repository:
 
 The badge looks like this: [![Docker
 Hub](https://img.shields.io/docker/cloud/build/cjolowicz/hypermodern-python.svg)](https://hub.docker.com/r/cjolowicz/hypermodern-python)
-
-## Deploying an app to Heroku
-
-[Heroku](https://heroku.com/)
-
-- Sign up at Heroku.
-
-- Create a Heroku app.
-
-- Connect the GitHub repo to the Heroku app.
-
-## Conclusion
-
-Thank you for reading this far. This chapter concludes the Hypermodern Python
-series.
-
-This series of articles is dedicated to my father who introduced me to
-programming in the 1980s, and who is an avid chess book collector. I saw a copy
-of *Die hypermoderne Schachpartie* (The hypermodern chess game) in his
-bookshelf, written by [Savielly
-Tartakower](https://en.wikipedia.org/wiki/Savielly_Tartakower) in 1925 to
-modernize chess theory. That inspired the title of this guide.
-
-<!--
-{{< figure src="http://www.vintagecomputer.net/ctc/3300/CTC_DataPoint-3300_pic3.jpg" caption="Fun fact: Consoles have supported dark mode since 1969, exactly half a century before iOS 13." alt="DataPoint 3300 (1969)" link="https://www.youtube.com/watch?v=dEGlKpIBujc" width="80%" class="centered" >}}
--->

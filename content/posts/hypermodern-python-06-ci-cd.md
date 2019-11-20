@@ -33,6 +33,12 @@ For your reference, below is a list of the articles in this series.
 
 <!-- markdown-toc end -->
 
+This guide has a companion repository:
+[cjolowicz/hypermodern-python](https://github.com/cjolowicz/hypermodern-python).
+Here is the link for the changes contained in this chapter:
+
+▶ **[View code](https://github.com/cjolowicz/hypermodern-python/compare/chapter05...chapter06)**
+
 ## Continuous integration using GitHub Actions
 
 *Continuous integration* (CI) helps you automate the integration of code changes

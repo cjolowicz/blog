@@ -31,7 +31,7 @@ Time to show how to build a Python project for *hypermodernists!* [^1]
     Tartakower](https://en.wikipedia.org/wiki/Savielly_Tartakower) in 1925 to
     modernize chess theory. The images in this chapter are details from the
     hand-colored print *Le Sortie de l'opéra en l'an 2000* (Leaving the opera in
-    the year 2000) by Albert Robida, ca 1902 ([Library of
+    the year 2000) by Albert Robida, ca 1902 (source: [Library of
     Congress](http://www.loc.gov/pictures/item/2007676247/)).
 
 This guide is aimed both at beginners who are keen to learn best practises from
@@ -60,9 +60,11 @@ For your reference, below is a list of the articles in this series.
 - [Chapter 6: CI/CD](../hypermodern-python-06-ci-cd)
 
 This guide has a companion repository:
-[cjolowicz/hypermodern-python](https://github.com/cjolowicz/hypermodern-python)
-Each section in the guide corresponds to a set of commits in the GitHub
-repository, linked to at the top of the section.
+[cjolowicz/hypermodern-python](https://github.com/cjolowicz/hypermodern-python).
+Each article in the guide corresponds to a set of commits in the GitHub
+repository.
+
+▶ **[View code](https://github.com/cjolowicz/hypermodern-python/compare/initial...chapter01)**
 
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **In this chapter:**
