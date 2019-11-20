@@ -56,7 +56,7 @@ FROM base as builder
 
 WORKDIR /app
 ENV POETRY_VERSION=1.0.0b8
-RUN wget -qO- https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
+RUN wget -qO- https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
 RUN python -m venv /venv
 
 COPY pyproject.toml poetry.lock ./
@@ -138,7 +138,7 @@ Install Poetry:
 
 ```Dockerfile
 ENV POETRY_VERSION=1.0.0b8
-RUN wget -qO- https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
+RUN wget -qO- https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
 ```
 
 Create a virtual environment:

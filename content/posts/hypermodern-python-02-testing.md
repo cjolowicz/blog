@@ -41,6 +41,18 @@ Here is the link for the changes contained in this chapter:
 
 ▶ **[View code](https://github.com/cjolowicz/hypermodern-python/compare/chapter01...chapter02)**
 
+<!-- 
+
+This chapter introduces the following tools:
+
+- [nox](https://nox.thea.codes/) 
+- [pytest](https://docs.pytest.org/en/latest/)
+- [pytest-cov](https://pytest-cov.readthedocs.io/en/latest/) 
+- [pytest-mock](https://github.com/pytest-dev/pytest-mock)
+- [Coverage.py](https://coverage.readthedocs.io/)
+
+-->
+
 ## Unit testing with pytest
 
 It's never too early to add unit tests to a project. 

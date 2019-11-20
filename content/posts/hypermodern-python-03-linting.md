@@ -40,6 +40,23 @@ Here is the link for the changes contained in this chapter:
 
 ▶ **[View code](https://github.com/cjolowicz/hypermodern-python/compare/chapter02...chapter03)**
 
+<!-- 
+
+This chapter introduces the following tools:
+
+- [Bandit](https://github.com/PyCQA/bandit) 
+- [Black](https://github.com/psf/black)
+- [flake8](http://flake8.pycqa.org)
+- [flake8-bandit](https://github.com/tylerwince/flake8-bandit) 
+- [flake8-black](https://github.com/peterjc/flake8-black) 
+- [flake8-bugbear](https://github.com/PyCQA/flake8-bugbear) 
+- [flake8-import-order](https://github.com/PyCQA/flake8-import-order)
+- [mccabe](https://github.com/PyCQA/mccabe)
+- [pycodestyle](https://github.com/pycqa/pycodestyle)
+- [pyflakes](https://github.com/PyCQA/pyflakes)
+
+-->
+
 ## Linting with flake8
 
 Linters analyze source code to flag programming errors, bugs, stylistic errors,

@@ -47,8 +47,9 @@ boilerplate and workarounds required by the legacy toolbox.
 {{< figure src="/images/Le sortie de l'opéra en l'an 2000/01.jpg" >}}
 
 In this first chapter, you are going to learn how to set up a Python project
-using pyenv and Poetry. At the end of this chapter, you will have a simple
-command-line application built using click.
+using [pyenv](https://github.com/pyenv/pyenv) and
+[Poetry](https://python-poetry.org/). At the end of this chapter, you will have
+a simple command-line application built using click.
 
 For your reference, below is a list of the articles in this series.
 
@@ -176,14 +177,17 @@ versions are accessible as `python3.7` and `python3.8`, respectively.
 dependencies. Its ease of use and support for modern workflows make it the ideal
 successor to the venerable [setuptools](http://setuptools.readthedocs.io). It is
 similar to `npm` and `yarn` in the JavaScript world, and to other modern package
-and dependency managers.
+and dependency managers. Other popular options for modern Python project
+management include [pipenv](https://pipenv.kennethreitz.org/en/latest/),
+[pyflow](https://github.com/David-OConnor/pyflow), and
+[dephell](https://dephell.org/).
 
 With Poetry 1.0 [around the
-corner](https://github.com/sdispater/poetry/projects/1), I would recommend you
+corner](https://github.com/python-poetry/poetry/releases), I would recommend you
 install the preview version:
 
 ```sh
-curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py |
+curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py |
 POETRY_PREVIEW=1 python
 ```
 
