@@ -5,9 +5,7 @@ description: "Coding in Python like Savielly Tartakower."
 draft: true
 tags:
   - python
-  - sphinx
-  - readthedocs
-  - nox
+  - docker
 ---
 
 In this seventh and last installment of the Hypermodern Python series, I'm going
@@ -34,50 +32,82 @@ For your reference, below is a list of the articles in this series.
 
 ## Building a Docker image
 
-[Docker](https://www.docker.com/) allows you to build your
+[Docker](https://www.docker.com/) enables you to build, share, and run your
+application anywhere using containers. Containers are a lightweight
+virtualization technology, packaging your application with its dependencies, and
+allowing it to be executed in an isolated environment.
 
 Add the following `Dockerfile` to the root of your project:
 
 ```Dockerfile
 FROM python:3.8.0-alpine3.10 as base
-
-ENV PYTHONUNBUFFERED=1
-
-WORKDIR /app
-
 FROM base as builder
 
-ENV PIP_DEFAULT_TIMEOUT=60 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1 \
-    PIP_NO_CACHE_DIR=1 \
-    POETRY_VERSION=1.0.0b5
-
-RUN pip install "poetry==$POETRY_VERSION"
+WORKDIR /app
+ENV POETRY_VERSION=1.0.0b5
+RUN wget -qO- https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
 RUN python -m venv /venv
 
 COPY pyproject.toml poetry.lock ./
-RUN poetry export -f requirements.txt | /venv/bin/pip install -r /dev/stdin
+RUN /root/.poetry/bin/poetry export -f requirements.txt | /venv/bin/pip install -r /dev/stdin
 
-COPY . .
-RUN poetry build && /venv/bin/pip install dist/*.whl
+COPY . ./
+RUN /root/.poetry/bin/poetry build && /venv/bin/pip install dist/*.whl
 
 FROM base as final
 
 COPY --from=builder /venv /venv
-CMD ["/venv/bin/hypermodern-python"]
+ENV PYTHONUNBUFFERED=1
+ENTRYPOINT ["/venv/bin/hypermodern-python"]
 ```
 
-You can build the Dockerfile using the following command:
+This Dockerfile defines a so-called [multi-stage
+build](https://docs.docker.com/develop/develop-images/multistage-build/), an
+elegant way to reduce the size and complexity of your images:
+
+- The *build stage* includes all the developer tooling needed to build your
+  application (e.g. Poetry).
+- The *final stage* is deliberately kept slim and contains only artifacts needed
+  at runtime.
+
+In the Python world, multi-stage builds are typically realized using virtual
+environments. In a nutshell, the build stage installs everything into a virtual
+environment, and the final stage simply copies the virtual environment over into
+a small base image.
+
+Here are a few more observations about the Dockerfile:
+
+- The image is based on the official Python image for
+  [Alpine](https://alpinelinux.org/), a security-oriented, lightweight Linux
+  distribution.
+- Use `poetry export` to install your pinned requirements first, before copying
+  your code. This will allow you to leverage the [Docker build
+  cache](https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#leverage-build-cache),
+  and never reinstall dependencies just because you changed a line in your code.
+- Use `poetry build` to build a wheel, and then pip-install that into your
+  virtualenv. Do not use `poetry install` to install your code, because it will
+  perform an [editable
+  install](https://pip.pypa.io/en/stable/reference/pip_install/#editable-installs).
+- The final stage sets the
+  [PYTHONUNBUFFERED](https://docs.python.org/3/using/cmdline.html#envvar-PYTHONUNBUFFERED)
+  environment variable to disable buffering for the standard output stream. This
+  makes sense for Docker images as [stdout is typically used for log
+  messages](https://12factor.net/logs).
+
+Build the Docker image using the following command:
 
 ```sh
 docker build -t hypermodern-python .
 ```
 
-Run a container like this:
+Run your image like this:
 
 ```sh
 docker run hypermodern-python [options]
 ```
+
+You can pass options to `hypermodern-python` by appending them to the end of the
+command-line.
 
 ## Hosting images at Docker Hub
 
