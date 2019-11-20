@@ -21,7 +21,7 @@ For your reference, below is a list of the articles in this series.
 - [Chapter 2: Testing](../hypermodern-python-02-testing)
 - [Chapter 3: Linting](../hypermodern-python-03-linting)
 - [Chapter 4: Typing](../hypermodern-python-04-typing)
-- [Chapter 5: Documentation](../hypermodern-python-05-documentation)
+- [Chapter 5: Documentation](../hypermodern-python-05-documentation) (this article)
 - [Chapter 6: CI/CD](../hypermodern-python-06-ci-cd)
 
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
@@ -230,7 +230,7 @@ def reticulate(count: int = -1) -> Iterator[int]:
     """
 ```
 
-[darglint](https://github.com/terrencepreilly/darglint) checks that the
+The [darglint](https://github.com/terrencepreilly/darglint) tool checks that the
 docstring description matches the definition, and integrates with Flake8 as a
 plugin. Add the plugin to the lint session:
 
@@ -297,9 +297,9 @@ def reticulate(count: int = -1) -> Iterator[int]:
     """
 ```
 
-The `xdoctest` package runs the examples in your docstrings and compares the
-actual output to the expected output as per the docstring. Add `xdoctest` to
-your developer dependencies:
+The [xdoctest](https://github.com/Erotemic/xdoctest) package runs the examples
+in your docstrings and compares the actual output to the expected output as per
+the docstring. Add `xdoctest` to your developer dependencies:
 
 ```sh
 poetry add --dev xdoctest
@@ -448,6 +448,9 @@ Declare the documentation dependencies in `pyproject.toml`, as an extra named
 [tool.poetry.extras]
 docs = ["sphinx", "sphinx-rtd-theme", "sphinx-autodoc-typehints"]
 ```
+
+Update the lock file by invoking [poetry
+lock](https://poetry.eustace.io/docs/cli/#lock).
 
 You can now simply install your package with the `--extras=docs` option. Update
 the Nox session:

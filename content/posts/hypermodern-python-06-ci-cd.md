@@ -21,7 +21,7 @@ For your reference, below is a list of the articles in this series.
 - [Chapter 3: Linting](../hypermodern-python-03-linting)
 - [Chapter 4: Typing](../hypermodern-python-04-typing)
 - [Chapter 5: Documentation](../hypermodern-python-05-documentation)
-- [Chapter 6: CI/CD](../hypermodern-python-06-ci-cd)
+- [Chapter 6: CI/CD](../hypermodern-python-06-ci-cd) (this article)
 
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **In this chapter:**
@@ -37,7 +37,7 @@ For your reference, below is a list of the articles in this series.
 
 *Continuous integration* (CI) helps you automate the integration of code changes
 into your project. The CI server verifies the correctness of changes, triggering
-tools such as unit tests, linters, or typecheckers. GitHub displays Pull
+tools such as unit tests, linters, or type checkers. GitHub displays Pull
 Requests with a green tick if they pass CI, and with a red x if the CI pipeline
 failed.
 
@@ -82,8 +82,8 @@ invoking shell commands:
    build](https://poetry.eustace.io/docs/cli/#build).
 
 You should also add a GitHub Actions badge to your repository page. The badge
-indicates whether the tests are passing or failing, and links to the GitHub
-Actions dashboard for your project. It looks like this:
+indicates whether the tests are passing or failing on the master branch, and
+links to the GitHub Actions dashboard for your project. It looks like this:
 
 > [![tests](https://github.com/cjolowicz/hypermodern-python/workflows/tests/badge.svg)](https://github.com/cjolowicz/hypermodern-python/actions?workflow=tests)
 

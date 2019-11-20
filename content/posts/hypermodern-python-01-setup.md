@@ -10,26 +10,26 @@ tags:
   - click
 ---
 
-Welcome to the whirlwind tour of the Python ecosystem in late 2019! This series
-of articles is a guide to modern Python tooling with a focus on simplicity and
-minimalism.
+Welcome to a whirlwind tour of the Python ecosystem in late 2019! This is a
+guide to modern Python tooling with a focus on simplicity and minimalism, in
+several parts.
 
-More than a decade of coexistence of Python 2 and 3
-[ends](https://www.python.org/doc/sunset-python-2/) on new year
-2020. The Python landscape has changed significantly over this period, with a
-host of new tools and best practices improving the Python developer experience.
-At the same time, their adoption has lagged behind, due to the constraints of
-legacy support.
+More than a decade of coexistence of Python 2 and 3 [comes to a
+close](https://www.python.org/doc/sunset-python-2/) on new year
+2020. The Python landscape has changed significantly over this period: A host of
+new tools and best practices have continued to improve the Python developer
+experience. At the same time, their adoption has lagged behind, due to the
+constraints of legacy support.
 
 Time to show how to build a Python project for *hypermodernists*,[^1] from
 scratch. In this guide, you are going to create a complete and up-to-date Python
 project structure, with unit tests, static analysis, type-checking,
 documentation, and continuous integration and delivery.
 
-[^1]: *Die hypermoderne Schachpartie* (The hypermodern chess game) is a book
-    written by [Savielly
+[^1]: The title of this guide is inspired by the book *Die hypermoderne
+    Schachpartie* (The hypermodern chess game), written by [Savielly
     Tartakower](https://en.wikipedia.org/wiki/Savielly_Tartakower) in 1925 to
-    modernize chess theory. It inspired the title of this guide.
+    modernize chess theory.
 
 This guide is aimed both at beginners who are keen to learn best practises from
 the start, and seasoned Python developers whose workflows are affected by
@@ -47,7 +47,7 @@ command-line application built using click.
 
 For your reference, below is a list of the articles in this series.
 
-- [Chapter 1: Setup](../hypermodern-python-01-setup)
+- [Chapter 1: Setup](../hypermodern-python-01-setup) (this article)
 - [Chapter 2: Testing](../hypermodern-python-02-testing)
 - [Chapter 3: Linting](../hypermodern-python-03-linting)
 - [Chapter 4: Typing](../hypermodern-python-04-typing)
@@ -422,10 +422,10 @@ $ poetry run hypermodern-python
 Hello, world!
 ```
 
-Options for your script need to be preceded by `--`:
+You can also pass options to your script:
 
 ```sh
-$ poetry run hypermodern-python -- --help
+$ poetry run hypermodern-python --help
 
 Usage: hypermodern-python [OPTIONS]
 

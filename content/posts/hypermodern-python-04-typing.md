@@ -19,7 +19,7 @@ For your reference, below is a list of the articles in this series.
 - [Chapter 1: Setup](../hypermodern-python-01-setup)
 - [Chapter 2: Testing](../hypermodern-python-02-testing)
 - [Chapter 3: Linting](../hypermodern-python-03-linting)
-- [Chapter 4: Typing](../hypermodern-python-04-typing)
+- [Chapter 4: Typing](../hypermodern-python-04-typing) (this article)
 - [Chapter 5: Documentation](../hypermodern-python-05-documentation)
 - [Chapter 6: CI/CD](../hypermodern-python-06-ci-cd)
 
@@ -103,7 +103,7 @@ def mypy(session: Session) -> None:
 Include mypy in the default Nox sessions:
 
 ```python
-nox.options.sessions = "lint", "mypy", "pytype", "tests"
+nox.options.sessions = "lint", "mypy", "tests"
 ```
 
 mypy generates warnings if it does not find types for a third-party package. You
@@ -177,8 +177,8 @@ affairs:
 nox -rs pytype
 ```
 
-Update `nox.options.session` to include static type checking in the default Nox
-sessions:
+Update `nox.options.session` to include static type checking with pytype in the
+default Nox sessions:
 
 ```python
 nox.options.sessions = "lint", "mypy", "pytype", "tests"
