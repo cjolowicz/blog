@@ -31,10 +31,10 @@ documentation, and continuous integration and delivery.
 [^1]: The title of this guide is inspired by the book *Die hypermoderne
     Schachpartie* (The hypermodern chess game), written by [Savielly
     Tartakower](https://en.wikipedia.org/wiki/Savielly_Tartakower) in 1925 to
-    modernize chess theory. The images are details from the [hand-colored
-    print](http://www.loc.gov/pictures/item/2007676247/) *Le Sortie de l'opéra
-    en l'an 2000* (Leaving the opera in the year 2000) by Albert Robida, ca
-    1902.
+    modernize chess theory. The images in this chapter are details from the
+    hand-colored print *Le Sortie de l'opéra en l'an 2000* (Leaving the opera in
+    the year 2000) by Albert Robida, ca 1902 ([Library of
+    Congress](http://www.loc.gov/pictures/item/2007676247/)).
 
 This guide is aimed both at beginners who are keen to learn best practises from
 the start, and seasoned Python developers whose workflows are affected by
