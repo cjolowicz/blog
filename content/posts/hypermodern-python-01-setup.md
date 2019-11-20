@@ -463,5 +463,5 @@ Options:
   --help     Show this message and exit.
 ```
 
-<center>In the [next chapter](../hypermodern-python-02-testing), I'm going to
-discuss how to add unit tests to your project.</center>
+In the [next chapter](../hypermodern-python-02-testing), I'm going to discuss
+how to add unit tests to your project.
