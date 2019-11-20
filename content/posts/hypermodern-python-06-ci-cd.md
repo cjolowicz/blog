@@ -230,7 +230,9 @@ The badge looks like this:
 ## Hosting documentation at Read the Docs
 
 [Read the Docs](https://readthedocs.org/) hosts documentation for countless
-open-source Python projects. 
+open-source Python projects. The hosting service also takes care of rebuilding
+the documentation when you update your project. Users can browse documentation
+for every published version, as well as the latest development version.
 
 Create the `.readthedocs.yml` configuration file:
 
@@ -244,16 +246,30 @@ python:
   version: 3.7
   install:
     - requirements: docs/requirements.txt
+    - method: pip
+      path: .
 ```
 
-Generate the requirements file using the following command:
+The `install` section in the configuration file tells Read the Docs how to
+install your package and its documentation dependencies. Read the Docs does not
+support installation of dependencies using Poetry directly. Luckily, pip can
+install any package with a standard `pyproject.toml` file, and will use Poetry
+behind the scenes.
+
+While this means that you could install the documentation dependencies using
+`pip install .[docs]`, this installation method does not honor the exact pinned
+versions from `poetry.lock`, only the more generic version constraints in
+`pyproject.toml`. This is why you should specify the dependencies using pip's
+`requirements.txt` format. Export your pinned requirements to
+`docs/requirements.txt` using the following command:
 
 ```sh
 poetry export -f requirements.txt -E docs > docs/requirements.txt
 ```
 
-You need to place this file under source control to ensure that it is available
-when Read the Docs installs your documentation dependencies.
+This file needs to be placed under source control to ensure that it is available
+when Read the Docs installs your dependencies. Update the file whenever you
+upgrade or otherwise change your documentation dependencies.
 
 Sign up at Read the Docs, and import your GitHub repository, using the button
 *Import a Project*. Read the Docs automatically starts building your
