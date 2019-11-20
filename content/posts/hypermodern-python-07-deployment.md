@@ -48,7 +48,7 @@ FROM python:3.8.0-alpine3.10 as base
 FROM base as builder
 
 WORKDIR /app
-ENV POETRY_VERSION=1.0.0b6
+ENV POETRY_VERSION=1.0.0b8
 RUN wget -qO- https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
 RUN python -m venv /venv
 
@@ -127,36 +127,52 @@ working directory:
 WORKDIR /app
 ```
 
-Install Poetry and create a virtual environment:
+Install Poetry:
 
 ```Dockerfile
 ENV POETRY_VERSION=1.0.0b6
 RUN wget -qO- https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
+```
+
+Create a virtual environment:
+
+```Dockerfile
 RUN python -m venv /venv
 ```
 
-Copy the package configuration and lock file first, before copying your code.
-Use [poetry export](https://poetry.eustace.io/docs/cli/#export) to install your
-pinned requirements. This will allow you to leverage the [Docker build
-cache](https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#leverage-build-cache),
-and never reinstall dependencies just because you changed a line in your code.
+Copy the package configuration and lock file first, before copying your code:
 
 ```Dockerfile
 COPY pyproject.toml poetry.lock ./
+```
+
+Use [poetry export](https://poetry.eustace.io/docs/cli/#export) to install your
+pinned requirements:
+
+```Dockerfile
 RUN /root/.poetry/bin/poetry export -f requirements.txt | /venv/bin/pip install -r /dev/stdin
 ```
 
-Copy your source code, and use [poetry
-build](https://poetry.eustace.io/docs/cli/#build) to build a wheel. Then
-pip-install the wheel into your virtualenv. Do not use [poetry
-install](https://poetry.eustace.io/docs/cli/#install) to install your code,
-because it will perform an [editable
-install](https://pip.pypa.io/en/stable/reference/pip_install/#editable-installs).
+This will allow you to leverage the [Docker build
+cache](https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#leverage-build-cache),
+and never reinstall dependencies just because you changed a line in your code.
+
+Copy your source code:
 
 ```Dockerfile
 COPY . ./
+```
+
+Use [poetry build](https://poetry.eustace.io/docs/cli/#build) to build a wheel. Then
+pip-install the wheel into your virtualenv:
+
+```Dockerfile
 RUN /root/.poetry/bin/poetry build && /venv/bin/pip install dist/*.whl
 ```
+
+Do not use [poetry install](https://poetry.eustace.io/docs/cli/#install) to
+install your code, because it will perform an [editable
+install](https://pip.pypa.io/en/stable/reference/pip_install/#editable-installs).
 
 The third `FROM` statement introduces the final stage:
 
