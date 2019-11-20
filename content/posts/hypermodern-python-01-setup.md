@@ -1,7 +1,7 @@
 --- 
 date: 2019-11-07T12:52:59+02:00
 title: "Hypermodern Python"
-description: "Coding in Python like Savielly Tartakower."
+description: "A guide to modern Python tooling with a focus on simplicity and minimalism."
 draft: true
 tags:
   - python
@@ -10,17 +10,21 @@ tags:
   - click
 ---
 
-Welcome to the whirlwind tour of the Python ecosystem in late 2019! This is a
-guide to modern Python tooling with a focus on simplicity and minimalism.
+Welcome to the whirlwind tour of the Python ecosystem in late 2019! This series
+of articles is a guide to modern Python tooling with a focus on simplicity and
+minimalism.
 
-After more than a decade of coexistence with Python 3, [Python 2 will be
-sunset](https://www.python.org/doc/sunset-python-2/) on new year
-2020. The Python landscape has changed significantly over this decade, with a
+More than a decade of coexistence of Python 2 and 3
+[ends](https://www.python.org/doc/sunset-python-2/) on new year
+2020. The Python landscape has changed significantly over this period, with a
 host of new tools and best practices improving the Python developer experience.
 At the same time, their adoption has lagged behind, due to the constraints of
 legacy support.
 
-Time to show how to build a Python project for *hypermodernists*,[^1] from scratch.
+Time to show how to build a Python project for *hypermodernists*,[^1] from
+scratch. In this guide, you are going to create a complete and up-to-date Python
+project structure, with unit tests, static analysis, type-checking,
+documentation, and continuous integration and delivery.
 
 [^1]: *Die hypermoderne Schachpartie* (The hypermodern chess game) is a book
     written by [Savielly
