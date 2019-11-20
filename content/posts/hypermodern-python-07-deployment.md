@@ -225,6 +225,12 @@ Hub](https://img.shields.io/docker/cloud/build/cjolowicz/hypermodern-python.svg)
 
 [Heroku](https://heroku.com/)
 
+- Sign up at Heroku.
+
+- Create a Heroku app.
+
+- Connect the GitHub repo to the Heroku app.
+
 ## Conclusion
 
 Thank you for reading this far. This chapter concludes the Hypermodern Python
