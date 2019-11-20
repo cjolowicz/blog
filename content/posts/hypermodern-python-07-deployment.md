@@ -25,7 +25,9 @@ For your reference, below is a list of the articles in this series.
 **In this chapter:**
 
 - [Building a Docker image](#building-a-docker-image)
+- [The Dockerfile in detail](#the-dockerfile-in-detail)
 - [Hosting images at Docker Hub](#hosting-images-at-docker-hub)
+- [Deploying an app to Heroku](#deploying-an-app-to-heroku)
 - [Conclusion](#conclusion)
 
 <!-- markdown-toc end -->
@@ -33,7 +35,7 @@ For your reference, below is a list of the articles in this series.
 ## Building a Docker image
 
 [Docker](https://www.docker.com/) enables you to build, share, and run your
-application anywhere using containers. Containers are a lightweight
+application anywhere using *containers*. Containers are a lightweight
 virtualization technology, packaging your application with its dependencies, and
 allowing it to be executed in an isolated environment.
 
@@ -41,7 +43,8 @@ Download and install [Docker Desktop](https://docker.com/get-started). If on
 Linux, download [Docker
 Engine](https://hub.docker.com/search?type=edition&offering=community).
 
-Add the following `Dockerfile` to the root of your project:
+Add the following `Dockerfile` to the root of your project. (We will go through
+the Dockerfile line by line in the next section.)
 
 ```Dockerfile
 FROM python:3.8.0-alpine3.10 as base
@@ -130,7 +133,7 @@ WORKDIR /app
 Install Poetry:
 
 ```Dockerfile
-ENV POETRY_VERSION=1.0.0b6
+ENV POETRY_VERSION=1.0.0b8
 RUN wget -qO- https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
 ```
 
@@ -140,7 +143,7 @@ Create a virtual environment:
 RUN python -m venv /venv
 ```
 
-Copy the package configuration and lock file first, before copying your code:
+Copy the package configuration and lock file into the image:
 
 ```Dockerfile
 COPY pyproject.toml poetry.lock ./
@@ -153,11 +156,11 @@ pinned requirements:
 RUN /root/.poetry/bin/poetry export -f requirements.txt | /venv/bin/pip install -r /dev/stdin
 ```
 
-This will allow you to leverage the [Docker build
+Installing the requirements before copying your code allows you to leverage the
+[Docker build
 cache](https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#leverage-build-cache),
 and never reinstall dependencies just because you changed a line in your code.
-
-Copy your source code:
+Now copy your source code:
 
 ```Dockerfile
 COPY . ./
@@ -173,6 +176,9 @@ RUN /root/.poetry/bin/poetry build && /venv/bin/pip install dist/*.whl
 Do not use [poetry install](https://poetry.eustace.io/docs/cli/#install) to
 install your code, because it will perform an [editable
 install](https://pip.pypa.io/en/stable/reference/pip_install/#editable-installs).
+(An editable install doesn’t actually install your package into the virtual
+environment. It creates a `.egg-link` file that links to your source code, and
+this link would only be valid for the duration of the build stage.)
 
 The third `FROM` statement introduces the final stage:
 
