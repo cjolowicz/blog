@@ -59,10 +59,10 @@ For your reference, below is a list of the articles in this series.
 - [Chapter 5: Documentation](../hypermodern-python-05-documentation)
 - [Chapter 6: CI/CD](../hypermodern-python-06-ci-cd)
 
-<!--
 This guide has a companion repository:
 [cjolowicz/hypermodern-python](https://github.com/cjolowicz/hypermodern-python)
--->
+Each section in the guide corresponds to a set of commits in the GitHub
+repository, linked to at the top of the section.
 
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **In this chapter:**
