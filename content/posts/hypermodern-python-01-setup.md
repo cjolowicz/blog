@@ -12,21 +12,19 @@ tags:
 
 {{< figure src="/images/Le sortie de l'opéra en l'an 2000/06.jpg" >}}
 
-Welcome to a whirlwind tour of the Python ecosystem in late 2019! This is a
-guide to modern Python tooling with a focus on simplicity and minimalism, in
-several parts.
+Welcome to the whirlwind tour of the Python ecosystem in late 2019! This is a
+guide to modern Python tooling with a focus on simplicity and minimalism. You
+are going to create a complete and up-to-date Python project structure, with
+unit tests, static analysis, type-checking, documentation, and continuous
+integration and delivery.
 
-More than a decade of coexistence of Python 2 and 3 [comes to a
-close](https://www.python.org/doc/sunset-python-2/) on new year
-2020. The Python landscape has changed significantly over this period: A host of
-new tools and best practices have continued to improve the Python developer
-experience. At the same time, their adoption has lagged behind, due to the
-constraints of legacy support.
+On New Year 2020, more than a decade of coexistence of Python 2 and 3 [comes to
+a close](https://www.python.org/doc/sunset-python-2/). The Python landscape has
+changed significantly over this period: A host of new tools and best practices
+have continued to improve the Python developer experience. At the same time,
+their adoption has lagged behind, due to the constraints of legacy support.
 
-Time to show how to build a Python project for *hypermodernists*,[^1] from
-scratch. In this guide, you are going to create a complete and up-to-date Python
-project structure, with unit tests, static analysis, type-checking,
-documentation, and continuous integration and delivery.
+Time to show how to build a Python project for *hypermodernists!* [^1]
 
 [^1]: The title of this guide is inspired by the book *Die hypermoderne
     Schachpartie* (The hypermodern chess game), written by [Savielly
@@ -367,14 +365,15 @@ The dependency entry in `pyproject.toml` contains a [version
 constraint](https://poetry.eustace.io/docs/versions/) for the installed package:
 `^7.0`. This means that users of the package need to have at least the current
 release, `7.0`. The constraint also allows newer releases of the package, as
-long as they don't contain breaking changes.
+long as they don't contain breaking changes.[^2]
 
-Breaking changes are only allowed in major releases (incrementing the most
-significant version digit). Packages with a version number smaller than 1.0.0
-are a little special, in that breaking changes may occur in all releases except
-patch releases (incrementing any but the least significant version digit). You
-can edit the version constraint, for example if a package you depend on does not
-follow the [Semantic Versioning](https://semver.org/) scheme.
+[^2]: Breaking changes are only allowed in major releases (incrementing the most
+      significant version digit). Packages with a version number smaller than
+      1.0.0 are a little special, in that breaking changes may occur in all
+      releases except patch releases (incrementing any but the least significant
+      version digit). You can edit the version constraint, for example if a
+      package you depend on does not follow the [Semantic
+      Versioning](https://semver.org/) scheme.
 
 By contrast, `poetry.lock` contains the exact version of `click` installed into
 the virtual environment. Place this file under source control. It allows
