@@ -10,34 +10,25 @@ tags:
   - nox
 ---
 
-<!--
-TODO:
-
-- release-drafter
-- Dockerfile
-- Docker Hub
-- cookiecutter
--->
-
 ## Building a Docker image
+
+[Docker](https://www.docker.com/)
 
 Add the following `Dockerfile` to the root of your project:
 
 ```Dockerfile
 FROM python:3.8.0-alpine3.10 as base
 
-ENV PYTHONFAULTHANDLER=1 \
-    PYTHONHASHSEED=random \
-    PYTHONUNBUFFERED=1
+ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
 FROM base as builder
 
-ENV PIP_DEFAULT_TIMEOUT=100 \
+ENV PIP_DEFAULT_TIMEOUT=60 \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
     PIP_NO_CACHE_DIR=1 \
-    POETRY_VERSION=1.0.0b2
+    POETRY_VERSION=1.0.0b5
 
 RUN pip install "poetry==$POETRY_VERSION"
 RUN python -m venv /venv
@@ -65,6 +56,8 @@ Run a container like this:
 ```sh
 docker run hypermodern-python [options]
 ```
+
+## Hosting images at Docker Hub
 
 ## Conclusion
 
