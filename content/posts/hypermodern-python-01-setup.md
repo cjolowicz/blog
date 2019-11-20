@@ -12,16 +12,16 @@ tags:
 
 {{< figure src="/images/Le sortie de l'opéra en l'an 2000/06.jpg" >}}
 
-Welcome to the whirlwind tour of the Python ecosystem in late 2019! This is a
-guide to modern Python tooling with a focus on simplicity and minimalism. You
-are going to create a complete and up-to-date Python project structure, with
-unit tests, static analysis, type-checking, documentation, and continuous
-integration and delivery.
+Welcome to a whirlwind tour of the Python ecosystem in late 2019! This is a
+guide to modern Python tooling with a focus on simplicity and minimalism. It
+will walk you through the creation of a complete and up-to-date Python project
+structure, with unit tests, static analysis, type-checking, documentation, and
+continuous integration and delivery.
 
-On New Year 2020, more than a decade of coexistence of Python 2 and 3 [comes to
-a close](https://www.python.org/doc/sunset-python-2/). The Python landscape has
-changed significantly over this period: A host of new tools and best practices
-have continued to improve the Python developer experience. At the same time,
+On New Year 2020, more than a decade of coexistence of Python 2 and 3 [will come
+to a close](https://www.python.org/doc/sunset-python-2/). The Python landscape
+has changed significantly over this period, and a host of new tools and best
+practices continue to improve the Python developer experience. At the same time,
 their adoption has lagged behind, due to the constraints of legacy support.
 
 Time to show how to build a Python project for *hypermodernists!* [^1]
@@ -34,8 +34,8 @@ Time to show how to build a Python project for *hypermodernists!* [^1]
     the year 2000) by Albert Robida, ca 1902 (source: [Library of
     Congress](http://www.loc.gov/pictures/item/2007676247/)).
 
-This guide is aimed both at beginners who are keen to learn best practises from
-the start, and seasoned Python developers whose workflows are affected by
+This guide is aimed at beginners who are keen to learn best practises from the
+start, and seasoned Python developers whose workflows are affected by
 boilerplate and workarounds required by the legacy toolbox.
 
 > *You need a recent Linux, Unix, or Mac system with
@@ -46,12 +46,12 @@ boilerplate and workarounds required by the legacy toolbox.
 
 {{< figure src="/images/Le sortie de l'opéra en l'an 2000/01.jpg" >}}
 
-In this first chapter, you are going to learn how to set up a Python project
-using [pyenv](https://github.com/pyenv/pyenv) and
-[Poetry](https://python-poetry.org/). At the end of this chapter, you will have
-a simple command-line application built using click.
+In this first chapter, I will walk you through setting up a Python project using
+[pyenv](https://github.com/pyenv/pyenv) and
+[Poetry](https://python-poetry.org/). As an example project, we will build a
+simple command-line application.
 
-For your reference, below is a list of the articles in this series.
+Here is a list of the articles in this series.
 
 - [Chapter 1: Setup](../hypermodern-python-01-setup) (this article)
 - [Chapter 2: Testing](../hypermodern-python-02-testing)
@@ -65,7 +65,8 @@ This guide has a companion repository:
 Each article in the guide corresponds to a set of commits in the GitHub
 repository.
 
-▶ **[View code](https://github.com/cjolowicz/hypermodern-python/compare/initial...chapter01)**
+- [View changes](https://github.com/cjolowicz/hypermodern-python/compare/initial...chapter01)
+- [Download code](https://github.com/cjolowicz/hypermodern-python/archive/chapter01.zip)
 
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **In this chapter:**
@@ -84,8 +85,8 @@ repository.
 
 {{< figure src="/images/Le sortie de l'opéra en l'an 2000/02.jpg" >}}
 
-In this guide, [GitHub](https://github.com) is used to host the public git
-repository for your project. Other popular options are
+For the purposes of this guide, [GitHub](https://github.com) is used to host the
+public git repository for your project. Other popular options are
 [GitLab](https://gitlab.com/) and [BitBucket](https://bitbucket.org/). Create a
 repository, and populate it with `README.md` and `LICENSE` files. For this
 project, I will use the [MIT license](https://choosealicense.com/licenses/mit/),
@@ -146,27 +147,27 @@ libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python-openssl git
 You're ready to install the latest Python releases. This may take a while:
 
 ```sh
-pyenv install 3.8.0
-pyenv install 3.7.5
+pyenv install 3.8.1
+pyenv install 3.7.6
 ```
 
 Make your fresh Pythons available inside the repository:
 
 ```sh
-pyenv local 3.8.0 3.7.5
+pyenv local 3.8.1 3.7.6
 ```
 
 Congratulations! You have access to the latest and greatest of Python:
 
 ```sh
 $ python --version
-Python 3.8.0
+Python 3.8.1
 
 $ python3.7 --version
-Python 3.7.5
+Python 3.7.6
 ```
 
-Python 3.8.0 is the default version and can be invoked as `python`, but both
+Python 3.8.1 is the default version and can be invoked as `python`, but both
 versions are accessible as `python3.7` and `python3.8`, respectively.
 
 ## Setting up a Python project using Poetry
@@ -177,18 +178,16 @@ versions are accessible as `python3.7` and `python3.8`, respectively.
 dependencies. Its ease of use and support for modern workflows make it the ideal
 successor to the venerable [setuptools](http://setuptools.readthedocs.io). It is
 similar to `npm` and `yarn` in the JavaScript world, and to other modern package
-and dependency managers. Other popular options for modern Python project
-management include [pipenv](https://pipenv.kennethreitz.org/en/latest/),
+and dependency managers. For alternatives to Poetry, have a look at
+[flit](https://github.com/takluyver/flit),
+[pipenv](https://pipenv.kennethreitz.org/en/latest/),
 [pyflow](https://github.com/David-OConnor/pyflow), and
 [dephell](https://dephell.org/).
 
-With Poetry 1.0 [around the
-corner](https://github.com/python-poetry/poetry/releases), I would recommend you
-install the preview version:
+Install Poetry:
 
 ```sh
-curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py |
-POETRY_PREVIEW=1 python
+curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
 ```
 
 Open a new login shell or source `~/.poetry/env` in your current shell:
@@ -298,7 +297,7 @@ and an independent set of installed Python packages. This way, the dependencies
 of your current project do not interfere with the system-wide Python
 installation, or other projects you're working on.
 
-Poetry manages virtual environments for your projects. To see this in action,
+Poetry manages virtual environments for your projects. To see it in action,
 install the skeleton package using [poetry
 install](https://poetry.eustace.io/docs/cli/#install):
 
@@ -316,9 +315,10 @@ Nothing to install or update
   - Installing hypermodern-python (0.1.0)
 ```
 
-Poetry created a virtual environment dedicated to your project, and installed
-your initial package into it. It also created a so-called *lock file*, named
-`poetry.lock`. You will learn more about this file in the next section.
+Poetry has now created a virtual environment dedicated to your project, and
+installed your initial package into it. It has also created a so-called *lock
+file*, named `poetry.lock`. You will learn more about this file in the next
+section.
 
 Let's run a Python session inside the new virtual environment, using [poetry
 run](https://poetry.eustace.io/docs/cli/#run):
@@ -326,8 +326,8 @@ run](https://poetry.eustace.io/docs/cli/#run):
 ```python
 $ poetry run python
 
-Python 3.8.0 (default, Oct 16 2019, 19:27:04)
-[GCC 8.3.0] on linux
+Python 3.8.1 (default, Dec 19 2019, 17:17:20)
+[Clang 11.0.0 (clang-1100.0.20.17)] on darwin
 Type "help", "copyright", "credits" or "license" for more information.
 >>> import hypermodern_python
 >>> hypermodern_python.__version__
@@ -462,4 +462,5 @@ Options:
   --help     Show this message and exit.
 ```
 
-<center>[Continue to the next chapter](../hypermodern-python-02-testing)</center>
+<center>In the [next chapter](../hypermodern-python-02-testing), I'm going to
+discuss how to add unit tests to your project.</center>
