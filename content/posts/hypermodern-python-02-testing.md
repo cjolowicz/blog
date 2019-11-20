@@ -5,11 +5,11 @@ description: "Coding in Python like Savielly Tartakower."
 draft: true
 tags:
   - python
+  - poetry
   - nox
   - pytest
   - coverage.py
-  - black
-  - flake8
+  - pytest-mock
 ---
 
 In this second installment of the Hypermodern Python series, I'm going to

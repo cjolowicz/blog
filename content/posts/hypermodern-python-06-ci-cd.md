@@ -8,6 +8,7 @@ tags:
   - GitHub Actions
   - Codecov
   - PyPI
+  - readthedocs
 ---
 
 In this sixth installment of the Hypermodern Python series, I'm going to discuss

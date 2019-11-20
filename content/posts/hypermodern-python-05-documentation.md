@@ -5,9 +5,11 @@ description: "Coding in Python like Savielly Tartakower."
 draft: true
 tags:
   - python
-  - sphinx
-  - readthedocs
   - nox
+  - sphinx
+  - flake8
+  - darglint
+  - xdoctest
 ---
 
 In this fifth installment of the Hypermodern Python series, I'm going to discuss

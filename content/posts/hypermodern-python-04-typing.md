@@ -5,8 +5,10 @@ description: "Coding in Python like Savielly Tartakower."
 draft: true
 tags:
   - python
-  - mytype
+  - nox
+  - mypy
   - pytype
+  - flake8
 ---
 
 In this fourth installment of the Hypermodern Python series, I'm going to

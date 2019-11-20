@@ -6,8 +6,9 @@ draft: true
 tags:
   - python
   - nox
-  - black
   - flake8
+  - black
+  - bandit
 ---
 
 In this third installment of the Hypermodern Python series, I'm going to discuss
