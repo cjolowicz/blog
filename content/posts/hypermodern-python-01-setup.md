@@ -8,6 +8,7 @@ tags:
   - poetry
   - pyenv
   - click
+  - requests
 ---
 
 {{< figure src="/images/hypermodern-python-01/opera_crop01.jpg" link="/images/hypermodern-python-01/opera_crop01.jpg" >}}
@@ -63,7 +64,8 @@ libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python-openssl git
 In this first chapter, I will walk you through setting up a Python project using
 [pyenv](https://github.com/pyenv/pyenv) and
 [Poetry](https://python-poetry.org/). As an example project, we will build a
-simple command-line application.
+simple command-line application which uses the Wikipedia API to display random
+facts on the console.
 
 Here is a list of the articles in this series.
 
@@ -93,6 +95,7 @@ repository.
 - [Managing virtual environments with Poetry](#managing-virtual-environments-with-poetry)
 - [Managing dependencies with Poetry](#managing-dependencies-with-poetry)
 - [Command-line interfaces with click](#command-line-interfaces-with-click)
+- [Example: Consuming a REST API with requests](#example-consuming-a-rest-api-with-requests)
 
 <!-- markdown-toc end -->
 
@@ -476,6 +479,113 @@ Options:
   --version  Show the version and exit.
   --help     Show this message and exit.
 ```
+
+## Example: Consuming a REST API with requests
+
+To conclude this chapter, we are going to build an example application. The
+example application prints random facts to the console. The data is retrieved
+from [Wikipedia's REST API](https://www.mediawiki.org/wiki/REST_API), by
+requesting summaries for random Wikipedia articles.
+
+Install the `requests` package, the *de facto* standard for making HTTP requests
+in Python:
+
+```sh
+poetry add requests
+```
+
+Next, replace the file `src/hypermodern-python/console.py` by the source code
+shown below. We will go through this step by step in the remainder of this
+section.
+
+```python
+# src/hypermodern_python/console.py
+import textwrap
+
+import click
+import requests
+
+from . import __version__
+
+
+@click.command()
+@click.version_option(version=__version__)
+def main() -> None:
+    """The hypermodern Python project."""
+    response = requests.get("https://en.wikipedia.org/api/rest_v1/page/random/summary")
+
+    title = response.json()["title"]
+    extract = response.json()["extract"]
+
+    click.secho(title, fg="green")
+    click.echo(textwrap.fill(extract))
+```
+
+Let's have a look at the imports at the top of the module first. The `textwrap`
+module from the standard library allows us to wrap lines when printing text to
+the console. We also import the newly installed `requests` package. Blank lines
+serve to group imports as recommended in [PEP
+8](https://www.python.org/dev/peps/pep-0008/#imports) (standard library--third
+party packages--local imports).
+
+```python
+import textwrap
+
+import click
+import requests
+
+from . import __version__
+```
+
+In the `console.main` function, the "hello world" example from the previous
+section is replaced by the code for the example application.
+
+The first line performs an HTTP request to the REST API of the English
+Wikipedia. The request uses the `GET` method on the `/page/random/summary`
+endpoint, which returns the summary of a random Wikipedia article:
+
+```python
+response = requests.get("https://en.wikipedia.org/api/rest_v1/page/random/summary")
+```
+
+The response body contains the resource data in [JSON](https://www.json.org/)
+format, which can be accessed using the `response.json()` method. We are only
+interested in the `title` and `extract` attributes, containing the title of the
+Wikipedia page and a short plain text extract, respectively.
+
+```python
+title = response.json()["title"]
+extract = response.json()["extract"]
+```
+
+Finally, we print the title and extract to the console, using `click.echo` and
+`click.secho`. The function `click.secho` allows you to specify the foreground
+color using the `fg` keyword attribute. The `textwrap.fill` function wraps the
+text in `extract` so every line is at most 70 characters long.
+
+```python
+click.secho(title, fg="green")
+click.echo(textwrap.fill(extract))
+```
+
+Let's try it out:
+
+```sh
+$ poetry run hypermodern-python
+
+Jägersbleeker Teich
+The Jägersbleeker Teich in the Harz Mountains of central Germany is a
+storage pond near the town of Clausthal-Zellerfeld in the county of
+Goslar in Lower Saxony. It is one of the Upper Harz Ponds that were
+created for the mining industry.
+```
+
+Feel free to play around with this a little. Here are some things you might try:
+
+- Display a friendly error message when the API is not reachable.
+- Add an option to select the Wikipedia edition for another language.
+- If you feel adventurous: auto-detect the user's preferred language edition,
+  using [locale](https://docs.python.org/3.8/library/locale.html).
 
 ## Next
 
