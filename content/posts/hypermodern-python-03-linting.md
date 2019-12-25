@@ -763,8 +763,8 @@ reasons:
 
 ## Thanks for reading!
 
-The next chapter is about adding static type checking to your project. It will
-be published on January 22, 2020.
+The next chapter is about adding type annotations and static type checking to
+your project. It will be published on January 22, 2020.
 
 {{< figure src="/images/hypermodern-python-03/train.jpg" class="centered" >}}
 <!-- 
