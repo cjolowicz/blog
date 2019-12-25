@@ -11,17 +11,15 @@ tags:
   - requests
 ---
 
-{{< figure src="/images/hypermodern-python-01/opera_crop01.jpg" link="/images/hypermodern-python-01/opera_crop01.jpg" >}}
+[Read this article on Medium](https://medium.com/@cjolowicz/)
 
-<!-- Welcome to a whirlwind tour of the Python ecosystem in early 2020! -->
+{{< figure src="/images/hypermodern-python-01/opera_crop01.jpg" link="/images/hypermodern-python-01/opera_crop01.jpg" >}}
 
 New Year 2020 [marks the end](https://www.python.org/doc/sunset-python-2/) of
 more than a decade of coexistence of Python 2 and
 3. The Python landscape has changed considerably over this period: a host of new
 tools and best practices now improve the Python developer experience. Their
 adoption, however, lags behind due to the constraints of legacy support.
-
-<!-- Time to show how to build a Python project for *hypermodernists!* [^1] -->
 
 This article series is a guide to modern Python tooling with a focus on
 simplicity and minimalism.[^1] It walks you through the creation of a complete
@@ -68,7 +66,6 @@ In this first chapter, we set up a Python project using
 command-line application, which uses the Wikipedia API to display random facts
 on the console.
 
-<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 Here are the topics covered in this chapter:
 
 - [Setting up a GitHub repository](#setting-up-a-github-repository)
@@ -79,8 +76,6 @@ Here are the topics covered in this chapter:
 - [Managing dependencies with Poetry](#managing-dependencies-with-poetry)
 - [Command-line interfaces with click](#command-line-interfaces-with-click)
 - [Example: Consuming a REST API with requests](#example-consuming-a-rest-api-with-requests)
-
-<!-- markdown-toc end -->
 
 Here is a list of the articles in this series:
 
