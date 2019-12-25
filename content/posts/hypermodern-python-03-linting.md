@@ -264,6 +264,8 @@ should also have a look at
 [asottile/reorder-python-imports](https://github.com/asottile/reorder_python_imports)
 and [sqlalchemyorg/zimports](https://github.com/sqlalchemyorg/zimports).
 
+[How to integrate isort with this project](https://github.com/cjolowicz/hypermodern-python/compare/chapter03...chapter03-isort)
+
 ## Finding more bugs with flake8-bugbear
 
 {{< figure src="/images/hypermodern-python-03/cote05.jpg" link="/images/hypermodern-python-03/cote05.jpg" >}}
