@@ -481,7 +481,129 @@ def tests(session):
 ```
 
 Your linter checks are now deterministic, and your Nox sessions benefit from
-Poetry's convenient and reliable dependency management.
+Poetry's convenient and reliable dependency management. ✌
+
+## Managing Git hooks with pre-commit
+
+Git provides [hooks](https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks)
+which allow you to run custom commands when important actions occur, such as a
+commit or push. You can leverage this to run automated checks when you commit
+changes. [pre-commit](https://pre-commit.com/) is a framework for managing and
+maintaining such hooks. Use it to integrate the [best industry standard
+linters](https://pre-commit.com/hooks.html) into your workflow, even those
+written in a language other than Python.
+
+Install pre-commit via [pip](https://pip.readthedocs.org/) or
+[pipx](https://github.com/pipxproject/pipx):
+
+```sh
+pip install --user --upgrade pre-commit
+```
+
+Configure pre-commit using the `.pre-commit-config.yaml` configuration file, in
+the top-level directory of your repository. Let's start with the following
+sample configuration:
+
+```yaml
+# .pre-commit-config.yaml
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.3.0
+    hooks:
+    -   id: check-yaml
+    -   id: end-of-file-fixer
+    -   id: trailing-whitespace
+-   repo: https://github.com/psf/black
+    rev: 19.3b0
+    hooks:
+    -   id: black
+```
+
+Install the hooks by running the following command:
+
+```sh
+pre-commit install
+```
+
+The hooks will run automatically every time you invoke `git commit`, with checks
+restricted to the files changed by the commit. When you add new hooks (like just
+now), you can trigger them manually for all files using the following command:
+
+```sh
+$ pre-commit run --all-files
+
+[INFO] Initializing environment for https://github.com/pre-commit/pre-commit-hooks.
+[INFO] Initializing environment for https://github.com/psf/black.
+[INFO] Installing environment for https://github.com/pre-commit/pre-commit-hooks.
+[INFO] Once installed this environment will be reused.
+[INFO] This may take a few minutes...
+[INFO] Installing environment for https://github.com/psf/black.
+[INFO] Once installed this environment will be reused.
+[INFO] This may take a few minutes...
+Check Yaml...............................................................Passed
+Fix End of Files.........................................................Failed
+- hook id: end-of-file-fixer
+- exit code: 1
+- files were modified by this hook
+
+Fixing LICENSE
+
+Trim Trailing Whitespace.................................................Passed
+black....................................................................Passed
+```
+
+As you can see from the output, the `end-of-file-fixer` hook failed because the
+license file was missing a final newline. The hook has already inserted the
+missing newline into the file, so you can simply commit LICENSE:
+
+```sh
+git commit --message="Fix missing newline at end of LICENSE" LICENSE
+```
+
+The sample configuration contains an entry for Black, installing the specified
+version into an isolated environment managed by pre-commit. But we already
+manage Black as a development dependency with Poetry. Instead of managing the
+dependency in two separate places, you can run Black in the development
+environment created by Poetry:
+
+```yaml
+# .pre-commit-config.yaml
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.3.0
+    hooks:
+    -   id: check-yaml
+    -   id: end-of-file-fixer
+    -   id: trailing-whitespace
+-   repo: local
+    hooks:
+    -   id: black
+        name: black
+        entry: poetry run black
+        language: system
+        types: [python]
+```
+
+You can run Flake8 from the pre-commit hook using the same technique:
+
+```yaml
+# .pre-commit-config.yaml
+-   repo: local
+    hooks:
+    -   id: black
+        ...
+    -   id: flake8
+        name: flake8
+        entry: poetry run flake8
+        language: system
+        types: [python]
+```
+
+These checks run somewhat faster than the corresponding Nox sessions, for two
+reasons:
+
+- They only run on files changed by the commit in question.
+- They assume that the tools are already installed.
 
 ## Thanks for reading!
 
