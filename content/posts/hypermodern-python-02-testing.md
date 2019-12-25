@@ -11,7 +11,7 @@ tags:
   - pytest-mock
 ---
 
-[Read this article on Medium](https://medium.com/@cjolowicz/hypermodern-python-xxxxxx)
+[Read this article on Medium](https://medium.com/@cjolowicz/hypermodern-python-2-testing-ae907a920260)
 
 {{< figure src="/images/hypermodern-python-02/verne01.jpg" link="/images/hypermodern-python-02/verne01.jpg" >}}
 
