@@ -32,7 +32,8 @@ Here are the topics covered in this chapter on Linting in Python:
 - [Code formatting with Black](#code-formatting-with-black)
 - [Checking imports with flake8-import-order](#checking-imports-with-flake8-import-order)
 - [Finding more bugs with flake8-bugbear](#finding-more-bugs-with-flake8-bugbear)
-- [Identifying security issues with bandit](#identifying-security-issues-with-bandit)
+- [Identifying security issues with Bandit](#identifying-security-issues-with-bandit)
+- [Finding security vulnerabilities in dependencies with Safety](#finding-security-vulnerabilities-in-dependencies-with-safety)
 - [Managing development dependencies in Nox sessions](#managing-development-dependencies-in-nox-sessions)
 - [Managing Git hooks with pre-commit](#managing-git-hooks-with-precommit)
 
@@ -60,8 +61,11 @@ repository:
 
 Linters analyze source code to flag programming errors, bugs, stylistic errors,
 and suspicious constructs. The most common ones for Python are
-[pylint](https://www.pylint.org), [flake8](http://flake8.pycqa.org), and
-[pylama](https://github.com/klen/pylama). In this chapter, we use Flake8.
+[pylint](https://www.pylint.org) and the linter aggregators
+[flake8](http://flake8.pycqa.org), [pylama](https://github.com/klen/pylama), and
+[prospector](https://prospector.readthedocs.io/). There are also multi-language
+linter frameworks such as [pre-commit](https://pre-commit.com/) and
+[coala](https://coala.io/#/home?lang=Python). In this chapter, we use Flake8.
 
 Add a Nox session to run Flake8 on your codebase:
 
@@ -306,7 +310,7 @@ ignore = E203,E501,W503
 max-line-length = 80
 ```
 
-## Identifying security issues with bandit
+## Identifying security issues with Bandit
 
 {{< figure src="/images/hypermodern-python-03/cote06.jpg" link="/images/hypermodern-python-03/cote06.jpg" >}}
 
@@ -348,6 +352,54 @@ expectations in tests:
 [flake8]
 per-file-ignores = tests/*:S101
 ...
+```
+
+Bandit finds known issues that can be detected via static file checking. If you
+are very concerned with security, you should consider using additional tools,
+for example a fuzzing tool such as
+[python-afl](https://github.com/jwilk/python-afl).
+
+## Finding security vulnerabilities in dependencies with Safety
+
+{{< figure src="/images/hypermodern-python-03/cote09.jpg" link="/images/hypermodern-python-03/cote09.jpg" >}}
+
+[Safety](https://github.com/pyupio/safety) checks the dependencies of your
+project for known security vulnerabilities, using a curated database of insecure
+Python packages. Add the following Nox session to run Safety on your project:
+
+```python
+import tempfile
+
+
+@nox.session(python="3.8")
+def safety(session):
+    with tempfile.NamedTemporaryFile() as requirements:
+        session.run(
+            "poetry",
+            "export",
+            "--dev",
+            "--format=requirements.txt",
+            "--without-hashes",
+            f"--output={requirements.name}",
+            external=True,
+        )
+        session.install("safety")
+        session.run("safety", "check", f"--file={requirements.name}", "--full-report")
+```
+
+The session uses the [poetry export](https://python-poetry.org/docs/cli/#export)
+command to convert Poetry's lock file to a [requirements
+file](https://pip.readthedocs.io/en/stable/user_guide/#requirements-files), for
+consumption by Safety. The standard
+[tempfile](https://docs.python.org/3/library/tempfile.html) module is used to
+create a temporary file for the requirements.
+
+Include Safety in the default Nox sessions by adding it to
+`nox.options.sessions`:
+
+```python
+# noxfile.py
+nox.options.sessions = "lint", "safety", "tests"
 ```
 
 ## Managing development dependencies in Nox sessions
