@@ -42,7 +42,7 @@ Here is a full list of the articles in this series:
 
 - [Chapter 1: Setup](../hypermodern-python-01-setup)
 - [Chapter 2: Testing](../hypermodern-python-02-testing) (this article)
-- *Chapter 3: Linting*
+- [Chapter 3: Linting](../hypermodern-python-03-linting)
 - *Chapter 4: Typing*
 - *Chapter 5: Documentation*
 - *Chapter 6: CI/CD*
@@ -870,11 +870,8 @@ nox -rs tests-3.8 -- -m e2e
 
 ## Thanks for reading!
 
-The next chapter is about linting your project. It will be published on January
-15, 2020.
+The [next chapter](../hypermodern-python-03-linting) is about linting your
+project.
 
-{{< figure src="/images/hypermodern-python-02/train.jpg" class="centered" >}}
-<!-- 
 {{< figure src="/images/hypermodern-python-02/train.jpg" link="../hypermodern-python-03-linting" class="centered" >}}
 <span class="centered">[Continue to the next chapter](../hypermodern-python-03-linting)</span>
--->
