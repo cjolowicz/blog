@@ -193,23 +193,9 @@ def random_page(language: str = "en"):
 Annotating the return type of this function is a more complex affair. The
 function returns a [JSON](https://www.json.org/json-en.html) object, which is
 represented in Python using built-in types such as `dict`, `list`, `str`, and
-`int`. The resulting structures can be nested to an arbitrary level.
-
-Let's take a look at the *requests* library, whose function `Response.json()`
-provides the return value for our function. If you dig into the [source
-code](https://github.com/psf/requests/blob/a9ee0eef5a70acb9ed35622b3675574b11f92cb4/requests/models.py#L894-L918),
-you will be sourly disappointed: The function has no type annotations.
-
-Many Python packages, both third-party and in the standard library, do not
-include type annotations, owing to the fact that typing in Python is optional
-and still relatively new. Instead, a collection of external type annotations
-(*stubs*) was created in the form of
-[typeshed](https://github.com/python/typeshed). These external type annotations
-are consulted by type checkers and other tools that rely on static types.
-
-Looking at *requests* [stub
-file](https://github.com/python/typeshed/blob/b6b9df3836d0448bae5255f9b2984c3a45d8db67/third_party/2and3/requests/models.pyi#L140)
-on typeshed, we find the following definition:
+`int`. The resulting structures can be nested to an arbitrary level. If you look
+at the type annotation for `requests.Response.json()`, you will find the
+following definition:
 
 ```python
 # typeshed/third_party/2and3/requests/models.pyi
@@ -220,24 +206,38 @@ class Response:
     def json(self, **kwargs) -> Any: ...
 ```
 
-You can think of the enigmatic `Any` type as a box which can hold *any* type on
-the inside, and behaves like *all* of these types on the outside. It is the most
-permissive kind of type you can apply to a variable, parameter, or return type
-in your program.
+<!--
+
+Incidentally, this definition is not located in the *requests* library, but in
+the [typeshed](https://github.com/python/typeshed) repository, a collection of
+external type annotations (*stubs*) contributed by the Python community. Many
+Python packages, both third-party and in the standard library, do not include
+type annotations, owing to the fact that typing in Python is optional and still
+relatively new.
+
+-->
+
+You can think of the enigmatic
+[Any](https://docs.python.org/3/library/typing.html#the-any-type) type as a box
+which can hold *any* type on the inside, and behaves like *all* of these types
+on the outside. It is the most permissive kind of type you can apply to a
+variable, parameter, or return type in your program.
 
 You may wonder why the stub specifies such a broad return type instead of
-providing a more exact representation of the JSON standard. The [main reason for
-this](https://github.com/python/typing/issues/182) is that a JSON type would be
-inherently recursive: the lists and dictionaries in a JSON object can themselves
-hold any JSON object. Recursive types are [not yet fully
-supported](https://github.com/python/mypy/issues/731) in mypy, the *de facto*
-reference implementation for Python type-checking.
+providing a more exact representation of the JSON standard. The main reason for
+this is that a JSON type [would be inherently
+recursive](https://github.com/python/typing/issues/182): the lists and
+dictionaries in a JSON object can themselves hold any JSON object. Recursive
+types are [not yet fully supported](https://github.com/python/mypy/issues/731)
+in mypy.
 
-Let's go back to our own use case. Can't we be more specific than `Any`? After
-all, the [Wikipedia API docs](https://en.wikipedia.org/api/rest_v1/#/) tell us
-exactly which kind of JSON objects we can expect from each API endpoint. --
-Actually no, we strictly cannot because we only know at runtime what the API
-returns. That is, we cannot unless we *validate* the data we received.
+But can't we be more specific than `Any`? After all, the [Wikipedia API
+docs](https://en.wikipedia.org/api/rest_v1/#/) tell us exactly which kind of
+JSON objects we can expect from each API endpoint. -- Actually no, we cannot
+because we only know at runtime what the API returns. That is, we cannot unless
+we *validate* the data we received.
+
+## Runtime type validation using Desert and Marshmallow
 
 <!--
 Another reason is that in most use cases, you have additional knowledge about
