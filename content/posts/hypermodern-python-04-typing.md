@@ -1,7 +1,7 @@
 --- 
-date: 2019-11-07T12:52:59+02:00
-title: "Hypermodern Python 4: Typing"
-description: "Coding in Python like Savielly Tartakower."
+date: 2020-01-15T10:04:00+01:00
+title: "Hypermodern Python Chapter 4: Typing"
+description: "A guide to modern Python tooling with a focus on simplicity and minimalism."
 draft: true
 tags:
   - python
@@ -11,27 +11,38 @@ tags:
   - flake8
 ---
 
+[Read this article on Medium](https://medium.com/@cjolowicz/hypermodern-python-4-typing-xxxxxxxxxxxx)
+
 In this fourth installment of the Hypermodern Python series, I'm going to
-discuss how to add static type checking to your project.
+discuss how to add static type checking to your project.[^1] Previously, we
+discussed [how to add linting, static analysis, and code
+formatting](../hypermodern-python-03-linting).
 
-For your reference, below is a list of the articles in this series.
+[^1]: The images in this chapter are details from illustrations to the book *A
+    Journey in Other Worlds: A Romance of the Future* by John Jacob Astor, 1894
+    (source: [The Internet
+    Archive](https://archive.org/details/journeyinotherwo00astouoft)).
 
-- [Chapter 1: Setup](../hypermodern-python-01-setup)
-- [Chapter 2: Testing](../hypermodern-python-02-testing)
-- [Chapter 3: Linting](../hypermodern-python-03-linting)
-- [Chapter 4: Typing](../hypermodern-python-04-typing) (this article)
-- [Chapter 5: Documentation](../hypermodern-python-05-documentation)
-- [Chapter 6: CI/CD](../hypermodern-python-06-ci-cd)
-- [Appendix: Docker](../hypermodern-python-07-deployment)
-
-<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
-**In this chapter:**
+Here are the topics covered in this chapter on Typing in Python:
 
 - [Static type checkers and type annotations](#static-type-checkers-and-type-annotations)
 - [Static type checking with mypy](#static-type-checking-with-mypy)
 - [Static type checking with pytype](#static-type-checking-with-pytype)
 - [Increasing type coverage with flake8-annotations](#increasing-type-coverage-with-flake8-annotations)
 - [Adding type annotations to the test suite](#adding-type-annotations-to-the-test-suite)
+
+Here is a full list of the articles in this series:
+
+- [Chapter 1: Setup](../hypermodern-python-01-setup)
+- [Chapter 2: Testing](../hypermodern-python-02-testing)
+- [Chapter 3: Linting](../hypermodern-python-03-linting)
+- [Chapter 4: Typing](../hypermodern-python-04-typing) (this article)
+- *Chapter 5: Documentation*
+- *Chapter 6: CI/CD*
+- *Appendix: Docker*
+
+<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
+**In this chapter:**
 
 <!-- markdown-toc end -->
 
