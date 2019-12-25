@@ -34,7 +34,7 @@ Here are the topics covered in this chapter on Linting in Python:
 - [Finding more bugs with flake8-bugbear](#finding-more-bugs-with-flake8-bugbear)
 - [Identifying security issues with Bandit](#identifying-security-issues-with-bandit)
 - [Finding security vulnerabilities in dependencies with Safety](#finding-security-vulnerabilities-in-dependencies-with-safety)
-- [Managing development dependencies in Nox sessions](#managing-development-dependencies-in-nox-sessions)
+- [Managing dependencies in Nox sessions with Poetry](#managing-dependencies-in-nox-sessions-with-poetry)
 - [Managing Git hooks with pre-commit](#managing-git-hooks-with-precommit)
 
 Here is a full list of the articles in this series:
@@ -65,7 +65,8 @@ and suspicious constructs. The most common ones for Python are
 [flake8](http://flake8.pycqa.org), [pylama](https://github.com/klen/pylama), and
 [prospector](https://prospector.readthedocs.io/). There are also multi-language
 linter frameworks such as [pre-commit](https://pre-commit.com/) and
-[coala](https://coala.io/#/home?lang=Python). In this chapter, we use Flake8.
+[coala](https://coala.io/#/home?lang=Python). In this chapter, we use Flake8 and
+pre-commit.
 
 Add a Nox session to run Flake8 on your codebase:
 
@@ -89,7 +90,7 @@ method installs Flake8 into the virtual environment via
 [pip](https://pip.pypa.io/).
 
 Flake8 glues together several tools. The messages produced by these tools are
-assigned error codes, prefixed by one or more letters. These prefixes group the
+assigned error codes, prefixed by one or more letters. The prefixes group the
 errors into so-called violation classes:
 
 - `F` are errors reported by [pyflakes](https://github.com/PyCQA/pyflakes), a
@@ -160,8 +161,8 @@ nox > Session black was successful.
 
 Invoking `nox` without arguments triggers all the sessions, including Black. It
 would be better to only validate the coding style without modifying the
-conflicting files. You can exclude Black from the sessions run by default, by
-setting `nox.options.sessions`:
+conflicting files. Exclude Black from the sessions run by default, by setting
+`nox.options.sessions` at the top:
 
 ```python
 # noxfile.py
@@ -251,16 +252,16 @@ with respect to the grouping and ordering details:
 import-order-style = google
 ```
 
-Recommending an import linter is not an easy task, as there is currently a lot
-of movement in this area. The excellent plugin recommended in this section has
-been placed in [maintenance
+Recommending an import linter in 2020 is not an easy task, as there is currently
+a lot of movement in this area. The excellent plugin recommended in this section
+has been placed in [maintenance
 mode](https://github.com/PyCQA/flake8-import-order/issues/163#issuecomment-468923340).
 An alternative is [isort](https://timothycrosley.github.io/isort/), which comes
 with Flake8 integration via
 [flake8-isort](https://github.com/gforcada/flake8-isort) and additionally
 supports rewriting files. isort enjoys widespread popularity, but has also
 attracted
-[much](https://github.com/PyCQA/flake8-import-order/issues/163#issuecomment-450659551)
+much <!-- [](https://github.com/PyCQA/flake8-import-order/issues/163#issuecomment-450659551) -->
 [criticism](https://github.com/psf/black/issues/333#issuecomment-414123095)
 (which its author [intends to
 address](https://github.com/psf/black/issues/333#issuecomment-490241054) in the
@@ -402,13 +403,12 @@ Include Safety in the default Nox sessions by adding it to
 nox.options.sessions = "lint", "safety", "tests"
 ```
 
-## Managing development dependencies in Nox sessions
+## Managing dependencies in Nox sessions with Poetry
 
 {{< figure src="/images/hypermodern-python-03/cote07.jpg" link="/images/hypermodern-python-03/cote07.jpg" >}}
 
 In this section, I describe how to use Poetry to manage development dependencies
-in your Nox sessions, and how to make the checks in your Nox sessions
-deterministic.
+in your Nox sessions, and how to make your Nox sessions more reproducible.
 
 In the first chapter, we saw that Poetry writes the exact version of each
 package dependency to a file named `poetry.lock`. The same is done for
@@ -416,8 +416,8 @@ development dependencies like `pytest`. This is known as *pinning*, and it
 allows you to build and test your package in a predictable and deterministic
 way.
 
-By contrast, this is how we have been installing packages into our Nox sessions
-so far:
+By contrast, this is how we have been installing packages into Nox sessions so
+far:
  
 ```python
 session.install("flake8")
@@ -430,13 +430,13 @@ Integration server, due to a change to Flake8 or one of its dependencies. These
 things happen all the time, and the problem accumulates quickly as the
 dependencies of your project grow.
 
-We could pin Flake8 using something like the following:
+You could pin Flake8 using something like the following:
 
 ```python
 session.install("flake8==3.7.9")
 ```
 
-This approach improves our situation, but it has some limitations:
+This approach improves the situation, but it has some limitations:
 
 - We're back to handling requirements manually, rather than using Poetry's rich
   support for dependency management.
@@ -468,9 +468,9 @@ package to be able to run the test suite, but you don't need to install your
 package to run linters on it. Linters are *static analysis tools*, they don't
 need to run your program.
 
-Wouldn't it be great if we could install individual packages with
+Wouldn't it be great if you could install individual packages with
 `session.install`, but somehow use Poetry's lock file to constrain their
-versions? Fortunately, there is a pip feature that let's us do exactly this:
+versions? Fortunately, there is a pip feature that let's you do exactly this:
 [constraints
 files](https://pip.pypa.io/en/stable/user_guide/#constraints-files). If you have
 used a `requirements.txt` file before, the format is exactly the same. And
@@ -486,9 +486,6 @@ temporary file for the constraints.
 
 ```python
 # noxfile.py
-import tempfile
-
-
 def install_with_constraints(session, *args, **kwargs):
     with tempfile.NamedTemporaryFile() as requirements:
         session.run(
@@ -525,9 +522,26 @@ def lint(session):
         "flake8-import-order",
     )
     session.run("flake8", *args)
+
+
+@nox.session(python="3.8")
+def safety(session):
+    with tempfile.NamedTemporaryFile() as requirements:
+        session.run(
+            "poetry",
+            "export",
+            "--dev",
+            "--format=requirements.txt",
+            "--without-hashes",
+            f"--output={requirements.name}",
+            external=True,
+        )
+        install_with_constraints(session, "safety")
+        session.run("safety", "check", f"--file={requirements.name}", "--full-report")
 ```
 
-You can now use Poetry to manage Black and Flake8 as development dependencies:
+You can now use Poetry to manage Black, Flake8, and the other tools as
+development dependencies:
 
 ```sh
 poetry add --dev \
@@ -536,7 +550,8 @@ poetry add --dev \
     flake8-bandit \
     flake8-black \
     flake8-bugbear \
-    flake8-import-order
+    flake8-import-order \
+    security
 ```
 
 You should also adapt the testing session. That session only needs packages
@@ -638,10 +653,10 @@ newline to the file, so you can simply commit the file:
 git commit --message="Fix missing newline at end of LICENSE" LICENSE
 ```
 
-The sample configuration pins Black to a specific version, and so does Poetry's
-lock file. This setup requires you to keep the versions aligned manually, and
-can result in failed checks when the environments managed by pre-commit, Poetry,
-and Nox drift apart.
+There is a problem though: The sample configuration pins Black to a specific
+version, and so does Poetry's lock file. This setup requires you to keep the
+versions aligned manually, and can result in failed checks when the environments
+managed by pre-commit, Poetry, and Nox drift apart.
 
 Let's replace the Black entry using a [repository-local
 hook](https://pre-commit.com/#repository-local-hooks), and run Black in the
