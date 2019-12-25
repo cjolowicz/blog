@@ -409,8 +409,8 @@ Invoke Nox again to see that the test suite passes. 🎉
 
 Mocking not only speeds up your test suite, or lets you hack offline on a plane
 or train. By virtue of having a fixed, or deterministic, return value, the mock
-also enables you to write repeatable tests. This means, for example, that you
-can check that the title returned by the API is printed to the console:
+also enables you to write repeatable tests. This means you can, for example,
+check that the title returned by the API is printed to the console:
 
 ```python
 def test_main_prints_title(runner, mock_requests_get):
@@ -574,7 +574,7 @@ def get_random_fact():
 
 ## Adding an option to select the Wikipedia language edition
 
-In the final section, we will add an option to select the [language
+In this final section, we add a command-line option to select the [language
 edition](https://en.wikipedia.org/wiki/List_of_Wikipedias) of Wikipedia.
 Wikipedia editions are identified by a language code, which is used as a
 subdomain below wikipedia.org. Usually, this is the two-letter or three-letter
