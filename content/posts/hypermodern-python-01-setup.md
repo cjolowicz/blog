@@ -23,15 +23,16 @@ adoption is lagging behind, due to the constraints of legacy support.
 
 <!-- Time to show how to build a Python project for *hypermodernists!* [^1] -->
 
-This article series[^1] is a guide to modern Python tooling with a focus on
-simplicity and minimalism. It will walk you through the creation of a complete
-and up-to-date Python project structure, with unit tests, static analysis,
-type-checking, documentation, and continuous integration and delivery.
+This article series is a guide to modern Python tooling with a focus on
+simplicity and minimalism.[^1] It will walk you through the creation of a
+complete and up-to-date Python project structure, with unit tests, static
+analysis, type-checking, documentation, and continuous integration and delivery.
 
 [^1]: The title of this guide is inspired by the book *Die hypermoderne
-    Schachpartie* (The hypermodern chess game), written by [Savielly
-    Tartakower](https://en.wikipedia.org/wiki/Savielly_Tartakower) in 1925 to
-    modernize chess theory. The images in this chapter are details from the
+    Schachpartie* (The hypermodern game of chess), written by [Savielly
+    Tartakower](https://en.wikipedia.org/wiki/Savielly_Tartakower) in 1924. It
+    surveys the revolution that had taken place in chess theory in the decade
+    after the First World War. The images in this chapter are details from the
     hand-colored print *Le Sortie de l'opéra en l'an 2000* (Leaving the opera in
     the year 2000) by Albert Robida, ca 1902 (source: [Library of
     Congress](http://www.loc.gov/pictures/item/2007676247/)).
@@ -216,7 +217,7 @@ source ~/.poetry/env
 Initialize your Python project:
 
 ```sh
-poetry init -n  # --no-interaction
+poetry init --no-interaction
 ```
 
 This command will create a `pyproject.toml` file, the new Python package
@@ -388,25 +389,9 @@ The dependency entry in `pyproject.toml` contains a [version
 constraint](https://poetry.eustace.io/docs/versions/) for the installed package:
 `^7.0`. This means that users of the package need to have at least the current
 release, `7.0`. The constraint also allows newer releases of the package, as
-long as the version number does not indicate breaking changes.<!-- [^2] -->
-
-> Breaking changes are only allowed in major releases (incrementing the most
-> significant version digit). Packages with a version number smaller than 1.0.0
-> are a little special, in that breaking changes may occur in all releases
-> except patch releases (incrementing any but the least significant version
-> digit). You can edit the version constraint, for example if a package you
-> depend on does not follow the [Semantic Versioning](https://semver.org/)
-> scheme.
-
-<!--
-[^2]: Breaking changes are only allowed in major releases (incrementing the most
-      significant version digit). Packages with a version number smaller than
-      1.0.0 are a little special, in that breaking changes may occur in all
-      releases except patch releases (incrementing any but the least significant
-      version digit). You can edit the version constraint, for example if a
-      package you depend on does not follow the [Semantic
-      Versioning](https://semver.org/) scheme.
--->
+long as the version number does not indicate breaking changes. (After 1.0.0,
+[Semantic Versioning](https://semver.org/) limits breaking changes to major
+releases.)
 
 By contrast, `poetry.lock` contains the exact version of `click` installed into
 the virtual environment. Place this file under source control. It allows
@@ -598,7 +583,9 @@ Feel free to play around with this a little. Here are some things you might try:
 
 ## Thanks for reading!
 
-In the [next chapter](../hypermodern-python-02-testing), I'm going to discuss
-how to add unit tests to your project.
+In the next chapter, I'm going to discuss how to add unit tests to your project.
 
-{{< figure src="/images/hypermodern-python-01/specimensofprint_crop05.png" link="../hypermodern-python-02-testing" >}}
+---
+
+{{< figure src="/images/hypermodern-python-01/specimensofprint_crop05.png" link="../hypermodern-python-02-testing" class="centered" >}}
+<span class="centered">[Continue to the next chapter](../hypermodern-python-02-testing)</span>
