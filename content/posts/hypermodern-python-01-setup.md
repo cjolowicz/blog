@@ -10,7 +10,7 @@ tags:
   - requests
 ---
 
-<!-- [Read this article on Medium](https://medium.com/@cjolowicz/) -->
+[Read this article on Medium](https://medium.com/@cjolowicz/hypermodern-python-d44485d9d769)
 
 {{< figure src="/images/hypermodern-python-01/opera_crop01.jpg" link="/images/hypermodern-python-01/opera_crop01.jpg" >}}
 
