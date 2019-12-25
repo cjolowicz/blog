@@ -492,9 +492,11 @@ fine-grained test cases make it easier to figure out why the test suite failed
 when it does.
 
 Tests for a feature or bugfix should be written *before* implementation. This is
-also known as "writing a failing test". The reason for this is that it provides
-confidence that the tests are actually testing something, and do not simply pass
-because of a flaw in the tests themselves.
+also known as "[writing a failing
+test](https://www.icemobile.com/uploads/inline/test.driven.development.cartoon_0.jpeg)".
+The reason for this is that it provides confidence that the tests are actually
+testing something, and do not simply pass because of a flaw in the tests
+themselves.
 
 ## Example CLI: Refactoring
 
