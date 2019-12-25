@@ -20,18 +20,7 @@ discuss how to add unit tests to your project.[^1]
     (source: [Internet
     Archive](https://archive.org/details/delaterrelalu00vern))
 
-Here is a list of the articles in this series.
-
-- [Chapter 1: Setup](../hypermodern-python-01-setup)
-- [Chapter 2: Testing](../hypermodern-python-02-testing) (this article)
-- [Chapter 3: Linting](../hypermodern-python-03-linting)
-- [Chapter 4: Typing](../hypermodern-python-04-typing)
-- [Chapter 5: Documentation](../hypermodern-python-05-documentation)
-- [Chapter 6: CI/CD](../hypermodern-python-06-ci-cd)
-- [Appendix: Docker](../hypermodern-python-07-deployment)
-
-<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
-**In this chapter:**
+Here are the topics covered in this chapter:
 
 - [Unit testing with pytest](#unit-testing-with-pytest)
 - [Code coverage with coverage.py](#code-coverage-with-coveragepy)
@@ -39,7 +28,17 @@ Here is a list of the articles in this series.
 - [Mocking with pytest-mock](#mocking-with-pytest-mock)
 - [More mocking with pytest-mock](#more-mocking-with-pytest-mock)
 
-<!-- markdown-toc end -->
+Here is a list of the articles in this series:
+
+- [Chapter 1: Setup](../hypermodern-python-01-setup)
+- [Chapter 2: Testing](../hypermodern-python-02-testing) (this article)
+- *Chapter 3: Linting*
+- *Chapter 4: Typing*
+- *Chapter 5: Documentation*
+- *Chapter 6: CI/CD*
+- *Appendix: Docker*
+
+*(Remaining chapters will be published over the coming weeks.)*
 
 This guide has a companion repository:
 [cjolowicz/hypermodern-python](https://github.com/cjolowicz/hypermodern-python).
@@ -48,18 +47,6 @@ repository.
 
 - [View changes](https://github.com/cjolowicz/hypermodern-python/compare/initial...chapter01)
 - [Download code](https://github.com/cjolowicz/hypermodern-python/archive/chapter01.zip)
-
-<!-- 
-
-This chapter introduces the following tools:
-
-- [nox](https://nox.thea.codes/) 
-- [pytest](https://docs.pytest.org/en/latest/)
-- [pytest-cov](https://pytest-cov.readthedocs.io/en/latest/) 
-- [pytest-mock](https://github.com/pytest-dev/pytest-mock)
-- [Coverage.py](https://coverage.readthedocs.io/)
-
--->
 
 ## Unit testing with pytest
 
@@ -144,7 +131,7 @@ Invoke `pytest` to run the test suite:
 ```python
 $ poetry run pytest
 ============================ test session starts =============================
-platform linux -- Python 3.8.1, pytest-5.2.2, py-1.8.0, pluggy-0.13.0
+platform linux -- Python 3.8.1, pytest-5.3.2, py-1.8.0, pluggy-0.13.1
 rootdir: /hypermodern-python
 collected 1 item
 
@@ -188,7 +175,7 @@ To enable coverage reporting, invoke `pytest` with the `--cov` option:
 ```python
 $ poetry run pytest -- --cov
 ============================= test session starts ==============================
-platform linux -- Python 3.8.1, pytest-5.2.2, py-1.8.0, pluggy-0.13.0
+platform linux -- Python 3.8.1, pytest-5.3.2, py-1.8.0, pluggy-0.13.1
 rootdir: /hypermodern-python
 plugins: cov-2.8.1
 collected 1 item

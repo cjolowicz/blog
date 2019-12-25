@@ -342,8 +342,8 @@ run](https://poetry.eustace.io/docs/cli/#run):
 ```python
 $ poetry run python
 
-Python 3.8.1 (default, Dec 19 2019, 17:17:20)
-[Clang 11.0.0 (clang-1100.0.20.17)] on darwin
+Python 3.8.1 (default, Dec 29 2019, 16:28:23)
+[GCC 8.3.0] on linux
 Type "help", "copyright", "credits" or "license" for more information.
 >>> import hypermodern_python
 >>> hypermodern_python.__version__
