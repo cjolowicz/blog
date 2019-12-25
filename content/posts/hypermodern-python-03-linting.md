@@ -29,11 +29,11 @@ Previously, we discussed [Automated Testing](../hypermodern-python-02-testing).
 Here are the topics covered in this chapter on Linting in Python:
 
 - [Linting with flake8](#linting-with-flake8)
-- [Pinning development dependencies with Poetry and Nox](#pinning-development-dependencies-with-poetry-and-nox)
 - [Code formatting with Black](#code-formatting-with-black)
 - [Checking imports with flake8-import-order](#checking-imports-with-flake8-import-order)
 - [Finding more bugs with flake8-bugbear](#finding-more-bugs-with-flake8-bugbear)
 - [Identifying security issues with bandit](#identifying-security-issues-with-bandit)
+- [Pinning development dependencies with Poetry and Nox](#pinning-development-dependencies-with-poetry-and-nox)
 
 Here is a full list of the articles in this series:
 
@@ -78,11 +78,10 @@ def lint(session):
 
 The
 [session.install](https://nox.thea.codes/en/stable/config.html#nox.sessions.Session.install)
-method uses [pip](https://pip.pypa.io/) to install packages into the virtual
-environments created by Nox. By default, we run Flake8 on three locations: the
-package source tree, the test suite, and `noxfile.py` itself. But you can
-override this by passing specific source files to Nox, separated from Nox's own
-options by `--`.
+method installs packages into the virtual environment via
+[pip](https://pip.pypa.io/). By default, we run Flake8 on three locations: the
+package source tree, the test suite, and `noxfile.py` itself. You can override
+this by passing specific source files, separated from Nox's own options by `--`.
 
 Flake8 glues together several tools. Each message is assigned an error code,
 prefixed by one or more letters. These prefixes group the errors into so-called
@@ -108,10 +107,9 @@ select = C,E,F,W
 max-complexity = 10
 ```
 
-By default, Nox runs all sessions defined in `noxfile.py`, but you can restrict
-it to the lint session using the [-\-session
+By default, Nox runs all sessions defined in `noxfile.py`. Use the [\-\-session
 (-s)](https://nox.thea.codes/en/stable/usage.html#specifying-one-or-more-sessions)
-option:
+option to restrict it to a specific session:
 
 ```sh
 nox -rs lint
@@ -120,145 +118,6 @@ nox -rs lint
 There are many [awesome Flake8
 extensions](https://github.com/DmytroLitvinov/awesome-flake8-extensions). Some
 of these will be presented in later sections.
-
-## Pinning development dependencies with Poetry and Nox
-
-<!-- OR: Using Poetry to pin dependencies in Nox sessions -->
-
-<!-- TODO: Add hint to skip to the next chapter if this is too complicated,
-replacing `install_with_constraints(session, ...)` by `session.install(...)` and
-omitting the `poetry add --dev` commands. -->
-
-What do you notice when you look at the following line in the Nox session?
- 
-```python
-session.install("flake8")
-```
-
-No version is specified! Nox will install whatever pip considers to be the
-latest version of Flake8 at the time when the session is run.
-
-<!-- 
-TODO Why is this bad? accumulates quickly
--->
-
-In the first Chapter, I explained that Poetry writes the exact version of each
-package dependency to a file named `poetry.lock`. The same is done for
-development dependencies like `pytest`. This is also known as *pinning*, and it
-allows you to create an automated pipeline to build and test your package in a
-predictable and deterministic way.
-
-We could pin Flake8 using something like the following:
-
-```python
-session.install("flake8==3.7.9")
-```
-
-While this approach works, it has some drawbacks:
-
-- We're back to handling requirements manually, rather than using Poetry's rich
-  support for dependency management.
-- The check is still not deterministic, because dependencies of dependencies
-  remain unpinned. Flake8 is a good example for this: At its core, it aggregates
-  several more specialized tools, and these are still installed without any
-  version constraint.
-
-How about we declare Flake8 as a *development dependency* of our project, like
-we did with Pytest in the previous chapter? Then we could benefit from Poetry as
-a dependency manager, and have Flake8 and its dependencies recorded in
-`poetry.lock`. Well, there is a catch. Look at how we installed development
-dependencies into the testing session:
-
-```python
-session.run("poetry", "install", external=True)
-```
-
-Unfortunately, this would install a bunch of things our linting session does not
-need:
-
-- the package itself
-- the package dependencies, such as Click
-- other development dependencies, such as Pytest
-
-A major difference between testing and linting is that you need to install your
-package to be able to run the test suite, but you don't need to install your
-package to run linters on it. Linters are *static analysis tools*, they don't
-need to run your program.
-
-Wouldn't it be great if we could somehow use Poetry's lock file to constrain
-what pip installs into the isolated environment? Fortunately, there is a
-somewhat lesser known pip feature that let's us do exactly this: [constraints
-files](https://pip.pypa.io/en/stable/user_guide/#constraints-files). If you have
-used a `requirements.txt` file before, the format is exactly the same. And
-Poetry has a command to export the lock file to `requirements.txt` format. So we
-have all the building blocks for a solution.
-
-Change the Nox session to call a wrapper function `install_with_constraints`
-instead of invoking `session.install` directly:
-
-```python
-@nox.session(python=["3.8", "3.7"])
-def lint(session):
-    args = session.posargs or locations
-    install_with_constraints(session, "flake8")
-    session.run("flake8", *args)
-```
-
-The function `install_with_constraints` generates a constraints file using
-[poetry export](https://python-poetry.org/docs/cli/#export), and passes it to
-`session.install` using the `--constraint` option, along with any specified
-positional or keyword arguments. We use the standard
-[tempfile](https://docs.python.org/3/library/tempfile.html) module to write the
-constraints to a temporary file on the fly, ensuring they are always up-to-date.
-
-```python
-# noxfile.py
-import tempfile
-
-
-def install_with_constraints(session, *args, **kwargs):
-    with tempfile.NamedTemporaryFile() as requirements:
-        session.run(
-            "poetry",
-            "export",
-            "--dev",
-            "--format=requirements.txt",
-            f"--output={requirements.name}",
-            external=True,
-        )
-        session.install(f"--constraint={requirements.name}", *args, **kwargs)
-```
-
-You can now use Poetry to manage Flake8 and its dependencies as a development
-dependency:
-
-```sh
-poetry add --dev flake8
-```
-
-Run `nox -s lint` to make sure everything still works.
-
-Before adding more static analysis tools as development dependencies, we should
-also adapt our existing testing session. The testing session only needs to
-install development dependencies required for running the test suite, and should
-not be cluttered by static analysis tools and anything else we may decide to
-install for development.
-
-Instead of simply invoking `poetry install`, pass the `--no-dev` option. This
-excludes development dependencies, and installs only the package itself and its
-dependencies. Then install the test requirements explicitly using the new
-`install_with_constraints` function. Here is the rewritten Nox session:
-
-```python
-@nox.session(python=["3.8", "3.7"])
-def tests(session):
-    args = session.posargs or ["--cov", "-m", "not e2e"]
-    session.run("poetry", "install", "--no-dev", external=True)
-    install_with_constraints(
-        session, "coverage[toml]", "pytest", "pytest-cov", "pytest-mock",
-    )
-    session.run("pytest", *args)
-```
 
 ## Code formatting with Black
 
@@ -466,6 +325,153 @@ expectations in tests:
 [flake8]
 per-file-ignores = tests/*:S101
 ...
+```
+
+## Managing development dependencies in Nox sessions
+
+In the first Chapter, we saw that Poetry writes the exact version of each
+package dependency to a file named `poetry.lock`. The same is done for
+development dependencies like `pytest`. This is known as *pinning*, and it
+allows you to build and test your package in a predictable and deterministic
+way.
+
+By contrast, this is how we have been installing packages into our Nox sessions
+so far:
+ 
+```python
+session.install("flake8")
+```
+
+No version specified! Nox will install whatever pip considers the latest version
+when the session is run. The checks may succeed when you run them on your local
+machine, but suddenly break on another developer's machine or on a Continuous
+Integration server, due to a change to Flake8 or one of its dependencies. These
+things happen all the time, and the problem accumulates quickly as the
+dependencies of your project grow.
+
+We could pin Flake8 using something like the following:
+
+```python
+session.install("flake8==3.7.9")
+```
+
+This approach improves our situation, but it has some limitations:
+
+- We're back to handling requirements manually, rather than using Poetry's rich
+  support for dependency management.
+- The check is still not deterministic, because dependencies of dependencies
+  remain unpinned. Flake8 is a good example for this: At its core, it aggregates
+  several more specialized tools, and these are still installed without any
+  version constraint.
+
+How about we declare Flake8 as a *development dependency* of our project, like
+we did with Pytest in the previous chapter? Then we can benefit from Poetry as a
+dependency manager, and record the versions of Flake8 and its dependencies in
+its lock file. -- Well, there is a catch. Look how we installed development
+dependencies in the Nox session for testing:
+
+```python
+session.run("poetry", "install", external=True)
+```
+
+This command installs a bunch of things our linting session does not need:
+
+- the package under development
+- the package dependencies
+- unrelated development dependencies (e.g. Pytest)
+
+A major difference between testing and linting is that you need to install your
+package to be able to run the test suite, but you don't need to install your
+package to run linters on it. Linters are *static analysis tools*, they don't
+need to run your program.
+
+Wouldn't it be great if we could install individual packages with
+`session.install`, but somehow use Poetry's lock file to constrain their
+versions? Fortunately, there is a pip feature that let's us do exactly this:
+[constraints
+files](https://pip.pypa.io/en/stable/user_guide/#constraints-files). If you have
+used a `requirements.txt` file before, the format is exactly the same. And
+Poetry has a command to export its lock file to requirements format. So we have
+all the building blocks for a solution.
+
+The function `install_with_constraints` below is a wrapper for
+`session.install`. It generates a constraints file by running [poetry
+export](https://python-poetry.org/docs/cli/#export), and passes that file to pip
+using its `--constraint` option. The function uses the standard
+[tempfile](https://docs.python.org/3/library/tempfile.html) module to create a
+temporary file for the constraints.
+
+```python
+# noxfile.py
+import tempfile
+
+
+def install_with_constraints(session, *args, **kwargs):
+    with tempfile.NamedTemporaryFile() as requirements:
+        session.run(
+            "poetry",
+            "export",
+            "--dev",
+            "--format=requirements.txt",
+            f"--output={requirements.name}",
+            external=True,
+        )
+        session.install(f"--constraint={requirements.name}", *args, **kwargs)
+```
+
+Change the Nox sessions to call the `install_with_constraints` wrapper instead
+of invoking `session.install` directly:
+
+```python
+@nox.session(python="3.8")
+def black(session):
+    args = session.posargs or locations
+    install_with_constraints(session, "black")
+    session.run("black", *args)
+
+
+@nox.session(python=["3.8", "3.7"])
+def lint(session):
+    args = session.posargs or locations
+    install_with_constraints(
+        session,
+        "flake8",
+        "flake8-bandit",
+        "flake8-black",
+        "flake8-bugbear",
+        "flake8-import-order",
+    )
+    session.run("flake8", *args)
+```
+
+You can now use Poetry to manage Black and Flake8 as development dependencies:
+
+```sh
+poetry add --dev \
+    black \
+    flake8 \
+    flake8-bandit \
+    flake8-black \
+    flake8-bugbear \
+    flake8-import-order
+```
+
+You should also adapt the testing session. The testing session only needs to
+install packages required for running the test suite, and should not be
+cluttered by anything else. Instead of simply invoking `poetry install`, pass
+the `--no-dev` option. This excludes development dependencies, and installs only
+the package itself and its dependencies. Then install the test requirements
+explicitly using `install_with_constraints`. Here is the rewritten Nox session:
+
+```python
+@nox.session(python=["3.8", "3.7"])
+def tests(session):
+    args = session.posargs or ["--cov", "-m", "not e2e"]
+    session.run("poetry", "install", "--no-dev", external=True)
+    install_with_constraints(
+        session, "coverage[toml]", "pytest", "pytest-cov", "pytest-mock",
+    )
+    session.run("pytest", *args)
 ```
 
 ## Thanks for reading!
