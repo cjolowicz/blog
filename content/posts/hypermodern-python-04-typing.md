@@ -25,7 +25,7 @@ code formatting](../hypermodern-python-03-linting).
 
 Here are the topics covered in this chapter on Typing in Python:
 
-- [Static type checkers and type annotations](#static-type-checkers-and-type-annotations)
+- [Type annotations and type checkers](#type-annotations-and-type-checkers)
 - [Static type checking with mypy](#static-type-checking-with-mypy)
 - [Static type checking with pytype](#static-type-checking-with-pytype)
 - [Adding type annotations to the package](#adding-type-annotations-to-the-package)
@@ -130,8 +130,7 @@ nox -rs mypy
 
 Mypy raises an error if it cannot find any type definitions for a Python package
 used by your program. Unless you are going to write these type definitions
-yourself (which you can), you should disable the error using the `mypy.ini`
-configuration file:
+yourself, you should disable the error using the `mypy.ini` configuration file:
 
 ```ini
 # mypy.ini
@@ -166,16 +165,16 @@ def pytype(session):
     session.run("pytype", *args)
 ```
 
+The session runs in Python 3.7 only, because Python 3.8 is [not yet
+supported](https://github.com/google/pytype/issues/440) in pytype. We also pass
+the command-line option `--disable=import-error`. Like mypy, pytype reports
+import errors for third-party packages without type annotations.
+
 Run the Nox session using the following command:
 
 ```sh
 nox -rs pytype
 ```
-
-The session runs in Python 3.7 only, because Python 3.8 is [not yet
-supported](https://github.com/google/pytype/issues/440) in pytype. We also pass
-the command-line option `--disable=import-error`. Like mypy, pytype reports
-import errors for third-party packages without type annotations.
 
 Update `nox.options.session` to include static type checking with pytype in the
 default Nox sessions:
@@ -210,10 +209,10 @@ The `wikipedia.random_page` function accepts an optional parameter of type
 def random_page(language: str = "en"):
 ```
 
-The function returns the JSON object received from the Wikipedia API. JSON
-objects are represented in Python using built-in types such as `dict`, `list`,
-`str`, and `int`, and can be arbitrarily nested. Due to the recursive nature of
-JSON objects, their type is still [hard to
+The `wikipedia.random_page` function returns the JSON object received from the
+Wikipedia API. JSON objects are represented in Python using built-in types such
+as `dict`, `list`, `str`, and `int`. Due to the recursive nature of JSON
+objects, their type is still [hard to
 express](https://github.com/python/typing/issues/182) in Python, and is usually
 given as [Any](https://docs.python.org/3/library/typing.html#the-any-type):
 
@@ -238,10 +237,10 @@ Wikipedia API. An API contract is not a type guarantee, but you can turn it into
 one by validating the data you receive. This will also demonstrate some great
 ways to use type annotations *at runtime*.
 
-The first step on the road is defining the target type for the validation. The
-API returns a dictionary with several keys, of which we are only interested in
-`title` and `extract`. But your program can do better than operating on a
-dictionary: Using
+The first step on the road is defining the target type for the validation.
+Currently, the function should return a dictionary with several keys, of which
+we are only interested in `title` and `extract`. But your program can do better
+than operating on a dictionary: Using
 [dataclasses](https://docs.python.org/3/library/dataclasses.html) from the
 standard library, you can define fully-featured data types in a concise and
 straightforward manner. Let's define a `wikipedia.Page` type for our
@@ -267,7 +266,7 @@ def random_page(language: str = "en") -> Page:
 
 Data types have a beneficial influence on the structure of code bases. You can
 see this by adapting `console.main` to use `wikipedia.Page` instead of the raw
-dictionary:
+dictionary. The body turns into a clear and concise three-liner:
 
 ```python
 # src/hypermodern_python/console.py
@@ -279,7 +278,17 @@ def main(language: str) -> None:
     click.echo(textwrap.fill(page.extract))
 ```
 
-So how are we going to turn JSON into Page objects? Enter
+Of course, we are still missing the actual code to create `wikipedia.Page`
+objects. Let's start with a test case, performing a simple runtime type check:
+
+```python
+# tests/test_wikipedia.py
+def test_random_page_returns_page(mock_requests_get):
+    page = wikipedia.random_page()
+    assert isinstance(page, wikipedia.Page)
+```
+
+How are we going to turn JSON into `wikipedia.Page` objects? Enter
 [Marshmallow](https://marshmallow.readthedocs.io/): This library allows you to
 define schemas to serialize, deserialize and validate data. Used by countless
 applications, Marshmallow has also spawned an ecosystem of tools and libraries
@@ -293,20 +302,28 @@ Add Desert and Marshmallow to your dependencies:
 poetry add desert marshmallow
 ```
 
-Generating a schema with desert works like this:
+You need to add the libraries to `mypy.ini` to avoid import errors:
 
-```python
-# src/hypermodern_python/wikipedia.py
-import desert
-
-
-schema = desert.schema(Page)
+```ini
+# mypy.ini
+[mypy-desert,marshmallow,nox.*,pytest,pytest_mock,_pytest.*]
+ignore_missing_imports = True
 ```
 
-As noted above, our Page type represents the Wikipedia resource only partially.
-Marshmallow errs on the side of safety and raises a validation error when
-encountering unknown fields. You can tell it to ignore unknown fields via the
-`meta` keyword:
+The basic usage of Desert is shown in the following example:
+
+```python
+# Generate a schema from a dataclass.
+schema = desert.schema(Page)
+
+# Use the schema to load data.
+page = schema.load(data)
+```
+
+Our data type represents the Wikipedia page resource only partially. Marshmallow
+errs on the side of safety and raises a validation error when encountering
+unknown fields. However, you can tell it to ignore unknown fields via the `meta`
+keyword. Add the schema as a module-level variable: 
 
 ```python
 # src/hypermodern_python/wikipedia.py
@@ -317,33 +334,46 @@ import marshmallow
 schema = desert.schema(Page, meta={"unknown": marshmallow.EXCLUDE})
 ```
 
-Using this schema, we are ready to implement `wikipedia.random_page`. We also
-take this opportunity to add basic exception handling for validation errors.
+Using the schema, we are ready to implement `wikipedia.random_page`:
 
 ```python
 # src/hypermodern_python/wikipedia.py
 def random_page(language: str = "en") -> Page:
-    url = API_URL.format(language=language)
-
-    try:
-        with requests.get(url) as response:
-            response.raise_for_status()
-            data = response.json()
-            return schema.load(data)
-    except (requests.RequestException, marshmallow.ValidationError) as error:
-        message = str(error)
-        raise click.ClickException(message)
+    ...
+    with requests.get(url) as response:
+        response.raise_for_status()
+        data = response.json()
+        return schema.load(data)
 ```
 
-You also need to add the libraries to `mypy.ini` to avoid import errors:
+Let's also handle validation errors gracefully by converting them to
+`ClickException`, like we did in [chapter
+2](../hypermodern-python-02-testing#example-cli-handling-exceptions-gracefully)
+for request errors. As an example, suppose that Wikipedia responds with a body
+of "null" instead of an actual resource, due to a fictitious bug.
 
-```ini
-# mypy.ini
-[mypy-desert,marshmallow,nox.*,pytest,pytest_mock,_pytest.*]
-ignore_missing_imports = True
+We can turn this scenario into a test case by configuring the `requests.get`
+mock to produce `None` as the JSON object, and using
+[pytest.raises](https://docs.pytest.org/en/stable/reference.html#pytest-raises)
+to check for the correct exception:
+
+```python
+# tests/test_wikipedia.py
+def test_random_page_handles_validation_errors(mock_requests_get: Mock) -> None:
+    mock_requests_get.return_value.__enter__.return_value.json.return_value = None
+    with pytest.raises(click.ClickException):
+        wikipedia.random_page()
 ```
 
-Here is the final `wikipedia` module:
+Getting this to pass is a simple matter of adding `marshmallow.ValidationError`
+to the except clause:
+
+```python
+# src/hypermodern_python/wikipedia.py
+except (requests.RequestException, marshmallow.ValidationError) as error:
+```
+
+This completes the implementation. Here is the final `wikipedia` module:
 
 ```python
 # src/hypermodern_python/wikipedia.py
