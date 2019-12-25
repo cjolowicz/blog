@@ -859,12 +859,11 @@ nox -rs tests-3.8 -- -m e2e
 
 ## Thanks for reading!
 
-The next chapter is about adding linting to your project. It will be published
-on January 15, 2020.
+The next chapter is about linting your project. It will be published on January
+15, 2020.
 
+{{< figure src="/images/hypermodern-python-02/train.jpg" class="centered" >}}
 <!-- 
----
-
 {{< figure src="/images/hypermodern-python-02/train.jpg" link="../hypermodern-python-03-linting" class="centered" >}}
 <span class="centered">[Continue to the next chapter](../hypermodern-python-03-linting)</span>
 -->
