@@ -12,7 +12,7 @@ tags:
   - pre-commit
 ---
 
-[Read this article on Medium](https://medium.com/@cjolowicz/hypermodern-python-3-linting-xxxxxxxxxxxx)
+[Read this article on Medium](https://medium.com/@cjolowicz/hypermodern-python-3-linting-e2f15708da80)
 
 {{< figure src="/images/hypermodern-python-03/cote01.jpg" link="/images/hypermodern-python-03/cote01.jpg" >}}
 
