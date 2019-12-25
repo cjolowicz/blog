@@ -1,7 +1,7 @@
 --- 
 date: 2020-01-02T08:00:00+02:00
-title: "Hypermodern Python 2: Testing"
-description: "Coding in Python like Savielly Tartakower."
+title: "Hypermodern Python Chapter 2: Testing"
+description: "A guide to modern Python tooling with a focus on simplicity and minimalism."
 draft: true
 tags:
   - python
@@ -14,14 +14,16 @@ tags:
 
 In this second installment of the Hypermodern Python series, I'm going to
 discuss how to add unit tests to your project, and how to teach the random fact
-generator foreign languages.[^1]
+generator foreign languages.[^1] Previously, we discussed [How to set up a
+Python project](../hypermodern-python-01-setup).
+
 
 [^1]: The images in this chapter come from Émile-Antoine Bayard's Illustrations
     for From the Earth to the Moon (De la terre à la lune) by Jules Verne (1870)
     (source: [Internet
     Archive](https://archive.org/details/delaterrelalu00vern))
 
-Here are the topics covered in this chapter:
+Here are the topics covered in this chapter on Testing in Python:
 
 - [Unit testing with pytest](#unit-testing-with-pytest)
 - [Code coverage with coverage.py](#code-coverage-with-coveragepy)
@@ -33,7 +35,7 @@ Here are the topics covered in this chapter:
 - [Using fakes](#using-fakes)
 - [End-to-end testing](#endtoend-testing)
 
-Here is a list of the articles in this series:
+Here is a full list of the articles in this series:
 
 - [Chapter 1: Setup](../hypermodern-python-01-setup)
 - [Chapter 2: Testing](../hypermodern-python-02-testing) (this article)
@@ -89,8 +91,8 @@ different parts of the source tree [have the same
 name](https://github.com/pytest-dev/pytest/issues/3151). Furthermore, it gives
 you the option to import modules from within your tests package.
 
-The file `test_console.py` contains a test case for the `console` module,
-checking if the program exits with a status code of zero.
+The file `test_console.py` contains a test case for the `console` module, which
+checks whether the program exits with a status code of zero.
 
 ```python
 # tests/test_console.py
@@ -205,18 +207,18 @@ coverage only tells you that all lines and branches in your code base were hit.
 (In fact, our test case achieved full coverage without checking the
 functionality of the program at all, only its exit status.)
 
-However, aiming for 100% code coverage is good practice, especially for a fresh
-codebase. Anything less than that implies that some part of your code base is
-definitely untested. And to quote [Bruce
+Nevertheless, aiming for 100% code coverage is good practice, especially for a
+fresh codebase. Anything less than that implies that some part of your code base
+is definitely untested. And to quote [Bruce
 Eckel](https://en.wikipedia.org/wiki/Bruce_Eckel), *if it's not tested, it's
-broken*. Later, we will see some tools that help you achieve the goal of
-extensive code coverage.
+broken*. Later, we will see some tools that help you achieve extensive code
+coverage.
 
 ## Test automation with Nox
 
-One of my personal favorites, [nox](https://nox.thea.codes/) is a successor to
+One of my personal favorites, [Nox](https://nox.thea.codes/) is a successor to
 the venerable [tox](https://tox.readthedocs.io/). At its core, the tool
-automates testing in multiple Python environments. It makes it easy to run any
+automates testing in multiple Python environments. Nox makes it easy to run any
 kind of job in an isolated environment, with only those dependencies installed
 that the particular job needs.
 
@@ -351,11 +353,11 @@ for console output, and receives a mock object instead. Simply "knocking out"
 something meaningful, namely a response with a valid JSON object.
 
 When a mock object is called, or when an attribute is accessed, it returns
-another mock object. Sometimes this suffices to get you through a test case.
-When it doesn't, you need to *configure* the mock object. To configure an
+another mock object. Sometimes this is sufficient to get you through a test
+case. When it is not, you need to *configure* the mock object. To configure an
 attribute, you simply set the attribute to the desired value. To configure the
 return value for when the mock is called, you set `return_value` on the mock
-object as if it was an attribute.
+object as if it were an attribute.
 
 Let's look at the example again:
 
@@ -365,7 +367,7 @@ with requests.get(API_URL) as response:
     data = response.json()
 ```
 
-The code uses the response as a [context
+The code above uses the response as a [context
 manager](https://docs.python.org/3/reference/datamodel.html#context-managers).
 The `with` statement is syntactic sugar for the following slightly simplified
 pseudocode:
@@ -421,7 +423,8 @@ def test_main_prints_title(runner, mock_requests_get):
     assert "Lorem Ipsum" in result.output
 ```
 
-Also, mocks can be inspected to see if they were called, using the mock's
+Additionally, mocks can be inspected to see if they were called, using the
+mock's
 [called](https://docs.python.org/3/library/unittest.mock.html#unittest.mock.Mock.called)
 attribute. This provides you with a way to check that `requests.get` was invoked
 to send a request to the API:
@@ -464,10 +467,10 @@ You should generally have a single assertion per test case, because more
 fine-grained test cases make it easier to figure out why the test suite failed
 when it does.
 
-Generally, tests for a feature or bugfix should be written *before* implementing
-it. This is also known as "writing a failing test". The reason for this is that
-it provides confidence that the tests are actually testing something, and do not
-simply pass because of a flaw in the tests themselves.
+Generally, tests for a feature or bugfix should be written *before*
+implementation. This is also known as "writing a failing test". The reason for
+this is that it provides confidence that the tests are actually testing
+something, and do not simply pass because of a flaw in the tests themselves.
 
 ## Example: Refactoring
 
@@ -674,7 +677,7 @@ def test_main_uses_specified_language(runner, mock_wikipedia_random_page):
 
 We are now ready to implement the new functionality using the
 [click.option](https://click.palletsprojects.com/en/7.x/options/) decorator.
-With no further ado, here is the final version of the `console` module:
+Without further ado, here is the final version of the `console` module:
 
 ```python
 # src/hypermodern-python/console.py
@@ -776,10 +779,10 @@ def fake_api():
 
 ## End-to-end testing
 
-Testing against the live production server is bad practise for unit tests, but
+Testing against the live production server is bad practice for unit tests, but
 there is nothing like the confidence you get from seeing your code work in a
 real environment. Such tests are known as *end-to-end tests*, and while they are
-usually too slow, brittle and unpredictable for the kind of automated testing
+usually too slow, brittle, and unpredictable for the kind of automated testing
 you would want to do on a CI server or in the midst of development, they do have
 their place.
 
