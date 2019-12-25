@@ -12,19 +12,21 @@ tags:
 
 {{< figure src="/images/hypermodern-python-01/opera_crop01.jpg" link="/images/hypermodern-python-01/opera_crop01.jpg" >}}
 
-Welcome to a whirlwind tour of the Python ecosystem in late 2019! This is a
-guide to modern Python tooling with a focus on simplicity and minimalism. It
-will walk you through the creation of a complete and up-to-date Python project
-structure, with unit tests, static analysis, type-checking, documentation, and
-continuous integration and delivery.
+Welcome to a whirlwind tour of the Python ecosystem in early 2020! 
 
-On New Year 2020, more than a decade of coexistence of Python 2 and 3 [will come
+On New Year 2020, more than a decade of coexistence of Python 2 and 3 [has come
 to a close](https://www.python.org/doc/sunset-python-2/). The Python landscape
-has changed significantly over this period, and a host of new tools and best
-practices continue to improve the Python developer experience. At the same time,
-their adoption has lagged behind, due to the constraints of legacy support.
+had changed considerably over this period: a host of new tools and best
+practices continued to improve the Python developer experience. At the same
+time, their adoption was lagging behind, due to the constraints of legacy
+support.
 
 Time to show how to build a Python project for *hypermodernists!* [^1]
+
+This is a guide to modern Python tooling with a focus on simplicity and
+minimalism. It will walk you through the creation of a complete and up-to-date
+Python project structure, with unit tests, static analysis, type-checking,
+documentation, and continuous integration and delivery.
 
 [^1]: The title of this guide is inspired by the book *Die hypermoderne
     Schachpartie* (The hypermodern chess game), written by [Savielly
@@ -40,7 +42,19 @@ boilerplate and workarounds required by the legacy toolbox.
 
 > *You need a recent Linux, Unix, or Mac system with
 > [bash](https://www.gnu.org/software/bash/), [curl](https://curl.haxx.se) and
-> [git](https://www.git-scm.com) for this tutorial.*
+> [git](https://www.git-scm.com) for this tutorial, or Windows 10 with the
+> Windows Subsystem for Linux.*
+
+On Windows 10, enable the [Windows Subsystem for
+Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10) (WSL) and
+install the Ubuntu 18.04 LTS distribution. Open Ubuntu from the Start Menu, and
+install additional packages using the following command:
+
+```sh
+sudo apt update && sudo apt install -y make build-essential libssl-dev zlib1g-dev \
+libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev \
+libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python-openssl git
+```
 
 ## Overview
 
