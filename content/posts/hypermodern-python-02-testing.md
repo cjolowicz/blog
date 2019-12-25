@@ -1,5 +1,5 @@
 --- 
-date: 2020-01-02T08:00:00+02:00
+date: 2020-01-07T08:00:00+02:00
 title: "Hypermodern Python Chapter 2: Testing"
 description: "A guide to modern Python tooling with a focus on simplicity and minimalism."
 draft: true
@@ -12,6 +12,10 @@ tags:
   - pytest-mock
 ---
 
+[Read this article on Medium](https://medium.com/@cjolowicz/hypermodern-python-xxxxxx)
+
+{{< figure src="/images/hypermodern-python-02/verne01.jpg" link="/images/hypermodern-python-02/verne01.jpg" >}}
+
 In this second installment of the Hypermodern Python series, I'm going to
 discuss how to add unit tests to your project, and how to teach the random fact
 generator foreign languages.[^1] Previously, we discussed [How to set up a
@@ -20,13 +24,14 @@ Python project](../hypermodern-python-01-setup).
 
 [^1]: The images in this chapter come from Émile-Antoine Bayard's Illustrations
     for From the Earth to the Moon (De la terre à la lune) by Jules Verne (1870)
-    (source: [Internet
-    Archive](https://archive.org/details/delaterrelalu00vern))
+    (source: [Internet Archive](https://archive.org/details/delaterrelalu00vern)
+    via [Public Domain
+    Review](https://publicdomainreview.org/collection/emile-antoine-bayard-s-illustrations-for-around-the-moon-by-jules-verne-1870))
 
 Here are the topics covered in this chapter on Testing in Python:
 
 - [Unit testing with pytest](#unit-testing-with-pytest)
-- [Code coverage with coverage.py](#code-coverage-with-coveragepy)
+- [Code coverage with Coverage.py](#code-coverage-with-coveragepy)
 - [Test automation with Nox](#test-automation-with-nox)
 - [Mocking with pytest-mock](#mocking-with-pytestmock)
 - [Example: Refactoring](#example-refactoring)
@@ -48,12 +53,14 @@ Here is a full list of the articles in this series:
 This guide has a companion repository:
 [cjolowicz/hypermodern-python](https://github.com/cjolowicz/hypermodern-python).
 Each article in the guide corresponds to a set of commits in the GitHub
-repository.
+repository:
 
 - [View changes](https://github.com/cjolowicz/hypermodern-python/compare/chapter01...chapter02)
 - [Download code](https://github.com/cjolowicz/hypermodern-python/archive/chapter02.zip)
 
 ## Unit testing with pytest
+
+{{< figure src="/images/hypermodern-python-02/verne02.jpg" link="/images/hypermodern-python-02/verne02.jpg" >}}
 
 It's never too early to add unit tests to a project. 
 
@@ -107,11 +114,11 @@ def test_main_succeeds():
     assert result.exit_code == 0
 ```
 
-The `CliRunner` is needed to invoke the command-line interface from within a
+Click's `testing.CliRunner` can invoke the command-line interface from within a
 test case. Since this is likely to be needed by most test cases in this module,
 let's turn it into a [test
-fixture](https://docs.pytest.org/en/latest/fixture.html). Test fixtures are
-declared as simple functions with the `pytest.fixture` decorator. Test cases can
+fixture](https://docs.pytest.org/en/latest/fixture.html). *Test fixtures* are
+simple functions declared with the `pytest.fixture` decorator. Test cases can
 use a test fixture by including a function parameter with the same name as the
 test fixture.
 
@@ -147,7 +154,9 @@ tests/test_console.py .                                                 [100%]
 ============================= 1 passed in 0.03s ==============================
 ```
 
-## Code coverage with coverage.py
+## Code coverage with Coverage.py
+
+{{< figure src="/images/hypermodern-python-02/verne03.jpg" link="/images/hypermodern-python-02/verne03.jpg" >}}
 
 *Code coverage* is a measure of the degree to which the source code of your
 program is executed while running its test suite. The code coverage of Python
@@ -216,11 +225,13 @@ coverage.
 
 ## Test automation with Nox
 
+{{< figure src="/images/hypermodern-python-02/verne04.jpg" link="/images/hypermodern-python-02/verne04.jpg" >}}
+
 One of my personal favorites, [Nox](https://nox.thea.codes/) is a successor to
 the venerable [tox](https://tox.readthedocs.io/). At its core, the tool
 automates testing in multiple Python environments. Nox makes it easy to run any
 kind of job in an isolated environment, with only those dependencies installed
-that the particular job needs.
+that the job needs.
 
 Install Nox via [pip](https://pip.readthedocs.org/) or
 [pipx](https://github.com/pipxproject/pipx):
@@ -306,6 +317,8 @@ nox -- tests/test_console.py
 ```
 
 ## Mocking with pytest-mock
+
+{{< figure src="/images/hypermodern-python-02/verne05.jpg" link="/images/hypermodern-python-02/verne05.jpg" >}}
 
 Unit tests should be [fast, isolated, and
 repeatable](http://agileinaflash.blogspot.com/2009/02/first.html). The test for
@@ -467,12 +480,14 @@ You should generally have a single assertion per test case, because more
 fine-grained test cases make it easier to figure out why the test suite failed
 when it does.
 
-Generally, tests for a feature or bugfix should be written *before*
-implementation. This is also known as "writing a failing test". The reason for
-this is that it provides confidence that the tests are actually testing
-something, and do not simply pass because of a flaw in the tests themselves.
+Tests for a feature or bugfix should be written *before* implementation. This is
+also known as "writing a failing test". The reason for this is that it provides
+confidence that the tests are actually testing something, and do not simply pass
+because of a flaw in the tests themselves.
 
 ## Example: Refactoring
+
+{{< figure src="/images/hypermodern-python-02/verne06.jpg" link="/images/hypermodern-python-02/verne06.jpg" >}}
 
 The great thing about a good test suite is that it allows you to refactor your
 code without fear of breaking it. Let's move the Wikipedia client to a separate
@@ -529,6 +544,8 @@ nox > * tests-3.7: success
 
 ## Example: Handling exceptions gracefully
 
+{{< figure src="/images/hypermodern-python-02/verne07.jpg" link="/images/hypermodern-python-02/verne07.jpg" >}}
+
 If you run the example application without an Internet connection, your terminal
 will be filled with a long traceback. This is what happens when the Python
 interpreter is terminated by an unhandled exception. For common errors such as
@@ -578,6 +595,8 @@ def random_page():
 ```
 
 ## Example: Selecting the Wikipedia language edition
+
+{{< figure src="/images/hypermodern-python-02/verne08.jpg" link="/images/hypermodern-python-02/verne08.jpg" >}}
 
 In this section, we add a command-line option to select the [language
 edition](https://en.wikipedia.org/wiki/List_of_Wikipedias) of Wikipedia. 
@@ -714,6 +733,8 @@ language skills (and the Unicode skills of your terminal emulator).
 
 ## Using fakes
 
+{{< figure src="/images/hypermodern-python-02/verne09.jpg" link="/images/hypermodern-python-02/verne09.jpg" >}}
+
 Mocks help you test code units depending on bulky subsystems, but they are [not
 the only
 technique](https://blog.pragmatists.com/test-doubles-fakes-mocks-and-stubs-1a7491dfa3da)
@@ -779,6 +800,8 @@ def fake_api():
 
 ## End-to-end testing
 
+{{< figure src="/images/hypermodern-python-02/verne10.jpg" link="/images/hypermodern-python-02/verne10.jpg" >}}
+
 Testing against the live production server is bad practice for unit tests, but
 there is nothing like the confidence you get from seeing your code work in a
 real environment. Such tests are known as *end-to-end tests*, and while they are
@@ -834,7 +857,14 @@ how you would run end-to-end tests inside the testing environment for Python
 nox -rs tests-3.8 -- -m e2e
 ```
 
-## Thank you for reading!
+## Thanks for reading!
 
-In the [next chapter](../hypermodern-python-03-linting), I'm going to discuss
-how to add linting to your project.
+The next chapter is about adding linting to your project. It will be published
+on January 15, 2020.
+
+<!-- 
+---
+
+{{< figure src="/images/hypermodern-python-02/train.jpg" link="../hypermodern-python-03-linting" class="centered" >}}
+<span class="centered">[Continue to the next chapter](../hypermodern-python-03-linting)</span>
+-->
