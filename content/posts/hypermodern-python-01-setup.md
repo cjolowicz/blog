@@ -477,6 +477,8 @@ Options:
 
 ## Example: Consuming a REST API with requests
 
+{{< figure src="/images/hypermodern-python-01/opera_crop10.jpg" link="/images/hypermodern-python-01/opera_crop10.jpg" >}}
+
 To conclude this chapter, we are going to build an example application. The
 example application prints random facts to the console. The data is retrieved
 from the [Wikipedia API](https://www.mediawiki.org/wiki/REST_API).
