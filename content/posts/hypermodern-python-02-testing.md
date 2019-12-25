@@ -106,9 +106,11 @@ def test_main_succeeds():
 
 The `CliRunner` is needed to invoke the command-line interface from within a
 test case. Since this is likely to be needed by most test cases in this module,
-let's turn it into a *test fixture*. Test fixtures are declared as simple
-functions with the `pytest.fixture` decorator. Test cases can use a test fixture
-by including a function parameter with the same name as the test fixture.
+let's turn it into a [test
+fixture](https://docs.pytest.org/en/latest/fixture.html). Test fixtures are
+declared as simple functions with the `pytest.fixture` decorator. Test cases can
+use a test fixture by including a function parameter with the same name as the
+test fixture.
 
 ```python
 # tests/test_console.py
@@ -552,7 +554,8 @@ nox -rs tests-3.8 -- -m e2e
 
 The great thing about a good test suite is that it allows you to refactor your
 code without fear of breaking it. Let's move the API client code to a separate
-`client` module:
+module. Create a file `src/hypermodern-python/client.py` with the following
+contents:
 
 ```python
 # src/hypermodern-python/client.py
@@ -568,8 +571,8 @@ def get_random_fact():
         return response.json()
 ```
 
-The `console.main` function now simply invokes `client.get_random_fact` to
-retrieve the data for the random fact:
+Import `client` in the `console` module. The `console.main` function can now
+simply invoke `client.get_random_fact` to retrieve the data for the random fact:
 
 ```python
 # src/hypermodern-python/console.py
