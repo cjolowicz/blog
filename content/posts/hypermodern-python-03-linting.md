@@ -29,7 +29,7 @@ Previously, we discussed [Automated Testing](../hypermodern-python-02-testing).
 
 Here are the topics covered in this chapter on Linting in Python:
 
-- [Linting with flake8](#linting-with-flake8)
+- [Linting with Flake8](#linting-with-flake8)
 - [Code formatting with Black](#code-formatting-with-black)
 - [Checking imports with flake8-import-order](#checking-imports-with-flake8-import-order)
 - [Finding more bugs with flake8-bugbear](#finding-more-bugs-with-flake8-bugbear)
@@ -56,7 +56,7 @@ repository:
 - [View changes](https://github.com/cjolowicz/hypermodern-python/compare/chapter02...chapter03)
 - [Download code](https://github.com/cjolowicz/hypermodern-python/archive/chapter03.zip)
 
-## Linting with flake8
+## Linting with Flake8
 
 {{< figure src="/images/hypermodern-python-03/cote02.jpg" link="/images/hypermodern-python-03/cote02.jpg" >}}
 
