@@ -13,7 +13,8 @@ tags:
 ---
 
 In this second installment of the Hypermodern Python series, I'm going to
-discuss how to add unit tests to your project.[^1]
+discuss how to add unit tests to your project, and how to teach the random fact
+generator foreign languages.[^1]
 
 [^1]: The images in this chapter come from Émile-Antoine Bayard's Illustrations
     for From the Earth to the Moon (De la terre à la lune) by Jules Verne (1870)
@@ -615,7 +616,6 @@ the new file at the top-level of your tests package, and move the fixture there:
 ```python
 # tests/conftest.py
 import pytest
-import requests
 
 
 @pytest.fixture
@@ -706,17 +706,8 @@ def main(language):
     click.echo(textwrap.fill(extract))
 ```
 
-You now have a polyglot random fact generator. This may also be a fun way to
-test your language skills (and the Unicode skills of your terminal emulator).
-
-<!--
-
-While the code coverage is reported as 100%, the test does not check the
-functionality of the program at all. Remember, code coverage only tells you that
-all lines and branches in your code base were hit, not that the behavior of your
-program was checked in any meaningful way.
-
--->
+You now have a polyglot random fact generator, and a fun way to test your
+language skills (and the Unicode skills of your terminal emulator).
 
 ## Using fakes
 
