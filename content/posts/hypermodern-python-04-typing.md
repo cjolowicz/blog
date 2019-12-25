@@ -173,13 +173,20 @@ nox.options.sessions = "lint", "mypy", "pytype", "tests"
 
 ## Adding type annotations to the package
 
-Let's add type annotations to the `console.main` function. This is a simple
-function which accepts a `str` and returns `None` by falling off its end:
+Let's add type annotations to the `console.main` function. Do not be distracted
+by the decorators applied to it: This is just a simple function accepting a
+`str`, and returning `None` by "falling off its end".
 
 ```python
 # src/hypermodern_python/console.py
 def main(language: str) -> None:
     ...
+```
+
+Let's also annotate `wikipedia.API_URL`, a simple string constant:
+
+```python
+API_URL: str = "https://{language}.wikipedia.org/api/rest_v1/page/random/summary"
 ```
 
 The `wikipedia.random_page` function accepts an optional parameter of type
@@ -206,17 +213,6 @@ class Response:
     def json(self, **kwargs) -> Any: ...
 ```
 
-<!--
-
-Incidentally, this definition is not located in the *requests* library, but in
-the [typeshed](https://github.com/python/typeshed) repository, a collection of
-external type annotations (*stubs*) contributed by the Python community. Many
-Python packages, both third-party and in the standard library, do not include
-type annotations, owing to the fact that typing in Python is optional and still
-relatively new.
-
--->
-
 You can think of the enigmatic
 [Any](https://docs.python.org/3/library/typing.html#the-any-type) type as a box
 which can hold *any* type on the inside, and behaves like *all* of these types
@@ -239,68 +235,122 @@ we *validate* the data we received.
 
 ## Runtime type validation using Desert and Marshmallow
 
-<!--
-Another reason is that in most use cases, you have additional knowledge about
-the type of JSON structures you are dealing with, and it would be cumbersome to
-work with a completely generic JSON type. This points to a way to greatly
-improve our program: We only know at runtime what the API will return. So we
-should really *validate* the JSON structure.
-
----
-
-Dictionaries can be typed using `typing.Dict`. This is a generic type, which
-must be subscripted with the type of the dictionary keys (`str` in our case) and
-values (`Any`): `Dict[str, Any]`. Note that the Wikipedia resource does not only
-contain string values, so `Dict[str, str]` would be too specific.
+```sh
+poetry add desert
+```
 
 ```python
 # src/hypermodern_python/wikipedia.py
-from typing import Any, Dict
+from dataclasses import dataclass
 
----
 
-def random_page(language: str = "en") -> Dict[str, Any]:
+@dataclass
+class Page:
+    title: str
+    extract: str
 ```
-
-Using type definitions from the standard
-[typing](https://docs.python.org/3/library/typing.html) module we might attempt
-something like the following:
-
-```python
-from typing import Dict, List, Union
-
-
-JSON = Union[None, bool, int, float, str, List["JSON"], Dict[str, "JSON"]]
-
-
-def random_page(language: str = "en") -> JSON:
-```
-
-Unfortunately, this does not work because [recursive types are not yet
-supported](https://github.com/python/mypy/issues/731).
-
-We could be more specific by looking at the [Wikipedia API
-docs](https://en.wikipedia.org/api/rest_v1/#/):
-
-```python
-PageSummary = Dict[str, Union[str, int, Dict[str, int]]]
-```
-
-But the resulting type would be overspecified: The API could evolve in ways
-which would break it, even when our program does not use the affected features.
-For example, the API could give summaries an additional attribute with an
-unsupported type, such as `float` or `List[str]`.
-
-Providing a JSON type definition to the standard library was discussed at length
-[here](https://github.com/python/typing/issues/182).
--->
 
 ```python
 # src/hypermodern_python/wikipedia.py
-from typing import Any, Dict
+import desert
 
 
-def random_page(language: str = "en") -> Dict[str, Any]:
+schema = desert.schema(Page)
+
+
+def random_page(language: str = "en") -> Page:
+    url = API_URL.format(language=language)
+
+    try:
+        with requests.get(url) as response:
+            response.raise_for_status()
+            data = response.json()
+            return schema.load(data)
+    except requests.RequestException as error:
+        message = str(error)
+        raise click.ClickException(message)
+```
+
+```python
+# src/hypermodern_python/console.py
+import textwrap
+
+import click
+
+from . import __version__, wikipedia
+
+
+@click.command()
+@click.option(
+    "--language",
+    "-l",
+    default="en",
+    help="Language edition of Wikipedia",
+    metavar="LANG",
+    show_default=True,
+)
+@click.version_option(version=__version__)
+def main(language: str) -> None:
+    """The hypermodern Python project."""
+    page = wikipedia.random_page(language=language)
+
+    click.secho(page.title, fg="green")
+    click.echo(textwrap.fill(page.extract))
+```
+
+```ini
+# mypy.ini
+[mypy-desert,marshmallow,nox.*,pytest,pytest_mock,_pytest.*]
+ignore_missing_imports = True
+```
+
+```python
+# src/hypermodern_python/wikipedia.py
+import marshmallow
+
+
+schema = desert.schema(Page, meta={"unknown": marshmallow.EXCLUDE})
+```
+
+```python
+# src/hypermodern_python/wikipedia.py
+    except (requests.RequestException, marshmallow.ValidationError) as error:
+```
+
+```python
+# src/hypermodern_python/wikipedia.py
+from dataclasses import dataclass
+from typing import Final
+
+import click
+import desert
+import marshmallow
+import requests
+
+
+API_URL: Final = "https://{language}.wikipedia.org/api/rest_v1/page/random/summary"
+
+
+@dataclass
+class Page:
+    title: str
+    extract: str
+
+
+schema = desert.schema(Page, meta={"unknown": marshmallow.EXCLUDE})
+
+
+def random_page(language: str = "en") -> Page:
+    url = API_URL.format(language=language)
+
+    try:
+        with requests.get(url) as response:
+            response.raise_for_status()
+            data = response.json()
+            return schema.load(data)
+    except (requests.RequestException, marshmallow.ValidationError) as error:
+        message = str(error)
+        raise click.ClickException(message)
 ```
 
 ## Increasing type coverage with flake8-annotations
