@@ -1,8 +1,7 @@
 --- 
-date: 2020-01-07T08:00:00+02:00
+date: 2020-01-08T06:28:21+01:00
 title: "Hypermodern Python Chapter 2: Testing"
 description: "A guide to modern Python tooling with a focus on simplicity and minimalism."
-draft: true
 tags:
   - python
   - poetry
@@ -20,7 +19,6 @@ In this second installment of the Hypermodern Python series, I'm going to
 discuss how to add automated testing to your project, and how to teach the
 random fact generator foreign languages.[^1] Previously, we discussed [How to
 set up a Python project](../hypermodern-python-01-setup).
-
 
 [^1]: The images in this chapter come from Émile-Antoine Bayard's Illustrations
     for From the Earth to the Moon (De la terre à la lune) by Jules Verne (1870)
