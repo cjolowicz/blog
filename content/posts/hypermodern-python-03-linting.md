@@ -123,6 +123,12 @@ of these will be presented in later sections.
 
 ## Pinning development dependencies with Poetry and Nox
 
+<!-- OR: Using Poetry to pin dependencies in Nox sessions -->
+
+<!-- TODO: Add hint to skip to the next chapter if this is too complicated,
+replacing `install_with_constraints(session, ...)` by `session.install(...)` and
+omitting the `poetry add --dev` commands. -->
+
 What do you notice when you look at the following line in the Nox session?
  
 ```python
@@ -132,17 +138,17 @@ session.install("flake8")
 No version is specified! Nox will install whatever pip considers to be the
 latest version of Flake8 at the time when the session is run.
 
-In the first Chapter, I explained that Poetry writes the exact version of your
-package dependencies to a file named `poetry.lock`. The same is done for
+<!-- 
+TODO Why is this bad? accumulates quickly
+-->
+
+In the first Chapter, I explained that Poetry writes the exact version of each
+package dependency to a file named `poetry.lock`. The same is done for
 development dependencies like `pytest`. This is also known as *pinning*, and it
 allows you to create an automated pipeline to build and test your package in a
 predictable and deterministic way.
 
-<!-- 
-TODO Why is this good?
--->
-
-So why don't we just pin Flake8 using something like the following:
+We could pin Flake8 using something like the following:
 
 ```python
 session.install("flake8==3.7.9")
@@ -150,19 +156,18 @@ session.install("flake8==3.7.9")
 
 While this approach works, it has some drawbacks:
 
-- We're back to managing dependencies manually, rather than using Poetry's rich
+- We're back to handling requirements manually, rather than using Poetry's rich
   support for dependency management.
 - The check is still not deterministic, because dependencies of dependencies
-  remain unpinned. Flake8 is a good example for this: at its core, it aggregates
-  several more specialized analysis tools, and these are still installed without
-  any version constraint.
+  remain unpinned. Flake8 is a good example for this: At its core, it aggregates
+  several more specialized tools, and these are still installed without any
+  version constraint.
 
-How about we treat Flake8 as a *development dependency* like we did with Pytest
-in the previous chapter? This would mean that we can use Poetry as a dependency
-manager, and have Flake8 and its dependencies recorded in `poetry.lock`.
-
-Let's look at how we used Poetry to install development dependencies into the
-testing session:
+How about we declare Flake8 as a *development dependency* of our project, like
+we did with Pytest in the previous chapter? Then we could benefit from Poetry as
+a dependency manager, and have Flake8 and its dependencies recorded in
+`poetry.lock`. Well, there is a catch. Look at how we installed development
+dependencies into the testing session:
 
 ```python
 session.run("poetry", "install", external=True)
@@ -216,7 +221,7 @@ def install_with_constraints(session, *args, **kwargs):
         session.run(
             "poetry",
             "export",
-            f"--dev",
+            "--dev",
             "--format=requirements.txt",
             f"--output={requirements.name}",
             external=True,
@@ -236,11 +241,11 @@ Run `nox -s lint` to make sure everything still works.
 Before adding more static analysis tools as development dependencies, we should
 also adapt our existing testing session. The testing session only needs to
 install development dependencies required for running the test suite, and should
-not be cluttered by the static analysis toolbox and anything else we may decide
-to install for development.
+not be cluttered by static analysis tools and anything else we may decide to
+install for development.
 
-Instead of simply invoking `poetry install`, pass the `--no-dev` option to
-exclude development dependencies, and install only the package itself and its
+Instead of simply invoking `poetry install`, pass the `--no-dev` option. This
+excludes development dependencies, and installs only the package itself and its
 dependencies. Then install the test requirements explicitly using the new
 `install_with_constraints` function. Here is the rewritten Nox session:
 
