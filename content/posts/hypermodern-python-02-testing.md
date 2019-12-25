@@ -26,9 +26,11 @@ Here are the topics covered in this chapter:
 - [Code coverage with coverage.py](#code-coverage-with-coveragepy)
 - [Test automation with Nox](#test-automation-with-nox)
 - [Mocking with pytest-mock](#mocking-with-pytestmock)
-- [Refactoring the example application](#refactoring-the-example-application)
-- [Handling exceptions in the example application](#handling-exceptions-in-the-example-application)
-- [Adding an option to select the Wikipedia language edition](#adding-an-option-to-select-the-Wikipedia-language-edition)
+- [Example: Refactoring](#example-refactoring)
+- [Example: Handling exceptions gracefully](#example-handling-exceptions-gracefully)
+- [Example: Selecting the Wikipedia language edition](#example-selecting-the-wikipedia-language-edition)
+- [Using fakes](#using-fakes)
+- [End-to-end testing](#endtoend-testing)
 
 Here is a list of the articles in this series:
 
@@ -342,14 +344,6 @@ def test_main_succeeds(runner, mock_requests_get):
     ...
 ```
     
-<!--
-Like before, the fixture is added as a function parameter to the test case using
-it. This time, the fixture itself also depends on a fixture. This is expressed
-in the same way, by adding `mocker` as a function parameter to
-`mock_requests_get`.
-
--->
-
 If you run Nox now, the test fails because click expects to be passed a string
 for console output, and receives a mock object instead. Simply "knocking out"
 `requests.get` is not quite enough. The mock object also needs to return
@@ -407,6 +401,14 @@ def mock_requests_get(mocker):
     
 Invoke Nox again to see that the test suite passes. 🎉
 
+```sh
+$ nox -r
+...
+nox > Ran multiple sessions:
+nox > * tests-3.8: success
+nox > * tests-3.7: success
+```
+
 Mocking not only speeds up your test suite, or lets you hack offline on a plane
 or train. By virtue of having a fixed, or deterministic, return value, the mock
 also enables you to write repeatable tests. This means you can, for example,
@@ -457,29 +459,37 @@ def test_main_fails_on_request_error(runner, mock_requests_get):
     assert result.exit_code == 1
 ```
 
-## Refactoring the example application
+You should generally have a single assertion per test case, because more
+fine-grained test cases make it easier to figure out why the test suite failed
+when it does.
+
+Generally, tests for a feature or bugfix should be written *before* implementing
+it. This is also known as "writing a failing test". The reason for this is that
+it provides confidence that the tests are actually testing something, and do not
+simply pass because of a flaw in the tests themselves.
+
+## Example: Refactoring
 
 The great thing about a good test suite is that it allows you to refactor your
-code without fear of breaking it. Let's move the API client code to a separate
-module. Create a file `src/hypermodern-python/client.py` with the following
+code without fear of breaking it. Let's move the Wikipedia client to a separate
+module. Create a file `src/hypermodern-python/wikipedia.py` with the following
 contents:
 
 ```python
-# src/hypermodern-python/client.py
+# src/hypermodern-python/wikipedia.py
 import requests
 
 
 API_URL = "https://en.wikipedia.org/api/rest_v1/page/random/summary"
 
 
-def get_random_fact():
+def random_page():
     with requests.get(API_URL) as response:
         response.raise_for_status()
         return response.json()
 ```
 
-Import `client` in the `console` module. The `console.main` function can now
-simply invoke `client.get_random_fact` to retrieve the data for the random fact:
+The `console` module can now simply invoke `wikipedia.random_page`:
 
 ```python
 # src/hypermodern-python/console.py
@@ -487,14 +497,14 @@ import textwrap
 
 import click
 
-from . import __version__, client
+from . import __version__, wikipedia
 
 
 @click.command()
 @click.version_option(version=__version__)
 def main():
     """The hypermodern Python project."""
-    data = client.get_random_fact()
+    data = wikipedia.random_page()
 
     title = data["title"]
     extract = data["extract"]
@@ -513,75 +523,39 @@ nox > * tests-3.8: success
 nox > * tests-3.7: success
 ```
 
-## Handling exceptions in the example application
+## Example: Handling exceptions gracefully
 
-In this section, we add exception handling to the example application.
-Exceptions from the *requests* library are subclasses of
-`requests.RequestException`, and you can differentiate between them by type to
-print friendly, informative error messages. For the purposes of this example, we
-will only deal with the base class, and rely on the exception message to inform
-the user what happened.
+If you run the example application without an Internet connection, your terminal
+will be filled with a long traceback. This is what happens when the Python
+interpreter is terminated by an unhandled exception. For common errors such as
+this, it would be better to print a friendly, informative message to the screen.
 
-Generally, tests for a feature or bugfix should be written *before* implementing
-it. This is also known as "writing a failing test". The reason for this is that
-it provides confidence that the tests are actually testing something, and do not
-simply pass because of a flaw in the tests themselves.
+Let's express this as a test case, by configuring the mock to raise a
+`RequestException`. (The *requests* library has more specific exception classes,
+but for the purposes of this example, we will only deal with the base class.)
 
-So let's start by adding a test. But how do we get `requests.get` to raise an
-error? You can configure a mock to raise an exception instead of returning a
-value by assigning the exception instance or class to the
-[side_effect](https://docs.python.org/3/library/unittest.mock.html#unittest.mock.Mock.side_effect)
-attribute of the mock. Let's turn this into a fixture:
 
 ```python
 # tests/test_console.py
 import requests
 
 
-@pytest.fixture
-def mock_failing_requests_get(mocker):
-    mock = mocker.patch("requests.get")
-    mock.side_effect = requests.RequestException
-    return mock
-```
-
-When faced with an error from requests, we expect our application to exit with a
-non-zero status code, and print an error message to the console. You should
-generally have a single assertion per test case, because more fine-grained test
-cases make it easier to figure out why the test suite failed when it does. So we
-are going to add two test cases.
-
-The first test case asserts that the exit status is 1 on request errors. (This
-is not actually a failing test. When the Python interpreter is terminated by an
-unhandled exception, it also exits with a status code of 1.)
-
-```python
-# tests/test_console.py
-def test_main_fails_on_request_error(runner, mock_failing_requests_get):
-    result = runner.invoke(console.main)
-    assert result.exit_code == 1
-```
-
-The second test case asserts that the output contains the string "Error":
-
-```python
-def test_main_prints_message_on_request_error(runner, mock_failing_requests_get):
+def test_main_prints_message_on_request_error(runner, mock_requests_get):
+    mock_requests_get.side_effect = requests.RequestException
     result = runner.invoke(console.main)
     assert "Error" in result.output
 ```
 
-Finally, let's get the test suite to pass by handling the exception. 
+The simplest way to get this test to pass is by converting the
+`RequestException` into a `ClickException`. When click encounters this
+exception, it prints the exception message to standard error and exits the
+program with a status code of 1. You can reuse the exception message by
+converting the original exception to a string.
 
-You can exit a click application from anywhere in your program by raising a
-`click.ClickException`. When click encounters this exception, it will print the
-exception message to standard error and exit the program with a status code
-of 1. You can reuse the message of the original exception by converting that
-exception to a string.
-
-Here is the updated `client` module:
+Here is the updated `wikipedia` module:
 
 ```python
-# src/hypermodern-python/client.py
+# src/hypermodern-python/wikipedia.py
 import click
 import requests
 
@@ -589,7 +563,7 @@ import requests
 API_URL = "https://en.wikipedia.org/api/rest_v1/page/random/summary"
 
 
-def get_random_fact():
+def random_page():
     try:
         with requests.get(API_URL) as response:
             response.raise_for_status()
@@ -599,25 +573,44 @@ def get_random_fact():
         raise click.ClickException(message)
 ```
 
-## Adding an option to select the Wikipedia language edition
+## Example: Selecting the Wikipedia language edition
 
-In this final section, we add a command-line option to select the [language
-edition](https://en.wikipedia.org/wiki/List_of_Wikipedias) of Wikipedia.
+In this section, we add a command-line option to select the [language
+edition](https://en.wikipedia.org/wiki/List_of_Wikipedias) of Wikipedia. 
+
 Wikipedia editions are identified by a language code, which is used as a
 subdomain below wikipedia.org. Usually, this is the two-letter or three-letter
 language code assigned to the language by [ISO
 639-1](https://en.wikipedia.org/wiki/ISO_639-1) and [ISO
-639-3](https://en.wikipedia.org/wiki/ISO_639-3), for example, `fr` for the
-French Wikipedia, `jbo` for the [Lojban Wikipedia](https://xkcd.com/191/), and
-`ceb` for the [Cebuano Wikipedia](https://en.wikipedia.org/wiki/Lsjbot).
+639-3](https://en.wikipedia.org/wiki/ISO_639-3). Here are some examples:
 
-In a first step, we will pass the language code as an optional argument to
-`client.get_random_fact`.
+- `fr` for the French Wikipedia
+- `jbo` for the [Lojban Wikipedia](https://xkcd.com/191/)
+- `ceb` for the [Cebuano Wikipedia](https://en.wikipedia.org/wiki/Lsjbot)
 
-We start by adding a failing test to a new test module named `test_client.py`.
-For this, we are going to need the `mock_requests_get` mock. Instead of copying
-the fixture to the new test module, we can move it to `conftest.py`, where it
-will be available to every test module in the test package.
+As a first step, let's add an optional parameter for the language code to the
+`wikipedia.random_page` function. When an alternate language is passed, the API
+request should be sent to the corresponding Wikipedia edition. The test case is
+placed in a new test module named `test_wikipedia.py`:
+
+```python
+# tests/test_wikipedia.py
+from hypermodern_python import wikipedia
+
+
+def test_random_page_uses_given_language(mock_requests_get):
+    wikipedia.random_page(language="de")
+    args, _ = mock_requests_get.call_args
+    assert "de.wikipedia.org" in args[0]
+```
+
+The `mock_requests_get` fixture is now used by two test modules. You could move
+it to a separate module and import from there, but Pytest offers a [more
+convenient
+way](https://pytest.readthedocs.io/en/latest/fixture.html#conftest-py-sharing-fixture-functions):
+Fixtures placed in a `conftest.py` file are discovered automatically, and test
+modules at the same directory level can use them without explicit import. Create
+the new file at the top-level of your tests package, and move the fixture there:
 
 ```python
 # tests/conftest.py
@@ -635,29 +628,12 @@ def mock_requests_get(mocker):
     return mock
 ```
 
-When `get_random_fact` is passed an alternate language, it should send its API
-request to the matching Wikipedia edition. Mock objects allow you to inspect the
-arguments they were called with, using the
-[call_args](https://docs.python.org/3/library/unittest.mock.html#unittest.mock.Mock.call_args)
-attribute. This allows our test case to check that `requests.get` was called
-with a URL containing the correct domain name:
-
-```python
-from hypermodern_python import client
-
-
-def test_get_random_fact_uses_given_language(mock_requests_get):
-    client.get_random_fact(language="de")
-    args, _ = mock_requests_get.call_args
-    assert "de.wikipedia.org" in args[0]
-```
-
 To get the test to pass, we turn `API_URL` into a format string, and interpolate
-the specified language code into the URL, using
-[str.format](https://docs.python.org/3/library/stdtypes.html#str.format).
+the specified language code into the URL using
+[str.format](https://docs.python.org/3/library/stdtypes.html#str.format):
 
 ```python
-# src/hypermodern-python/client.py
+# src/hypermodern-python/wikipedia.py
 import click
 import requests
 
@@ -665,7 +641,7 @@ import requests
 API_URL = "https://{language}.wikipedia.org/api/rest_v1/page/random/summary"
 
 
-def get_random_fact(language="en"):
+def random_page(language="en"):
     url = API_URL.format(language=language)
 
     try:
@@ -677,29 +653,23 @@ def get_random_fact(language="en"):
         raise click.ClickException(message)
 ```
 
-The second step is to make this functionality accessible from the command line,
-using the `--language` option. Again, we start by adding a failing test. When
-the option is specified, `console.main` is expected to invoke
-`client.get_random_fact` with the specified language. We can check this using a
-mock for `get_random_fact`:
+As the second step, we make the new functionality accessible from the command
+line, adding a `--language` option. The test case mocks the
+`wikipedia.random_page` function, and uses the
+[assert_called_with](https://docs.python.org/3/library/unittest.mock.html#unittest.mock.Mock.assert_called_with)
+method on the mock to check that the language specified by the user is passed on
+to the function:
 
 ```python
 # tests/test_console.py
 @pytest.fixture
-def mock_get_random_fact(mocker):
-    return mocker.patch("hypermodern_python.client.get_random_fact")
-```
+def mock_wikipedia_random_page(mocker):
+    return mocker.patch("hypermodern_python.wikipedia.random_page")
 
-The test case uses the
-[assert_called_with](https://docs.python.org/3/library/unittest.mock.html#unittest.mock.Mock.assert_called_with)
-method on the mock to check that the language specified by the user is passed on
-to the `client` module:
 
-```python
-# tests/test_console.py
-def test_main_uses_specified_language(runner, mock_get_random_fact):
+def test_main_uses_specified_language(runner, mock_wikipedia_random_page):
     result = runner.invoke(console.main, ["--language=pl"])
-    mock_get_random_fact.assert_called_with(language="pl")
+    mock_wikipedia_random_page.assert_called_with(language="pl")
 ```
 
 We are now ready to implement the new functionality using the
@@ -712,7 +682,7 @@ import textwrap
 
 import click
 
-from . import __version__, client
+from . import __version__, wikipedia
 
 
 @click.command()
@@ -727,7 +697,7 @@ from . import __version__, client
 @click.version_option(version=__version__)
 def main(language):
     """The hypermodern Python project."""
-    data = client.get_random_fact(language)
+    data = wikipedia.random_page(language)
 
     title = data["title"]
     extract = data["extract"]
@@ -735,6 +705,9 @@ def main(language):
     click.secho(title, fg="green")
     click.echo(textwrap.fill(extract))
 ```
+
+You now have a polyglot random fact generator. This may also be a fun way to
+test your language skills (and the Unicode skills of your terminal emulator).
 
 <!--
 
@@ -745,23 +718,19 @@ program was checked in any meaningful way.
 
 -->
 
-## Fakes and Stubs
-
-The `mock_requests_get` fixture demonstrates one drawback of mocking: Mocks can
-be tightly coupled to implementation details of the system under test. In the
-long run, you may be better off to implement an actual "fake" API and serve it
-via HTTP for your tests.
+## Using fakes
 
 Mocks help you test code units depending on bulky subsystems, but they are [not
 the only
 technique](https://blog.pragmatists.com/test-doubles-fakes-mocks-and-stubs-1a7491dfa3da)
 to do so. For example, if your function requires a database connection, it may
 be both easier and more effective to pass an in-memory database than a mock
-object. Fake implementations are another good alternative to mock objects, which
-can be too forgiving when faced with wrong usage. Large data objects can be
-generated by test object factories, instead of being replaced by mock objects
-(check out the excellent [factoryboy](https://factoryboy.readthedocs.io/)
-package).
+object. Fake implementations are a good alternative to mock objects, which can
+be too forgiving when faced with wrong usage, and too tightly coupled to
+implementation details of the system under test (witness the `mock_requests_get`
+fixture). Large data objects can be generated by test object factories, instead
+of being replaced by mock objects (check out the excellent
+[factoryboy](https://factoryboy.readthedocs.io/) package).
 
 Implementing a fake API is out of the scope of this tutorial, but we will cover
 one aspect of it: How to write a fixture which requires tear down code as well
@@ -837,9 +806,9 @@ def test_main_succeeds_in_production_env(runner):
 ```
 
 Register the `e2e` marker using the `pytest_configure` hook, as shown below. The
-hook is placed in a `conftest.py` file, at the top-level of your tests package.
-This ensures that Pytest can discover the module and use it for the entire test
-suite.
+hook is placed in the `conftest.py` file, at the top-level of your tests
+package. This ensures that Pytest can discover the module and use it for the
+entire test suite.
 
 ```python
 # tests/conftest.py
