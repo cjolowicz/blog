@@ -41,10 +41,11 @@ This guide is aimed at beginners who are keen to learn best practises from the
 start, and seasoned Python developers whose workflows are affected by
 boilerplate and workarounds required by the legacy toolbox.
 
-> *You need a recent Linux, Unix, or Mac system with
-> [bash](https://www.gnu.org/software/bash/), [curl](https://curl.haxx.se) and
-> [git](https://www.git-scm.com) for this tutorial, or Windows 10 with the
-> Windows Subsystem for Linux.*
+### Requirements
+
+You need a recent Linux, Unix, or Mac system with
+[bash](https://www.gnu.org/software/bash/), [curl](https://curl.haxx.se) and
+[git](https://www.git-scm.com) for this tutorial.
 
 On Windows 10, enable the [Windows Subsystem for
 Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10) (WSL) and
