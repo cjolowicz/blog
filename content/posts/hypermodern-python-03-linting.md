@@ -560,9 +560,9 @@ git commit --message="Fix missing newline at end of LICENSE" LICENSE
 ```
 
 The sample configuration pins Black to a specific version, and so does Poetry's
-lock file. This setup requires us to keep the versions aligned manually, and may
-result in failed checks when the environments managed by pre-commit, Poetry, and
-Nox drift apart.
+lock file. This setup requires you to keep the versions aligned manually, and
+can result in failed checks when the environments managed by pre-commit, Poetry,
+and Nox drift apart.
 
 Let's replace the Black entry using a [repository-local
 hook](https://pre-commit.com/#repository-local-hooks), and run Black in the
@@ -586,6 +586,9 @@ repos:
         types: [python]
 ```
 
+This method allows you to rely on Poetry to manage development dependencies,
+without worrying about version mismatch caused by other tools.
+
 Use the same technique to run Flake8 from the pre-commit hook:
 
 ```yaml
@@ -600,10 +603,6 @@ Use the same technique to run Flake8 from the pre-commit hook:
         language: system
         types: [python]
 ```
-
-This method allows you to rely on Poetry to manage Black and Flake8 as
-development dependencies, without worrying about version mismatch caused by
-other tools.
 
 The checks run somewhat faster than the corresponding Nox sessions, for two
 reasons:
