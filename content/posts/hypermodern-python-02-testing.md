@@ -26,11 +26,9 @@ Here are the topics covered in this chapter:
 - [Code coverage with coverage.py](#code-coverage-with-coveragepy)
 - [Test automation with Nox](#test-automation-with-nox)
 - [Mocking with pytest-mock](#mocking-with-pytestmock)
-- [Fakes and Stubs](#fakes-and-stubs)
-- [Meaningful tests](#meaningful-tests)
 - [Refactoring the example application](#refactoring-the-example-application)
-- [Example: Handling exceptions](#example-handling-exceptions)
-- [Example: Adding an option to select the Wikipedia language edition](#example-adding-an-option-to-select-the-Wikipedia-language-edition)
+- [Handling exceptions in the example application](#handling-exceptions-in-the-example-application)
+- [Adding an option to select the Wikipedia language edition](#adding-an-option-to-select-the-Wikipedia-language-edition)
 
 Here is a list of the articles in this series:
 
@@ -407,6 +405,8 @@ def mock_requests_get(mocker):
     return mock
 ```
     
+Invoke Nox again to see that the test suite passes. 🎉
+
 Mocking not only speeds up your test suite, or lets you hack offline on a plane
 or train. By virtue of having a fixed, or deterministic, return value, the mock
 also enables you to write repeatable tests. This means, for example, that you
@@ -505,10 +505,6 @@ def fake_api():
     yield api
     api.shutdown()
 ```
-
--->
-
-<!--
 
 ## End-to-end testing
 
@@ -625,21 +621,25 @@ nox > * tests-3.8: success
 nox > * tests-3.7: success
 ```
 
-## Example: Handling exceptions
+## Handling exceptions in the example application
 
 In this section, we add exception handling to the example application.
+Exceptions from the *requests* library are subclasses of
+`requests.RequestException`, and you can differentiate between them by type to
+print friendly, informative error messages. For the purposes of this example, we
+will only deal with the base class, and rely on the exception message to inform
+the user what happened.
 
 Generally, tests for a feature or bugfix should be written *before* implementing
 it. This is also known as "writing a failing test". The reason for this is that
 it provides confidence that the tests are actually testing something, and do not
 simply pass because of a flaw in the tests themselves.
 
-So let's start by adding a failing test. How do we get the API to raise an
-error? The answer is again mocking. But this time, we need the `requests.get`
-mock to raise an exception instead of returning a value. You can do so by
-assigning an exception instance or class to the
+So let's start by adding a test. But how do we get `requests.get` to raise an
+error? You can configure a mock to raise an exception instead of returning a
+value by assigning the exception instance or class to the
 [side_effect](https://docs.python.org/3/library/unittest.mock.html#unittest.mock.Mock.side_effect)
-attribute of the mock, like so:
+attribute of the mock. Let's turn this into a fixture:
 
 ```python
 # tests/test_console.py
@@ -655,10 +655,13 @@ def mock_failing_requests_get(mocker):
 
 When faced with an error from requests, we expect our application to exit with a
 non-zero status code, and print an error message to the console. You should
-generally have a single assertion per test case, so we are going to add two test
-cases.
+generally have a single assertion per test case, because more fine-grained test
+cases make it easier to figure out why the test suite failed when it does. So we
+are going to add two test cases.
 
-The first test case asserts that the exit status is 1 on request errors:
+The first test case asserts that the exit status is 1 on request errors. (This
+is not actually a failing test. When the Python interpreter is terminated by an
+unhandled exception, it also exits with a status code of 1.)
 
 ```python
 # tests/test_console.py
@@ -675,21 +678,15 @@ def test_main_prints_message_on_request_error(runner, mock_failing_requests_get)
     assert "Error" in result.output
 ```
 
-(The first of these test cases is not actually a failing test. When the Python
-interpreter is terminated by an unhandled exception, it also exits with a status
-code of 1.)
-
 Finally, let's get the test suite to pass by handling the exception. 
 
-Exceptions from requests are subclasses of `requests.RequestException`, and you
-can differentiate between them by type to print friendly, informative error
-messages. For the purposes of this example, we will only deal with the base
-class, and rely on the exception message to inform the user what happened.
-
 You can exit a click application from anywhere in your program by raising a
-`click.ClickException` with an error message. When click encounters this
-exception, it will print the message to the standard error stream and exit the
-program with a status code of 1.
+`click.ClickException`. When click encounters this exception, it will print the
+exception message to standard error and exit the program with a status code
+of 1. You can reuse the message of the original exception by converting that
+exception to a string.
+
+Here is the updated `client` module:
 
 ```python
 # src/hypermodern-python/client.py
@@ -710,7 +707,7 @@ def get_random_fact():
         raise click.ClickException(message)
 ```
 
-## Example: Adding an option to select the Wikipedia language edition
+## Adding an option to select the Wikipedia language edition
 
 In the final section, we will add an option to select the [language
 edition](https://en.wikipedia.org/wiki/List_of_Wikipedias) of Wikipedia.
