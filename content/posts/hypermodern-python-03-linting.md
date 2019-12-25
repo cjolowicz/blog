@@ -76,12 +76,12 @@ def lint(session):
     session.run("flake8", *args)
 ```
 
-The
+By default, we run Flake8 on three locations: the package source tree, the test
+suite, and `noxfile.py` itself. You can override this by passing specific source
+files, separated from Nox's own options by `--`. The
 [session.install](https://nox.thea.codes/en/stable/config.html#nox.sessions.Session.install)
-method installs packages into the virtual environment via
-[pip](https://pip.pypa.io/). By default, we run Flake8 on three locations: the
-package source tree, the test suite, and `noxfile.py` itself. You can override
-this by passing specific source files, separated from Nox's own options by `--`.
+method installs Flake8 into the virtual environment via
+[pip](https://pip.pypa.io/).
 
 Flake8 glues together several tools. The messages produced by these tools are
 assigned error codes, prefixed by one or more letters. These prefixes group the
@@ -317,7 +317,7 @@ select = B,B9,BLK,C,E,F,I,S,W
 
 Bandit flags uses of `assert` to enforce interface constraints because
 assertions are removed when compiling to optimized byte code. You should disable
-this warning for your test suite, as `pytest` uses assertions to verify
+this warning for your test suite, as Pytest uses assertions to verify
 expectations in tests:
 
 ```ini
@@ -364,9 +364,11 @@ This approach improves our situation, but it has some limitations:
 - We're back to handling requirements manually, rather than using Poetry's rich
   support for dependency management.
 - The check is still not deterministic, because dependencies of dependencies
-  remain unpinned. Flake8 is a good example for this: At its core, it aggregates
-  several more specialized tools, and these are still installed without any
-  version constraint.
+  remain unpinned. (Flake8 is a good example for this: At its core, it
+  aggregates several more specialized tools. While Flake8 [protects you from
+  breaking
+  changes](http://flake8.pycqa.org/en/latest/faq.html#why-does-flake8-use-ranges-for-its-dependencies)
+  to these tools, their exact versions are still left to chance.)
 
 How about we declare Flake8 as a *development dependency* of our project, like
 we did with Pytest in the previous chapter? Then we can benefit from Poetry as a
@@ -478,8 +480,8 @@ def tests(session):
     session.run("pytest", *args)
 ```
 
-You know have deterministic linter checks. Enjoy the convenience and reliability
-of Poetry's dependency management for your Nox sessions!
+Your linter checks are now deterministic, and your Nox sessions benefit from
+Poetry's convenient and reliable dependency management.
 
 ## Thanks for reading!
 
