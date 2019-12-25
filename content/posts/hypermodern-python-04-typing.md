@@ -147,13 +147,15 @@ support.
 
 ## Static type checking with pytype
 
-Add [pytype](https://google.github.io/pytype/) as a development dependency:
+Add [pytype](https://google.github.io/pytype/) as a development dependency, for
+[Python 3.7 only](https://github.com/google/pytype/issues/440):
+
 
 ```sh
-poetry add --dev pytype
+poetry add --dev --python=3.7 pytype
 ```
 
-Add the following session to `noxfile.py` to run pytype:
+Add the following Nox session to run pytype:
 
 ```python
 # noxfile.py
@@ -165,10 +167,9 @@ def pytype(session):
     session.run("pytype", *args)
 ```
 
-The session runs in Python 3.7 only, because Python 3.8 is [not yet
-supported](https://github.com/google/pytype/issues/440) in pytype. We also pass
-the command-line option `--disable=import-error`. Like mypy, pytype reports
-import errors for third-party packages without type annotations.
+In this session, we use the command-line option `--disable=import-error` because
+pytype, like mypy, reports import errors for third-party packages without type
+annotations.
 
 Run the Nox session using the following command:
 
@@ -176,8 +177,8 @@ Run the Nox session using the following command:
 nox -rs pytype
 ```
 
-Update `nox.options.session` to include static type checking with pytype in the
-default Nox sessions:
+Update `nox.options.session` to include static type checking with pytype by
+default:
 
 ```python
 nox.options.sessions = "lint", "mypy", "pytype", "tests"
@@ -185,7 +186,7 @@ nox.options.sessions = "lint", "mypy", "pytype", "tests"
 
 ## Adding type annotations to the package
 
-Let's add some type annotations to the package! Looking at `console.main`, do
+Let's add some type annotations to the package, starting with `console.main`. Do
 not be distracted by the decorators applied to it: This is just a simple
 function accepting a `str`, and returning `None` by "falling off its end":
 
@@ -225,9 +226,10 @@ def random_page(language: str = "en") -> Any:
 ```
 
 You can think of the enigmatic `Any` type as a box which can hold *any* type on
-the inside, and behaves like *all* of the types on the outside. It is the most
+the inside, but behaves like *all* of the types on the outside. It is the most
 permissive kind of type you can apply to a variable, parameter, or return type
-in your program.
+in your program. Contrast this with `object`, which can also hold values of any
+type, but only supports the minimal interface that is common to all of them.
 
 ## Runtime type validation using Desert and Marshmallow
 
