@@ -34,9 +34,9 @@ Here are the topics covered in this chapter on Testing in Python:
 - [Code coverage with Coverage.py](#code-coverage-with-coveragepy)
 - [Test automation with Nox](#test-automation-with-nox)
 - [Mocking with pytest-mock](#mocking-with-pytestmock)
-- [Example: Refactoring](#example-refactoring)
-- [Example: Handling exceptions gracefully](#example-handling-exceptions-gracefully)
-- [Example: Selecting the Wikipedia language edition](#example-selecting-the-wikipedia-language-edition)
+- [Example CLI: Refactoring](#example-cli-refactoring)
+- [Example CLI: Handling exceptions gracefully](#example-cli-handling-exceptions-gracefully)
+- [Example CLI: Selecting the Wikipedia language edition](#example-cli-selecting-the-wikipedia-language-edition)
 - [Using fakes](#using-fakes)
 - [End-to-end testing](#endtoend-testing)
 
@@ -219,9 +219,20 @@ functionality of the program at all, only its exit status.)
 Nevertheless, aiming for 100% code coverage is good practice, especially for a
 fresh codebase. Anything less than that implies that some part of your code base
 is definitely untested. And to quote [Bruce
-Eckel](https://en.wikipedia.org/wiki/Bruce_Eckel), *if it's not tested, it's
-broken*. Later, we will see some tools that help you achieve extensive code
+Eckel](https://en.wikipedia.org/wiki/Bruce_Eckel), "If it's not tested, it's
+broken." Later, we will see some tools that help you achieve extensive code
 coverage.
+
+You can configure Coverage.py to require full test coverage (or any other target
+percentage) using the
+[fail_under](https://coverage.readthedocs.io/en/stable/config.html#report)
+option:
+
+```toml
+# pyproject.toml
+[tool.coverage.report]
+fail_under = 100
+```
 
 ## Test automation with Nox
 
@@ -485,7 +496,7 @@ also known as "writing a failing test". The reason for this is that it provides
 confidence that the tests are actually testing something, and do not simply pass
 because of a flaw in the tests themselves.
 
-## Example: Refactoring
+## Example CLI: Refactoring
 
 {{< figure src="/images/hypermodern-python-02/verne06.jpg" link="/images/hypermodern-python-02/verne06.jpg" >}}
 
@@ -542,7 +553,7 @@ nox > * tests-3.8: success
 nox > * tests-3.7: success
 ```
 
-## Example: Handling exceptions gracefully
+## Example CLI: Handling exceptions gracefully
 
 {{< figure src="/images/hypermodern-python-02/verne07.jpg" link="/images/hypermodern-python-02/verne07.jpg" >}}
 
@@ -594,7 +605,7 @@ def random_page():
         raise click.ClickException(message)
 ```
 
-## Example: Selecting the Wikipedia language edition
+## Example CLI: Selecting the Wikipedia language edition
 
 {{< figure src="/images/hypermodern-python-02/verne08.jpg" link="/images/hypermodern-python-02/verne08.jpg" >}}
 
