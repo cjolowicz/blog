@@ -246,6 +246,24 @@ with respect to the grouping and ordering details:
 import-order-style = google
 ```
 
+Recommending an import linter is not an easy task, as there is currently a lot
+of movement in this area. The excellent plugin recommended in this section has
+been placed in [maintenance
+mode](https://github.com/PyCQA/flake8-import-order/issues/163#issuecomment-468923340).
+An alternative is [isort](https://timothycrosley.github.io/isort/), which comes
+with Flake8 integration via
+[flake8-isort](https://github.com/gforcada/flake8-isort) and additionally
+supports rewriting files. isort enjoys widespread popularity, but has also
+attracted
+[much](https://github.com/PyCQA/flake8-import-order/issues/163#issuecomment-450659551)
+[criticism](https://github.com/psf/black/issues/333#issuecomment-414123095)
+(which its author [intends to
+address](https://github.com/psf/black/issues/333#issuecomment-490241054) in the
+upcoming major release). If you are looking for a tool to rewrite imports, you
+should also have a look at
+[asottile/reorder-python-imports](https://github.com/asottile/reorder_python_imports)
+and [sqlalchemyorg/zimports](https://github.com/sqlalchemyorg/zimports).
+
 ## Finding more bugs with flake8-bugbear
 
 {{< figure src="/images/hypermodern-python-03/cote05.jpg" link="/images/hypermodern-python-03/cote05.jpg" >}}
