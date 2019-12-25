@@ -1,5 +1,5 @@
 --- 
-date: 2019-11-07T12:52:59+02:00
+date: 2020-01-08T08:00:00+02:00
 title: "Hypermodern Python 2: Testing"
 description: "Coding in Python like Savielly Tartakower."
 draft: true

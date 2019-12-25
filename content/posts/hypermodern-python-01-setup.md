@@ -1,5 +1,5 @@
 --- 
-date: 2019-11-07T12:52:59+02:00
+date: 2020-01-01T08:00:00+02:00
 title: "Hypermodern Python"
 description: "A guide to modern Python tooling with a focus on simplicity and minimalism."
 draft: true
@@ -583,7 +583,7 @@ to try:
 
 ## Thanks for reading!
 
-The next chapter is about adding unit tests to your project, and will be
+The next chapter is about adding unit tests to your project. It will be
 published on January 8, 20202.
 
 <!-- 
