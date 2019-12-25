@@ -711,12 +711,16 @@ def get_random_fact():
 
 In the final section, we will add an option to select the [language
 edition](https://en.wikipedia.org/wiki/List_of_Wikipedias) of Wikipedia.
-Wikipedia editions are identified by a code, which is used as a subdomain below
-wikipedia.org. With some exceptions, this Wikipedia code is identical to the
-two-letter or three-letter language code assigned to the language by [ISO
+Wikipedia editions are identified by a language code, which is used as a
+subdomain below wikipedia.org. Usually, this is the two-letter or three-letter
+language code assigned to the language by [ISO
 639-1](https://en.wikipedia.org/wiki/ISO_639-1) and [ISO
-639-3](https://en.wikipedia.org/wiki/ISO_639-3). In a first step, we will pass
-the language code as an optional argument to `client.get_random_fact`.
+639-3](https://en.wikipedia.org/wiki/ISO_639-3), for example, `fr` for the
+French Wikipedia, `jbo` for the [Lojban Wikipedia](https://xkcd.com/191/), and
+`ceb` for the [Cebuano Wikipedia](https://en.wikipedia.org/wiki/Lsjbot).
+
+In a first step, we will pass the language code as an optional argument to
+`client.get_random_fact`.
 
 We start by adding a failing test to a new test module named `test_client.py`.
 For this, we are going to need the `mock_requests_get` mock. Instead of copying
