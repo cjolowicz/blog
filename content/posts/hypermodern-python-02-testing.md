@@ -17,9 +17,9 @@ tags:
 {{< figure src="/images/hypermodern-python-02/verne01.jpg" link="/images/hypermodern-python-02/verne01.jpg" >}}
 
 In this second installment of the Hypermodern Python series, I'm going to
-discuss how to add unit tests to your project, and how to teach the random fact
-generator foreign languages.[^1] Previously, we discussed [How to set up a
-Python project](../hypermodern-python-01-setup).
+discuss how to add automated testing to your project, and how to teach the
+random fact generator foreign languages.[^1] Previously, we discussed [How to
+set up a Python project](../hypermodern-python-01-setup).
 
 
 [^1]: The images in this chapter come from Émile-Antoine Bayard's Illustrations
