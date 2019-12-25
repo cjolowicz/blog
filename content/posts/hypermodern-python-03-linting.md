@@ -34,6 +34,7 @@ Here are the topics covered in this chapter on Linting in Python:
 - [Finding more bugs with flake8-bugbear](#finding-more-bugs-with-flake8-bugbear)
 - [Identifying security issues with bandit](#identifying-security-issues-with-bandit)
 - [Managing development dependencies in Nox sessions](#managing-development-dependencies-in-nox-sessions)
+- [Managing Git hooks with pre-commit](#managing-git-hooks-with-precommit)
 
 Here is a full list of the articles in this series:
 
@@ -351,6 +352,8 @@ per-file-ignores = tests/*:S101
 
 ## Managing development dependencies in Nox sessions
 
+{{< figure src="/images/hypermodern-python-03/cote07.jpg" link="/images/hypermodern-python-03/cote07.jpg" >}}
+
 In this section, I describe how to use Poetry to manage development dependencies
 in your Nox sessions, and how to make the checks in your Nox sessions
 deterministic.
@@ -506,6 +509,8 @@ Your linter checks are now deterministic, and your Nox sessions benefit from
 Poetry's convenient and reliable dependency management. ✌
 
 ## Managing Git hooks with pre-commit
+
+{{< figure src="/images/hypermodern-python-03/cote08.jpg" link="/images/hypermodern-python-03/cote08.jpg" >}}
 
 Git provides [hooks](https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks)
 which allow you to run custom commands when important actions occur, such as a
