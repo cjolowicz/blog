@@ -142,11 +142,6 @@ tests/test_console.py .                                                 [100%]
 ============================= 1 passed in 0.03s ==============================
 ```
 
-Generally, write tests for a feature or bugfix *before* implementing it. This is
-also known as "writing a failing test". The reason for this is that it provides
-confidence that the tests are actually testing something, and do not simply pass
-because of a flaw in the tests themselves.
-
 ## Code coverage with coverage.py
 
 *Code coverage* is a measure of the degree to which the source code of your
@@ -557,7 +552,7 @@ nox -rs tests-3.8 -- -m e2e
 
 The great thing about a good test suite is that it allows you to refactor your
 code without fear of breaking it. Let's move the API client code to a separate
-module:
+`client` module:
 
 ```python
 # src/hypermodern-python/client.py
@@ -612,10 +607,15 @@ nox > * tests-3.7: success
 
 In this section, we add exception handling to the example application.
 
-Let's start by adding a failing test. How do we get the API to raise an error?
-The answer is again mocking. But this time, we need the `requests.get` mock to
-raise an exception instead of returning a value. You can do so by assigning an
-exception instance or class to the
+Generally, tests for a feature or bugfix should be written *before* implementing
+it. This is also known as "writing a failing test". The reason for this is that
+it provides confidence that the tests are actually testing something, and do not
+simply pass because of a flaw in the tests themselves.
+
+So let's start by adding a failing test. How do we get the API to raise an
+error? The answer is again mocking. But this time, we need the `requests.get`
+mock to raise an exception instead of returning a value. You can do so by
+assigning an exception instance or class to the
 [side_effect](https://docs.python.org/3/library/unittest.mock.html#unittest.mock.Mock.side_effect)
 attribute of the mock, like so:
 
