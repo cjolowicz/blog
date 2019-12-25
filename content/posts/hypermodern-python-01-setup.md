@@ -583,7 +583,8 @@ to try:
 
 ## Thanks for reading!
 
-In the next chapter, I'm going to discuss how to add unit tests to your project.
+The next chapter is about adding unit tests to your project, and will be
+published on January 8, 20202.
 
 <!-- 
 ---
