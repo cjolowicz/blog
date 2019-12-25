@@ -497,26 +497,25 @@ import requests
 from . import __version__
 
 
+API_URL = "https://en.wikipedia.org/api/rest_v1/page/random/summary"
+
+
 @click.command()
 @click.version_option(version=__version__)
-def main() -> None:
+def main():
     """The hypermodern Python project."""
-    response = requests.get("https://en.wikipedia.org/api/rest_v1/page/random/summary")
+    with requests.get(API_URL) as response:
+        response.raise_for_status()
+        data = response.json()
 
-    title = response.json()["title"]
-    extract = response.json()["extract"]
+    title = data["title"]
+    extract = data["extract"]
 
     click.secho(title, fg="green")
     click.echo(textwrap.fill(extract))
 ```
 
-Let's have a look at the imports at the top of the module first. The
-[textwrap](https://docs.python.org/3/library/textwrap.html) module from the
-standard library allows you to wrap lines when printing text to the console. We
-also import the newly installed `requests` package. Blank lines serve to group
-imports as recommended in [PEP
-8](https://www.python.org/dev/peps/pep-0008/#imports) (standard library--third
-party packages--local imports).
+Let's have a look at the imports at the top of the module first. 
 
 ```python
 import textwrap
@@ -527,36 +526,52 @@ import requests
 from . import __version__
 ```
 
-In the `console.main` function, the "hello world" example from the previous
-section is replaced by the code for the example application. The first line
-sends an [HTTP GET](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods)
-request to the [REST API](https://restfulapi.net/) of the English Wikipedia. The
-request goes to the `/page/random/summary` endpoint, which returns the summary
-of a random Wikipedia article:
+The [textwrap](https://docs.python.org/3/library/textwrap.html) module from the
+standard library allows you to wrap lines when printing text to the console. We
+also import the newly installed `requests` package. Blank lines serve to group
+imports as recommended in [PEP
+8](https://www.python.org/dev/peps/pep-0008/#imports) (standard library--third
+party packages--local imports).
 
 ```python
-response = requests.get("https://en.wikipedia.org/api/rest_v1/page/random/summary")
+API_URL = "https://en.wikipedia.org/api/rest_v1/page/random/summary"
 ```
 
-The response body contains the resource data in [JSON](https://www.json.org/)
-format, which can be accessed using the `response.json()` method. We are only
-interested in the `title` and `extract` attributes, containing the title of the
-Wikipedia page and a short plain text extract, respectively.
+The `API_URL` constant points to the [REST API](https://restfulapi.net/) of the
+English Wikipedia, or more specifically, its `/page/random/summary` endpoint,
+which returns the summary of a random Wikipedia article.
 
 ```python
-title = response.json()["title"]
-extract = response.json()["extract"]
+with requests.get(API_URL) as response:
+    response.raise_for_status()
+    data = response.json()
+```
+
+In the body of the `main` function, the `requests.get` invocation sends an [HTTP
+GET](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods) request to the
+Wikipedia API. The `with` statement ensures that the HTTP connection is closed
+at the end of the block. Before looking at the response body, we check the HTTP
+status code and raise an exception if it signals an error. The response body
+contains the resource data in [JSON](https://www.json.org/) format, which can be
+accessed using the `response.json()` method.
+
+```python
+title = data["title"]
+extract = data["extract"]
+```
+
+We are only interested in the `title` and `extract` attributes, containing the
+title of the Wikipedia page and a short plain text extract, respectively.
+
+```python
+click.secho(title, fg="green")
+click.echo(textwrap.fill(extract))
 ```
 
 Finally, we print the title and extract to the console, using the `click.echo`
 and `click.secho` functions. The latter function allows you to specify the
 foreground color using the `fg` keyword attribute. The `textwrap.fill` function
 wraps the text in `extract` so that every line is at most 70 characters long.
-
-```python
-click.secho(title, fg="green")
-click.echo(textwrap.fill(extract))
-```
 
 Let's try it out!
 
