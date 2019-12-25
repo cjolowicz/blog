@@ -1,7 +1,7 @@
 --- 
-date: 2019-11-07T12:52:59+02:00
-title: "Hypermodern Python 3: Linting"
-description: "Coding in Python like Savielly Tartakower."
+date: 2020-01-08T09:04:32+01:00
+title: "Hypermodern Python Chapter 3: Linting"
+description: "A guide to modern Python tooling with a focus on simplicity and minimalism."
 draft: true
 tags:
   - python
@@ -11,21 +11,22 @@ tags:
   - bandit
 ---
 
+[Read this article on Medium](https://medium.com/@cjolowicz/hypermodern-python-3-linting-xxxxxxxxxxxx)
+
+{{< figure src="/images/hypermodern-python-03/cote01.jpg" link="/images/hypermodern-python-03/cote01.jpg" >}}
+
 In this third installment of the Hypermodern Python series, I'm going to discuss
-how to add linting to your project.
+how to add linting to your project.[^1] Previously, we discussed [Automated
+Testing](../hypermodern-python-02-testing).
 
-For your reference, below is a list of the articles in this series.
+[^1]: The images in this chapter come from a series of futuristic pictures by
+    Jean-Marc Côté and other artists issued in France in 1899, 1900, 1901 and
+    1910 (source: [Wikimedia
+    Commons](https://commons.wikimedia.org/wiki/Category:France_in_XXI_Century_(fiction))
+    via [The Public Domain
+    Review](https://publicdomainreview.org/collection/a-19th-century-vision-of-the-year-2000))
 
-- [Chapter 1: Setup](../hypermodern-python-01-setup)
-- [Chapter 2: Testing](../hypermodern-python-02-testing)
-- [Chapter 3: Linting](../hypermodern-python-03-linting) (this article)
-- [Chapter 4: Typing](../hypermodern-python-04-typing)
-- [Chapter 5: Documentation](../hypermodern-python-05-documentation)
-- [Chapter 6: CI/CD](../hypermodern-python-06-ci-cd)
-- [Appendix: Docker](../hypermodern-python-07-deployment)
-
-<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
-**In this chapter:**
+Here are the topics covered in this chapter on Linting in Python:
 
 - [Linting with flake8](#linting-with-flake8)
 - [Code formatting with Black](#code-formatting-with-black)
@@ -33,37 +34,32 @@ For your reference, below is a list of the articles in this series.
 - [Finding more bugs with flake8-bugbear](#finding-more-bugs-with-flake8-bugbear)
 - [Identifying security issues with bandit](#identifying-security-issues-with-bandit)
 
-<!-- markdown-toc end -->
+Here is a full list of the articles in this series:
+
+- [Chapter 1: Setup](../hypermodern-python-01-setup)
+- [Chapter 2: Testing](../hypermodern-python-02-testing)
+- [Chapter 3: Linting](../hypermodern-python-03-linting) (this article)
+- *Chapter 4: Typing*
+- *Chapter 5: Documentation*
+- *Chapter 6: CI/CD*
+- *Appendix: Docker*
 
 This guide has a companion repository:
 [cjolowicz/hypermodern-python](https://github.com/cjolowicz/hypermodern-python).
-Here is the link for the changes contained in this chapter:
+Each article in the guide corresponds to a set of commits in the GitHub
+repository:
 
-▶ **[View code](https://github.com/cjolowicz/hypermodern-python/compare/chapter02...chapter03)**
-
-<!-- 
-
-This chapter introduces the following tools:
-
-- [Bandit](https://github.com/PyCQA/bandit) 
-- [Black](https://github.com/psf/black)
-- [flake8](http://flake8.pycqa.org)
-- [flake8-bandit](https://github.com/tylerwince/flake8-bandit) 
-- [flake8-black](https://github.com/peterjc/flake8-black) 
-- [flake8-bugbear](https://github.com/PyCQA/flake8-bugbear) 
-- [flake8-import-order](https://github.com/PyCQA/flake8-import-order)
-- [mccabe](https://github.com/PyCQA/mccabe)
-- [pycodestyle](https://github.com/pycqa/pycodestyle)
-- [pyflakes](https://github.com/PyCQA/pyflakes)
-
--->
+- [View changes](https://github.com/cjolowicz/hypermodern-python/compare/chapter02...chapter03)
+- [Download code](https://github.com/cjolowicz/hypermodern-python/archive/chapter03.zip)
 
 ## Linting with flake8
+
+{{< figure src="/images/hypermodern-python-03/cote02.jpg" link="/images/hypermodern-python-03/cote02.jpg" >}}
 
 Linters analyze source code to flag programming errors, bugs, stylistic errors,
 and suspicious constructs. The most common ones for Python are
 [pylint](https://www.pylint.org), [flake8](http://flake8.pycqa.org), and
-[pylama](https://github.com/klen/pylama). In this chapter, you will use Flake8.
+[pylama](https://github.com/klen/pylama). In this chapter, we use Flake8.
 
 Add a Nox session to run Flake8 on your codebase:
 
@@ -79,8 +75,9 @@ def lint(session):
     session.run("flake8", *args)
 ```
 
-Flake8 assigns each of its messages an error code, prefixed by one or more
-letters. These prefixes group the errors into so-called violation classes:
+Flake8 glues together several tools. Each message is assigned an error code,
+prefixed by one or more letters. These prefixes group the errors into so-called
+violation classes:
 
 - `F` are errors reported by [pyflakes](https://github.com/PyCQA/pyflakes), a
   tool which parses source files and finds invalid Python code.
@@ -116,6 +113,8 @@ extensions](https://github.com/DmytroLitvinov/awesome-flake8-extensions). Some
 of these will be presented in later sections.
 
 ## Code formatting with Black
+
+{{< figure src="/images/hypermodern-python-03/cote03.jpg" link="/images/hypermodern-python-03/cote03.jpg" >}}
 
 The next addition to our toolbox is [Black](https://github.com/psf/black), the
 uncompromising Python code formatter. One of its greatest features is its lack
@@ -185,6 +184,8 @@ max-line-length = 88
 
 ## Checking imports with flake8-import-order
 
+{{< figure src="/images/hypermodern-python-03/cote04.jpg" link="/images/hypermodern-python-03/cote04.jpg" >}}
+
 The [flake8-import-order](https://github.com/PyCQA/flake8-import-order) plugin
 checks that import statements are grouped and ordered in a consistent and [PEP
 8](https://www.python.org/dev/peps/pep-0008/#imports)-compliant way. Imports
@@ -198,7 +199,7 @@ import time
 import click
 
 # local packages
-from hypermodern_python import splines
+from hypermodern_python import wikipedia
 ```
 
 Install the plugin in the linter session:
@@ -239,6 +240,8 @@ import-order-style = google
 ```
 
 ## Finding more bugs with flake8-bugbear
+
+{{< figure src="/images/hypermodern-python-03/cote05.jpg" link="/images/hypermodern-python-03/cote05.jpg" >}}
 
 The [flake8-bugbear](https://github.com/PyCQA/flake8-bugbear) plugin helps you
 find various bugs and design problems in your programs. Add the plugin to the
@@ -315,4 +318,13 @@ per-file-ignores = tests/*:S101
 ...
 ```
 
-<center>[Continue to the next chapter](../hypermodern-python-04-typing)</center>
+## Thanks for reading!
+
+The next chapter is about adding static type checking to your project. It will
+be published on January 22, 2020.
+
+{{< figure src="/images/hypermodern-python-03/train.jpg" class="centered" >}}
+<!-- 
+{{< figure src="/images/hypermodern-python-04/train.jpg" link="../hypermodern-python-04-typing" class="centered" >}}
+<span class="centered">[Continue to the next chapter](../hypermodern-python-04-typing)</span>
+-->

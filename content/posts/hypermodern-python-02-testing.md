@@ -23,7 +23,7 @@ set up a Python project](../hypermodern-python-01-setup).
 [^1]: The images in this chapter come from Émile-Antoine Bayard's Illustrations
     for From the Earth to the Moon (De la terre à la lune) by Jules Verne (1870)
     (source: [Internet Archive](https://archive.org/details/delaterrelalu00vern)
-    via [Public Domain
+    via [The Public Domain
     Review](https://publicdomainreview.org/collection/emile-antoine-bayard-s-illustrations-for-around-the-moon-by-jules-verne-1870))
 
 Here are the topics covered in this chapter on Testing in Python:
