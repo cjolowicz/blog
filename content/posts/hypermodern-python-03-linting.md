@@ -83,9 +83,9 @@ method installs packages into the virtual environment via
 package source tree, the test suite, and `noxfile.py` itself. You can override
 this by passing specific source files, separated from Nox's own options by `--`.
 
-Flake8 glues together several tools. Each message is assigned an error code,
-prefixed by one or more letters. These prefixes group the errors into so-called
-violation classes:
+Flake8 glues together several tools. The messages produced by these tools are
+assigned error codes, prefixed by one or more letters. These prefixes group the
+errors into so-called violation classes:
 
 - `F` are errors reported by [pyflakes](https://github.com/PyCQA/pyflakes), a
   tool which parses source files and finds invalid Python code.
@@ -329,7 +329,11 @@ per-file-ignores = tests/*:S101
 
 ## Managing development dependencies in Nox sessions
 
-In the first Chapter, we saw that Poetry writes the exact version of each
+In this section, I describe how to use Poetry to manage development dependencies
+in your Nox sessions, and how to make the checks in your Nox sessions
+deterministic.
+
+In the first chapter, we saw that Poetry writes the exact version of each
 package dependency to a file named `poetry.lock`. The same is done for
 development dependencies like `pytest`. This is known as *pinning*, and it
 allows you to build and test your package in a predictable and deterministic
@@ -456,12 +460,12 @@ poetry add --dev \
     flake8-import-order
 ```
 
-You should also adapt the testing session. The testing session only needs to
-install packages required for running the test suite, and should not be
-cluttered by anything else. Instead of simply invoking `poetry install`, pass
-the `--no-dev` option. This excludes development dependencies, and installs only
-the package itself and its dependencies. Then install the test requirements
-explicitly using `install_with_constraints`. Here is the rewritten Nox session:
+You should also adapt the testing session. That session only needs packages
+required for running the test suite, and should not be cluttered by anything
+else. Instead of simply invoking `poetry install`, pass the `--no-dev` option.
+This excludes development dependencies, and installs only the package itself and
+its dependencies. Then install the test requirements explicitly using
+`install_with_constraints`. Here is the rewritten Nox session:
 
 ```python
 @nox.session(python=["3.8", "3.7"])
@@ -473,6 +477,9 @@ def tests(session):
     )
     session.run("pytest", *args)
 ```
+
+You know have deterministic linter checks. Enjoy the convenience and reliability
+of Poetry's dependency management for your Nox sessions!
 
 ## Thanks for reading!
 
