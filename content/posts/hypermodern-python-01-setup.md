@@ -15,18 +15,18 @@ tags:
 
 <!-- Welcome to a whirlwind tour of the Python ecosystem in early 2020! -->
 
-On New Year 2020, more than a decade of coexistence of Python 2 and 3 [has come
-to a close](https://www.python.org/doc/sunset-python-2/). The Python landscape
-has changed considerably over this period: a host of new tools and best
-practices now improve the Python developer experience. At the same time, their
-adoption is lagging behind, due to the constraints of legacy support.
+New Year 2020 [marks the end](https://www.python.org/doc/sunset-python-2/) of
+more than a decade of coexistence of Python 2 and
+3. The Python landscape has changed considerably over this period: a host of new
+tools and best practices now improve the Python developer experience. Their
+adoption, however, lags behind due to the constraints of legacy support.
 
 <!-- Time to show how to build a Python project for *hypermodernists!* [^1] -->
 
 This article series is a guide to modern Python tooling with a focus on
-simplicity and minimalism.[^1] It will walk you through the creation of a
-complete and up-to-date Python project structure, with unit tests, static
-analysis, type-checking, documentation, and continuous integration and delivery.
+simplicity and minimalism.[^1] It walks you through the creation of a complete
+and up-to-date Python project structure, with unit tests, static analysis,
+type-checking, documentation, and continuous integration and delivery.
 
 [^1]: The title of this guide is inspired by the book *Die hypermoderne
     Schachpartie* (The hypermodern game of chess), written by [Savielly
