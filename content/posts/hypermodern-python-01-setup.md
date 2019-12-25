@@ -29,7 +29,7 @@ and up-to-date Python project structure, with unit tests, static analysis,
 type-checking, documentation, and continuous integration and delivery.
 
 [^1]: The title of this guide is inspired by the book *Die hypermoderne
-    Schachpartie* (The hypermodern game of chess), written by [Savielly
+    Schachpartie* (The hypermodern chess game), written by [Savielly
     Tartakower](https://en.wikipedia.org/wiki/Savielly_Tartakower) in 1924. It
     surveys the revolution that had taken place in chess theory in the decade
     after the First World War. The images in this chapter are details from the
@@ -62,32 +62,14 @@ libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python-openssl git
 
 {{< figure src="/images/hypermodern-python-01/opera_crop04.jpg" link="/images/hypermodern-python-01/opera_crop04.jpg" link="/images/hypermodern-python-01/opera_crop04.jpg" >}}
 
-In this first chapter, I will walk you through setting up a Python project using
+In this first chapter, we set up a Python project using
 [pyenv](https://github.com/pyenv/pyenv) and
-[Poetry](https://python-poetry.org/). As an example project, we will build a
-simple command-line application which uses the Wikipedia API to display random
-facts on the console.
-
-Here is a list of the articles in this series.
-
-- [Chapter 1: Setup](../hypermodern-python-01-setup) (this article)
-- [Chapter 2: Testing](../hypermodern-python-02-testing)
-- [Chapter 3: Linting](../hypermodern-python-03-linting)
-- [Chapter 4: Typing](../hypermodern-python-04-typing)
-- [Chapter 5: Documentation](../hypermodern-python-05-documentation)
-- [Chapter 6: CI/CD](../hypermodern-python-06-ci-cd)
-- [Appendix: Docker](../hypermodern-python-07-deployment)
-
-This guide has a companion repository:
-[cjolowicz/hypermodern-python](https://github.com/cjolowicz/hypermodern-python).
-Each article in the guide corresponds to a set of commits in the GitHub
-repository.
-
-- [View changes](https://github.com/cjolowicz/hypermodern-python/compare/initial...chapter01)
-- [Download code](https://github.com/cjolowicz/hypermodern-python/archive/chapter01.zip)
+[Poetry](https://python-poetry.org/). Our example project is a simple
+command-line application, which uses the Wikipedia API to display random facts
+on the console.
 
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
-**In this chapter:**
+Here are the topics covered in this chapter:
 
 - [Setting up a GitHub repository](#setting-up-a-github-repository)
 - [Installing Python with pyenv](#installing-python-with-pyenv)
@@ -99,6 +81,26 @@ repository.
 - [Example: Consuming a REST API with requests](#example-consuming-a-rest-api-with-requests)
 
 <!-- markdown-toc end -->
+
+Here is a list of the articles in this series:
+
+- [Chapter 1: Setup](../hypermodern-python-01-setup) (this article)
+- *Chapter 2: Testing*
+- *Chapter 3: Linting*
+- *Chapter 4: Typing*
+- *Chapter 5: Documentation*
+- *Chapter 6: CI/CD*
+- *Appendix: Docker*
+
+*(Remaining chapters will be published over the coming weeks.)*
+
+This guide has a companion repository:
+[cjolowicz/hypermodern-python](https://github.com/cjolowicz/hypermodern-python).
+Each article in the guide corresponds to a set of commits in the GitHub
+repository.
+
+- [View changes](https://github.com/cjolowicz/hypermodern-python/compare/initial...chapter01)
+- [Download code](https://github.com/cjolowicz/hypermodern-python/archive/chapter01.zip)
 
 ## Setting up a GitHub repository
 
@@ -479,9 +481,9 @@ Options:
 
 {{< figure src="/images/hypermodern-python-01/opera_crop10.jpg" link="/images/hypermodern-python-01/opera_crop10.jpg" >}}
 
-To conclude this chapter, we are going to build an example application. The
-example application prints random facts to the console. The data is retrieved
-from the [Wikipedia API](https://www.mediawiki.org/wiki/REST_API).
+Let's build an example application which prints random facts to the console. The
+data is retrieved from the [Wikipedia
+API](https://www.mediawiki.org/wiki/REST_API).
 
 Install the [requests](https://requests.readthedocs.io/) package, the *de facto*
 standard for making HTTP requests in Python:
@@ -490,9 +492,8 @@ standard for making HTTP requests in Python:
 poetry add requests
 ```
 
-Next, replace the file `src/hypermodern-python/console.py` by the source code
-shown below. We will go through this code step by step in the remainder of this
-section.
+Next, replace the file `src/hypermodern-python/console.py` with the source code
+shown below.
 
 ```python
 # src/hypermodern_python/console.py
@@ -558,14 +559,14 @@ extract = response.json()["extract"]
 Finally, we print the title and extract to the console, using the `click.echo`
 and `click.secho` functions. The latter function allows you to specify the
 foreground color using the `fg` keyword attribute. The `textwrap.fill` function
-wraps the text in `extract` so every line is at most 70 characters long.
+wraps the text in `extract` so that every line is at most 70 characters long.
 
 ```python
 click.secho(title, fg="green")
 click.echo(textwrap.fill(extract))
 ```
 
-Let's try it out:
+Let's try it out!
 
 ```sh
 $ poetry run hypermodern-python
@@ -577,7 +578,8 @@ Goslar in Lower Saxony. It is one of the Upper Harz Ponds that were
 created for the mining industry.
 ```
 
-Feel free to play around with this a little. Here are some things you might try:
+Feel free to play around with this a little. Here are some things you might want
+to try:
 
 - Display a friendly error message when the API is not reachable.
 - Add an option to select the Wikipedia edition for another language.
