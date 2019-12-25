@@ -121,6 +121,12 @@ Include mypy in the default Nox sessions:
 nox.options.sessions = "lint", "mypy", "tests"
 ```
 
+Run the Nox session using the following command:
+
+```sh
+nox -rs mypy
+```
+
 Mypy raises an error if it cannot find any type definitions for a Python package
 used by your program. Unless you are going to write these type definitions
 yourself (which you can), you should disable the error using the `mypy.ini`
@@ -159,6 +165,12 @@ def pytype(session):
     session.run("pytype", *args)
 ```
 
+Run the Nox session using the following command:
+
+```sh
+nox -rs pytype
+```
+
 The session runs in Python 3.7 only, because Python 3.8 is [not yet
 supported](https://github.com/google/pytype/issues/440) in pytype. We also pass
 the command-line option `--disable=import-error`. Like mypy, pytype reports
@@ -173,9 +185,9 @@ nox.options.sessions = "lint", "mypy", "pytype", "tests"
 
 ## Adding type annotations to the package
 
-Let's add type annotations to the `console.main` function. Do not be distracted
-by the decorators applied to it: This is just a simple function accepting a
-`str`, and returning `None` by "falling off its end".
+Let's add type annotations to your package! Looking at `console.main`, do not be
+distracted by the decorators applied to it: This is just a simple function
+accepting a `str`, and returning `None` by "falling off its end":
 
 ```python
 # src/hypermodern_python/console.py
@@ -183,7 +195,7 @@ def main(language: str) -> None:
     ...
 ```
 
-Let's also annotate `wikipedia.API_URL`, a simple string constant:
+In the `wikipedia` module, the `API_URL` constant is a string:
 
 ```python
 API_URL: str = "https://{language}.wikipedia.org/api/rest_v1/page/random/summary"
@@ -197,48 +209,46 @@ The `wikipedia.random_page` function accepts an optional parameter of type
 def random_page(language: str = "en"):
 ```
 
-Annotating the return type of this function is a more complex affair. The
-function returns a [JSON](https://www.json.org/json-en.html) object, which is
-represented in Python using built-in types such as `dict`, `list`, `str`, and
-`int`. The resulting structures can be nested to an arbitrary level. If you look
-at the type annotation for `requests.Response.json()`, you will find the
-following definition:
+The function returns the JSON object received from the Wikipedia API. JSON
+objects are represented in Python using built-in types such as `dict`, `list`,
+`str`, and `int`, and can be arbitrarily nested. Due to the recursive nature of
+JSON objects, their type is still [hard to
+express](https://github.com/python/typing/issues/182) in Python, and is usually
+given as [Any](https://docs.python.org/3/library/typing.html#the-any-type):
 
 ```python
-# typeshed/third_party/2and3/requests/models.pyi
+# src/hypermodern_python/wikipedia.py
 from typing import Any
 
 
-class Response:
-    def json(self, **kwargs) -> Any: ...
+def random_page(language: str = "en") -> Any:
 ```
 
 You can think of the enigmatic
-[Any](https://docs.python.org/3/library/typing.html#the-any-type) type as a box
-which can hold *any* type on the inside, and behaves like *all* of these types
-on the outside. It is the most permissive kind of type you can apply to a
-variable, parameter, or return type in your program.
-
-You may wonder why the stub specifies such a broad return type instead of
-providing a more exact representation of the JSON standard. The main reason for
-this is that a JSON type [would be inherently
-recursive](https://github.com/python/typing/issues/182): the lists and
-dictionaries in a JSON object can themselves hold any JSON object. Recursive
-types are [not yet fully supported](https://github.com/python/mypy/issues/731)
-in mypy.
-
-But can't we be more specific than `Any`? After all, the [Wikipedia API
-docs](https://en.wikipedia.org/api/rest_v1/#/) tell us exactly which kind of
-JSON objects we can expect from each API endpoint. -- Actually no, we cannot
-because we only know at runtime what the API returns. That is, we cannot unless
-we *validate* the data we received.
+`Any` type as a box
+which can hold *any* type on the inside, and behaves like *all* of the types on
+the outside. It is the most permissive kind of type you can apply to a variable,
+parameter, or return type in your program.
 
 ## Runtime type validation using Desert and Marshmallow
 
+Returning `Any` is somewhat unsatisfactory, because we know [quite
+precisely](https://en.wikipedia.org/api/rest_v1/#/) what we expect the Wikipedia
+API to return. An API contract is not a type guarantee, but you can turn it into
+one by validating the JSON you receive. This will also demonstrate some great
+ways to use type annotations *at runtime*.
+
+The first step on the road is defining the target type for the validation. The
+API returns a dictionary with several keys, of which we are only interested in
+`"title"` and `"extract"`. But your program can do better than operating on a
+dictionary, so let's turn this into a proper Python object with `title` and
+`extract` attributes.
+
 The standard [dataclasses](https://docs.python.org/3/library/dataclasses.html)
-module is a great choice for defining the data types of resources returned by an
-API. Defining a full-featured data type is as concise and straightforward as
-this:
+module is a great choice for defining the data types of a program. It makes it
+easy to define full-featured data types in a concise way, and is an example of
+how useful type annotations can be at runtime. Here is the definition of the
+`wikipedia.Page` type:
 
 ```python
 # src/hypermodern_python/wikipedia.py
@@ -250,9 +260,6 @@ class Page:
     title: str
     extract: str
 ```
-
-Th page resource of the Wikipedia API has a few more attributes, but we are only
-interested in the page title and extract.
 
 We are going to return this data type from `wikipedia.random_page`:
 
