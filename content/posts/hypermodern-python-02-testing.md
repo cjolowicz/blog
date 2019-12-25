@@ -1,5 +1,5 @@
 --- 
-date: 2020-01-08T08:00:00+02:00
+date: 2019-01-08T08:00:00+02:00
 title: "Hypermodern Python 2: Testing"
 description: "Coding in Python like Savielly Tartakower."
 draft: true
@@ -37,8 +37,6 @@ Here is a list of the articles in this series:
 - *Chapter 5: Documentation*
 - *Chapter 6: CI/CD*
 - *Appendix: Docker*
-
-*(Remaining chapters will be published over the coming weeks.)*
 
 This guide has a companion repository:
 [cjolowicz/hypermodern-python](https://github.com/cjolowicz/hypermodern-python).
@@ -153,7 +151,7 @@ integrates Coverage.py with `pytest`:
 poetry add --dev coverage[toml] pytest-cov
 ```
 
-Update the `pyproject.toml` configuration file to teach the tool about your
+Update the `pyproject.toml` configuration file to inform the tool about your
 source tree layout. The configuration also enables branch analysis and the
 display of line numbers for missing coverage.
 
@@ -290,42 +288,13 @@ nox -- tests/test_console.py
 
 ## Mocking with pytest-mock
 
-The Hypermodern Python package doesn't do anything useful yet. Let's add a
-module for [reticulating
-splines](https://www.quora.com/What-does-reticulating-splines-mean/answer/Matt-Sephton?ch=10&share=4d9cf44a&srid=uSlxC).
-The module defines a single function `splines.reticulate`, yielding an infinite
-number of splines, or the number of splines specified by the `count` parameter.
-Each spline is reticulated in a time-consuming process.
-
-```python
-# src/hypermodern_python/splines.py
-import time
-
-
-def reticulate(count=-1):
-    spline = 0
-    while count < 0 or spline < count:
-        time.sleep(1)
-        spline += 1
-        yield spline
-```
-
-Invoke `nox -r`. Coverage is down to 40% due to the new code. Add a simple test
-module checking that the function reticulates the requested number of splines:
-
-```python
-# tests/test_splines.py
-from hypermodern_python import splines
-
-
-def test_reticulate_yields_count_times():
-    iterator = splines.reticulate(3)
-    assert sum(1 for _ in iterator) == 3
-```
-
-Rerun `nox -r` and observe how the new test case takes over three seconds to
-complete. Reticulating splines is a complicated and time-consuming process. Not
-a reason to skip these tests altogether!
+Unit tests should be [fast, isolated, and
+repeatable](http://agileinaflash.blogspot.com/2009/02/first.html). The test for
+`console.main` is neither of these: It performs an actual request against a live
+API, which means that the test takes a full round-trip to the server to
+complete, does not run in an isolated environment, and its outcome depends on
+API behaviour, with the endpoint returning a random article. Even worse, the
+test fails whenever the network is down.
 
 The [unittest.mock](https://docs.python.org/3/library/unittest.mock.html)
 standard library allows you to replace parts of your system under test with mock
@@ -337,10 +306,10 @@ poetry add --dev pytest-mock
 ```
 
 The plugin provides a `mocker` fixture, which can be used to replace the
-`time.sleep` function by a mock object. This mock object will be useful for any
-test case involving splines, so create a test fixture for it. You can place this
-fixture in a file named `conftest.py`, which will make it accessible to all test
-modules without requiring an explicit import.
+`requests.get` function by a mock object. This mock object will be useful for
+any test case involving the API, so let's create a test fixture for it. You can
+place this fixture in a file named `conftest.py`, which will make it accessible
+to all test modules without requiring an explicit import.
 
 ```python
 # tests/conftest.py
@@ -348,80 +317,17 @@ import pytest
 
 
 @pytest.fixture
-def mock_sleep(mocker):
-    return mocker.patch("time.sleep")
+def mock_requests_get(mocker):
+    mock = mocker.patch("requests.get")
+    mock.return_value.json.return_value = {
+        "title": "Lorem Ipsum Dolor",
+        "extract": "Lorem Ipsum Dolor",
+    }
+    return mock
 ```
     
-Use the mock in your test case by adding it as a function parameter:
-
-```python
-# tests/test_splines.py
-def test_reticulate_yields_count_times(mock_sleep):
-    ...
-```
-    
-Now the tests pass immediately, without invoking the actual `time.sleep`
-function.
-
-You can also check that a mock object was called by the function under test:
-
-```python
-# tests/test_splines.py
-def test_reticulate_sleeps(mock_sleep):
-    for _ in splines.reticulate():
-        break
-    assert mock_sleep.called
-```
-
-## More mocking with pytest-mock
-
-Let's make this exciting functionality accessible from the command-line. For
-users with less than an infinite amount of time on their hands, add an option to
-control the number of splines to reticulate.
-
-```python
-# src/hypermodern_python/console.py
-import click
- 
-from . import __version__, splines
- 
- 
-@click.command()
-@click.option("-n", "--count", default=-1, help="Number of splines to reticulate")
-@click.version_option(version=__version__)
-def main(count):
-    """The hypermodern Python project."""
-    for spline in splines.reticulate(count):
-        click.echo(f"Reticulating spline {spline}...")
-```
-
-See the program in action:
-
-```sh
-$ poetry run hypermodern-python --count=3
-
-Reticulating spline 1...
-Reticulating spline 2...
-Reticulating spline 3...
-```
-
-Unfortunately, the console test now appears to hang. Adding the `time.sleep`
-mock does not appear to help. The program reticulates splines forever and ever
-when invoked without options. You could change the test case to restrict the
-number of splines, like this:
-
-```python
-def test_main_succeeds(runner, mock_sleep):
-    result = runner.invoke(console.main, ["--count=3"])
-    assert result.exit_code == 0
-```
-
-This solves the problem at hand, but you no longer have a test case for the
-default behaviour of the console application.
-
-Instead, let's mock out the `splines.reticulate` function itself. This time, the
-mock object needs to return something meaningful. `console.main` expects a
-sequence of splines which it can print to the screen. You can configure the mock
+The mock object needs to return something meaningful. `console.main` expects a
+ of splines which it can print to the screen. You can configure the mock
 object to return a specific value, effectively short-circuiting the call to the
 real function. Here's how you do it:
 
@@ -442,6 +348,28 @@ def test_main_succeeds(runner, mock_splines_reticulate):
 Cheating? Not so. Assuming that the function is fully covered by other test
 cases, this allows you to focus on how `console.main` uses it for its own
 purposes.
+
+Use the mock in your test case by adding it as a function parameter:
+
+```python
+# tests/test_console.py
+def test_main_succeeds(runner, mock_requests_get):
+    ...
+```
+    
+Now the test passes immediately and reproducibly, without invoking the actual
+`requests.get` function.
+
+You can also check that a mock object was called by the function under test:
+
+```python
+# tests/test_console.py
+def test_main_invokes_requests_get(runner, mock_requests_get):
+    runner.invoke(console.main)
+    assert mock_requests_get.called
+```
+
+## More mocking with pytest-mock
 
 While the code coverage is now reported as 100%, the tests do not cover the
 `--count` option at all. Nor do they make any assertions about the output

@@ -2,7 +2,6 @@
 date: 2020-01-01T08:00:00+02:00
 title: "Hypermodern Python"
 description: "A guide to modern Python tooling with a focus on simplicity and minimalism."
-draft: true
 tags:
   - python
   - poetry
@@ -11,7 +10,7 @@ tags:
   - requests
 ---
 
-[Read this article on Medium](https://medium.com/@cjolowicz/)
+<!-- [Read this article on Medium](https://medium.com/@cjolowicz/) -->
 
 {{< figure src="/images/hypermodern-python-01/opera_crop01.jpg" link="/images/hypermodern-python-01/opera_crop01.jpg" >}}
 
@@ -86,8 +85,6 @@ Here is a list of the articles in this series:
 - *Chapter 5: Documentation*
 - *Chapter 6: CI/CD*
 - *Appendix: Docker*
-
-*(Remaining chapters will be published over the coming weeks.)*
 
 This guide has a companion repository:
 [cjolowicz/hypermodern-python](https://github.com/cjolowicz/hypermodern-python).
