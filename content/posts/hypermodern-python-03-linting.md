@@ -411,11 +411,11 @@ nox.options.sessions = "lint", "safety", "tests"
 In this section, I describe how to use Poetry to manage development dependencies
 in your Nox sessions, and how to make your Nox sessions more reproducible.
 
-In the first chapter, we saw that Poetry writes the exact version of each
-package dependency to a file named `poetry.lock`. The same is done for
-development dependencies like `pytest`. This is known as *pinning*, and it
-allows you to build and test your package in a predictable and deterministic
-way.
+In the [first chapter](../hypermodern-python-01-setup), we saw that Poetry
+writes the exact version of each package dependency to a file named
+`poetry.lock`. The same is done for development dependencies like `pytest`. This
+is known as *pinning*, and it allows you to build and test your package in a
+predictable and deterministic way.
 
 By contrast, this is how we have been installing packages into Nox sessions so
 far:
