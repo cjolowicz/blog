@@ -13,21 +13,20 @@ tags:
 
 {{< figure src="/images/hypermodern-python-01/opera_crop01.jpg" link="/images/hypermodern-python-01/opera_crop01.jpg" >}}
 
-Welcome to a whirlwind tour of the Python ecosystem in early 2020! 
+<!-- Welcome to a whirlwind tour of the Python ecosystem in early 2020! -->
 
 On New Year 2020, more than a decade of coexistence of Python 2 and 3 [has come
 to a close](https://www.python.org/doc/sunset-python-2/). The Python landscape
-had changed considerably over this period: a host of new tools and best
-practices continued to improve the Python developer experience. At the same
-time, their adoption was lagging behind, due to the constraints of legacy
-support.
+has changed considerably over this period: a host of new tools and best
+practices now improve the Python developer experience. At the same time, their
+adoption is lagging behind, due to the constraints of legacy support.
 
-Time to show how to build a Python project for *hypermodernists!* [^1]
+<!-- Time to show how to build a Python project for *hypermodernists!* [^1] -->
 
-This is a guide to modern Python tooling with a focus on simplicity and
-minimalism. It will walk you through the creation of a complete and up-to-date
-Python project structure, with unit tests, static analysis, type-checking,
-documentation, and continuous integration and delivery.
+This article series[^1] is a guide to modern Python tooling with a focus on
+simplicity and minimalism. It will walk you through the creation of a complete
+and up-to-date Python project structure, with unit tests, static analysis,
+type-checking, documentation, and continuous integration and delivery.
 
 [^1]: The title of this guide is inspired by the book *Die hypermoderne
     Schachpartie* (The hypermodern chess game), written by [Savielly
@@ -389,8 +388,17 @@ The dependency entry in `pyproject.toml` contains a [version
 constraint](https://poetry.eustace.io/docs/versions/) for the installed package:
 `^7.0`. This means that users of the package need to have at least the current
 release, `7.0`. The constraint also allows newer releases of the package, as
-long as they don't contain breaking changes.[^2]
+long as the version number does not indicate breaking changes.<!-- [^2] -->
 
+> Breaking changes are only allowed in major releases (incrementing the most
+> significant version digit). Packages with a version number smaller than 1.0.0
+> are a little special, in that breaking changes may occur in all releases
+> except patch releases (incrementing any but the least significant version
+> digit). You can edit the version constraint, for example if a package you
+> depend on does not follow the [Semantic Versioning](https://semver.org/)
+> scheme.
+
+<!--
 [^2]: Breaking changes are only allowed in major releases (incrementing the most
       significant version digit). Packages with a version number smaller than
       1.0.0 are a little special, in that breaking changes may occur in all
@@ -398,6 +406,7 @@ long as they don't contain breaking changes.[^2]
       version digit). You can edit the version constraint, for example if a
       package you depend on does not follow the [Semantic
       Versioning](https://semver.org/) scheme.
+-->
 
 By contrast, `poetry.lock` contains the exact version of `click` installed into
 the virtual environment. Place this file under source control. It allows
@@ -484,18 +493,17 @@ Options:
 
 To conclude this chapter, we are going to build an example application. The
 example application prints random facts to the console. The data is retrieved
-from [Wikipedia's REST API](https://www.mediawiki.org/wiki/REST_API), by
-requesting summaries for random Wikipedia articles.
+from the [Wikipedia API](https://www.mediawiki.org/wiki/REST_API).
 
-Install the `requests` package, the *de facto* standard for making HTTP requests
-in Python:
+Install the [requests](https://requests.readthedocs.io/) package, the *de facto*
+standard for making HTTP requests in Python:
 
 ```sh
 poetry add requests
 ```
 
 Next, replace the file `src/hypermodern-python/console.py` by the source code
-shown below. We will go through this step by step in the remainder of this
+shown below. We will go through this code step by step in the remainder of this
 section.
 
 ```python
@@ -521,10 +529,11 @@ def main() -> None:
     click.echo(textwrap.fill(extract))
 ```
 
-Let's have a look at the imports at the top of the module first. The `textwrap`
-module from the standard library allows us to wrap lines when printing text to
-the console. We also import the newly installed `requests` package. Blank lines
-serve to group imports as recommended in [PEP
+Let's have a look at the imports at the top of the module first. The
+[textwrap](https://docs.python.org/3/library/textwrap.html) module from the
+standard library allows you to wrap lines when printing text to the console. We
+also import the newly installed `requests` package. Blank lines serve to group
+imports as recommended in [PEP
 8](https://www.python.org/dev/peps/pep-0008/#imports) (standard library--third
 party packages--local imports).
 
@@ -538,11 +547,11 @@ from . import __version__
 ```
 
 In the `console.main` function, the "hello world" example from the previous
-section is replaced by the code for the example application.
-
-The first line performs an HTTP request to the REST API of the English
-Wikipedia. The request uses the `GET` method on the `/page/random/summary`
-endpoint, which returns the summary of a random Wikipedia article:
+section is replaced by the code for the example application. The first line
+sends an [HTTP GET](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods)
+request to the [REST API](https://restfulapi.net/) of the English Wikipedia. The
+request goes to the `/page/random/summary` endpoint, which returns the summary
+of a random Wikipedia article:
 
 ```python
 response = requests.get("https://en.wikipedia.org/api/rest_v1/page/random/summary")
@@ -558,10 +567,10 @@ title = response.json()["title"]
 extract = response.json()["extract"]
 ```
 
-Finally, we print the title and extract to the console, using `click.echo` and
-`click.secho`. The function `click.secho` allows you to specify the foreground
-color using the `fg` keyword attribute. The `textwrap.fill` function wraps the
-text in `extract` so every line is at most 70 characters long.
+Finally, we print the title and extract to the console, using the `click.echo`
+and `click.secho` functions. The latter function allows you to specify the
+foreground color using the `fg` keyword attribute. The `textwrap.fill` function
+wraps the text in `extract` so every line is at most 70 characters long.
 
 ```python
 click.secho(title, fg="green")
@@ -587,7 +596,7 @@ Feel free to play around with this a little. Here are some things you might try:
 - If you feel adventurous: auto-detect the user's preferred language edition,
   using [locale](https://docs.python.org/3.8/library/locale.html).
 
-## Next
+## Thanks for reading!
 
 In the [next chapter](../hypermodern-python-02-testing), I'm going to discuss
 how to add unit tests to your project.
