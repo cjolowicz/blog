@@ -1,5 +1,5 @@
 --- 
-date: 2020-01-08T09:04:32+01:00
+date: 2020-01-15T07:04:32+01:00
 title: "Hypermodern Python Chapter 3: Linting"
 description: "A guide to modern Python tooling with a focus on simplicity and minimalism."
 draft: true
@@ -9,6 +9,8 @@ tags:
   - flake8
   - black
   - bandit
+  - safety
+  - pre-commit
 ---
 
 [Read this article on Medium](https://medium.com/@cjolowicz/hypermodern-python-3-linting-xxxxxxxxxxxx)
