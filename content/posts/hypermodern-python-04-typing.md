@@ -29,6 +29,7 @@ Here are the topics covered in this chapter on Typing in Python:
 - [Static type checking with mypy](#static-type-checking-with-mypy)
 - [Static type checking with pytype](#static-type-checking-with-pytype)
 - [Adding type annotations to the package](#adding-type-annotations-to-the-package)
+- [Runtime type validation using Desert and Marshmallow](#runtime-type-validation-using-desert-and-marshmallow)
 - [Increasing type coverage with flake8-annotations](#increasing-type-coverage-with-flake8-annotations)
 - [Adding type annotations to the test suite](#adding-type-annotations-to-the-test-suite)
 
@@ -185,9 +186,9 @@ nox.options.sessions = "lint", "mypy", "pytype", "tests"
 
 ## Adding type annotations to the package
 
-Let's add type annotations to your package! Looking at `console.main`, do not be
-distracted by the decorators applied to it: This is just a simple function
-accepting a `str`, and returning `None` by "falling off its end":
+Let's add some type annotations to the package! Looking at `console.main`, do
+not be distracted by the decorators applied to it: This is just a simple
+function accepting a `str`, and returning `None` by "falling off its end":
 
 ```python
 # src/hypermodern_python/console.py
@@ -224,31 +225,27 @@ from typing import Any
 def random_page(language: str = "en") -> Any:
 ```
 
-You can think of the enigmatic
-`Any` type as a box
-which can hold *any* type on the inside, and behaves like *all* of the types on
-the outside. It is the most permissive kind of type you can apply to a variable,
-parameter, or return type in your program.
+You can think of the enigmatic `Any` type as a box which can hold *any* type on
+the inside, and behaves like *all* of the types on the outside. It is the most
+permissive kind of type you can apply to a variable, parameter, or return type
+in your program.
 
 ## Runtime type validation using Desert and Marshmallow
 
-Returning `Any` is somewhat unsatisfactory, because we know [quite
-precisely](https://en.wikipedia.org/api/rest_v1/#/) what we expect the Wikipedia
-API to return. An API contract is not a type guarantee, but you can turn it into
-one by validating the JSON you receive. This will also demonstrate some great
+Returning `Any` is unsatisfactory, because we know quite precisely [which JSON
+structures we can expect](https://en.wikipedia.org/api/rest_v1/#/) from the
+Wikipedia API. An API contract is not a type guarantee, but you can turn it into
+one by validating the data you receive. This will also demonstrate some great
 ways to use type annotations *at runtime*.
 
 The first step on the road is defining the target type for the validation. The
 API returns a dictionary with several keys, of which we are only interested in
-`"title"` and `"extract"`. But your program can do better than operating on a
-dictionary, so let's turn this into a proper Python object with `title` and
-`extract` attributes.
-
-The standard [dataclasses](https://docs.python.org/3/library/dataclasses.html)
-module is a great choice for defining the data types of a program. It makes it
-easy to define full-featured data types in a concise way, and is an example of
-how useful type annotations can be at runtime. Here is the definition of the
-`wikipedia.Page` type:
+`title` and `extract`. But your program can do better than operating on a
+dictionary: Using
+[dataclasses](https://docs.python.org/3/library/dataclasses.html) from the
+standard library, you can define fully-featured data types in a concise and
+straightforward manner. Let's define a `wikipedia.Page` type for our
+application:
 
 ```python
 # src/hypermodern_python/wikipedia.py
@@ -268,25 +265,35 @@ We are going to return this data type from `wikipedia.random_page`:
 def random_page(language: str = "en") -> Page:
 ```
 
-The [https://github.com/marshmallow-code/marshmallow](marshmallow) library
-allows you to define schemas to serialize, deserialize and validate data. You
-use it to define
+Data types have a beneficial influence on the structure of code bases. You can
+see this by adapting `console.main` to use `wikipedia.Page` instead of the raw
+dictionary:
 
-- marshmallow allows data validation, serialization, deserialization using schemas
-- desert generates schemas from type annotations
+```python
+# src/hypermodern_python/console.py
+def main(language: str) -> None:
+    """The hypermodern Python project."""
+    page = wikipedia.random_page(language=language)
 
-[marshmallow]() is a library which validates low-level data structures and
-converts them to application-level objects, using schemas. [desert]() is a
-front-end to marshmallow which uses type annotations to generate schemas
-automatically.
-
-Add desert to your dependencies using Poetry:
-
-```sh
-poetry add desert
+    click.secho(page.title, fg="green")
+    click.echo(textwrap.fill(page.extract))
 ```
 
-You can generate a schema for `Page` like this:
+So how are we going to turn JSON into Page objects? Enter
+[Marshmallow](https://marshmallow.readthedocs.io/): This library allows you to
+define schemas to serialize, deserialize and validate data. Used by countless
+applications, Marshmallow has also spawned an ecosystem of tools and libraries
+built on top of it. One of these libraries,
+[Desert](https://desert.readthedocs.io/), uses the type annotations of
+dataclasses to generate serialization schemas for them.
+
+Add Desert and Marshmallow to your dependencies:
+
+```sh
+poetry add desert marshmallow
+```
+
+Generating a schema with desert works like this:
 
 ```python
 # src/hypermodern_python/wikipedia.py
@@ -296,17 +303,22 @@ import desert
 schema = desert.schema(Page)
 ```
 
-Actually, we need to tell schema that it should simply ignore unknown fields:
+As noted above, our Page type represents the Wikipedia resource only partially.
+Marshmallow errs on the side of safety and raises a validation error when
+encountering unknown fields. You can tell it to ignore unknown fields via the
+`meta` keyword:
 
 ```python
 # src/hypermodern_python/wikipedia.py
+import desert
 import marshmallow
 
 
 schema = desert.schema(Page, meta={"unknown": marshmallow.EXCLUDE})
 ```
 
-Using this schema, we can implement `random_page`:
+Using this schema, we are ready to implement `wikipedia.random_page`. We also
+take this opportunity to add basic exception handling for validation errors.
 
 ```python
 # src/hypermodern_python/wikipedia.py
@@ -318,41 +330,12 @@ def random_page(language: str = "en") -> Page:
             response.raise_for_status()
             data = response.json()
             return schema.load(data)
-    except requests.RequestException as error:
+    except (requests.RequestException, marshmallow.ValidationError) as error:
         message = str(error)
         raise click.ClickException(message)
 ```
 
-Thanks to the data type, we can simplify `console.main`:
-
-```python
-# src/hypermodern_python/console.py
-import textwrap
-
-import click
-
-from . import __version__, wikipedia
-
-
-@click.command()
-@click.option(
-    "--language",
-    "-l",
-    default="en",
-    help="Language edition of Wikipedia",
-    metavar="LANG",
-    show_default=True,
-)
-@click.version_option(version=__version__)
-def main(language: str) -> None:
-    """The hypermodern Python project."""
-    page = wikipedia.random_page(language=language)
-
-    click.secho(page.title, fg="green")
-    click.echo(textwrap.fill(page.extract))
-```
-
-Ignore import errors for `desert` and `marshmallow`:
+You also need to add the libraries to `mypy.ini` to avoid import errors:
 
 ```ini
 # mypy.ini
@@ -360,21 +343,11 @@ Ignore import errors for `desert` and `marshmallow`:
 ignore_missing_imports = True
 ```
 
-We also need to handle validation errors:
-
-```python
-# src/hypermodern_python/wikipedia.py
-    except (requests.RequestException, marshmallow.ValidationError) as error:
-```
-
-TODO test driven
-
 Here is the final `wikipedia` module:
 
 ```python
 # src/hypermodern_python/wikipedia.py
 from dataclasses import dataclass
-from typing import Final
 
 import click
 import desert
@@ -382,7 +355,7 @@ import marshmallow
 import requests
 
 
-API_URL: Final = "https://{language}.wikipedia.org/api/rest_v1/page/random/summary"
+API_URL: str = "https://{language}.wikipedia.org/api/rest_v1/page/random/summary"
 
 
 @dataclass
