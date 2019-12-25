@@ -199,9 +199,17 @@ TOTAL                                    7      0      0      0   100%
 ```
 
 The reported code coverage is 100%. This number does not imply that your test
-suite has meaningful test cases for all uses and misuses of your program.
-However, aiming for 100% code coverage is a good practice, especially for a
-fresh codebase. Later, we will see some tools that help you achieve this goal.
+suite has meaningful test cases for all uses and misuses of your program. Code
+coverage only tells you that all lines and branches in your code base were hit.
+(In fact, our test case achieved full coverage without checking the
+functionality of the program at all, only its exit status.)
+
+However, aiming for 100% code coverage is good practice, especially for a fresh
+codebase. Anything less than that implies that some part of your code base is
+definitely untested. And to quote [Bruce
+Eckel](https://en.wikipedia.org/wiki/Bruce_Eckel), *if it's not tested, it's
+broken*. Later, we will see some tools that help you achieve the goal of
+extensive code coverage.
 
 ## Test automation with Nox
 
@@ -305,7 +313,7 @@ repeatable](http://agileinaflash.blogspot.com/2009/02/first.html). The test for
 - It does not run in an isolated environment, because it sends out an actual
   request over the network.
 - It is not repeatable, because its outcome depends on the health, reachability,
-  and behaviour of the API. In particular, the test fails whenever the network
+  and behavior of the API. In particular, the test fails whenever the network
   is down.
 
 The [unittest.mock](https://docs.python.org/3/library/unittest.mock.html)
@@ -399,12 +407,42 @@ def mock_requests_get(mocker):
     return mock
 ```
     
+Mocking not only speeds up your test suite, or lets you hack offline on a plane
+or train. By virtue of having a fixed, or deterministic, return value, the mock
+also enables you to write repeatable tests. This means, for example, that you
+can check that the title returned by the API is printed to the console:
+
+```python
+def test_main_prints_title(runner, mock_requests_get):
+    result = runner.invoke(console.main)
+    assert "Lorem Ipsum" in result.output
+```
+
+Also, mocks can be inspected to see if they were called, using the mock's
+[called](https://docs.python.org/3/library/unittest.mock.html#unittest.mock.Mock.called)
+attribute. This provides you with a way to check that `requests.get` was invoked
+to send a request to the API:
+
+```python
+# tests/test_console.py
+def test_main_invokes_requests_get(runner, mock_requests_get):
+    runner.invoke(console.main)
+    assert mock_requests_get.called
+```
+
+<!--
+
+While the code coverage is reported as 100%, the test does not check the
+functionality of the program at all. Remember, code coverage only tells you that
+all lines and branches in your code base were hit, not that the behavior of your
+program was checked in any meaningful way.
+
+## Fakes and Stubs
+
 The `mock_requests_get` fixture demonstrates one drawback of mocking: Mocks can
 be tightly coupled to implementation details of the system under test. In the
 long run, you may be better off to implement an actual "fake" API and serve it
 via HTTP for your tests.
-
-## Fakes and Stubs
 
 Mocks help you test code units depending on bulky subsystems, but they are [not
 the only
@@ -468,30 +506,9 @@ def fake_api():
     api.shutdown()
 ```
 
-## Meaningful tests
+-->
 
-While the code coverage is reported as 100%, the tests do not check the
-functionality of the program at all. Remember, code coverage only tells you that
-all lines and branches in your code base were hit, not that the behavior of your
-program was checked in any meaningful way.
-
-For example, you can check that the title returned by the API is printed to the
-console:
-
-```python
-def test_main_prints_title(runner, mock_requests_get):
-    result = runner.invoke(console.main)
-    assert "Lorem Ipsum" in result.output
-```
-
-You can also check that `requests.get` is invoked to send a request to the API:
-
-```python
-# tests/test_console.py
-def test_main_invokes_requests_get(runner, mock_requests_get):
-    runner.invoke(console.main)
-    assert mock_requests_get.called
-```
+<!--
 
 ## End-to-end testing
 
@@ -549,6 +566,8 @@ how you would run end-to-end tests inside the testing environment for Python
 ```sh
 nox -rs tests-3.8 -- -m e2e
 ```
+
+-->
 
 ## Refactoring the example application
 
