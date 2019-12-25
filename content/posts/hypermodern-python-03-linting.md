@@ -33,7 +33,7 @@ Here are the topics covered in this chapter on Linting in Python:
 - [Checking imports with flake8-import-order](#checking-imports-with-flake8-import-order)
 - [Finding more bugs with flake8-bugbear](#finding-more-bugs-with-flake8-bugbear)
 - [Identifying security issues with bandit](#identifying-security-issues-with-bandit)
-- [Pinning development dependencies with Poetry and Nox](#pinning-development-dependencies-with-poetry-and-nox)
+- [Managing development dependencies in Nox sessions](#managing-development-dependencies-in-nox-sessions)
 
 Here is a full list of the articles in this series:
 
