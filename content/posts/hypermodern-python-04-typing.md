@@ -41,16 +41,13 @@ Here is a full list of the articles in this series:
 - *Chapter 6: CI/CD*
 - *Appendix: Docker*
 
-<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
-**In this chapter:**
-
-<!-- markdown-toc end -->
-
 This guide has a companion repository:
 [cjolowicz/hypermodern-python](https://github.com/cjolowicz/hypermodern-python).
-Here is the link for the changes contained in this chapter:
+Each article in the guide corresponds to a set of commits in the GitHub
+repository:
 
-▶ **[View code](https://github.com/cjolowicz/hypermodern-python/compare/chapter03...chapter04)**
+- [View changes](https://github.com/cjolowicz/hypermodern-python/compare/chapter03...chapter04)
+- [Download code](https://github.com/cjolowicz/hypermodern-python/archive/chapter04.zip)
 
 ## Static type checkers and type annotations
 

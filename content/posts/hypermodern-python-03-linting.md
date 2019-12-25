@@ -404,6 +404,62 @@ Include Safety in the default Nox sessions by adding it to
 nox.options.sessions = "lint", "safety", "tests"
 ```
 
+To see how Safety works, install the infamous
+[insecure-package](https://pypi.org/project/insecure-package/):
+
+```sh
+poetry add insecure-package
+```
+
+Here's what Safety has to say about this:
+
+```sh
+$ nox -rs safety
+
+nox > Running session safety
+nox > Re-using existing virtual environment at .nox/safety.
+nox > poetry export --dev --format=requirements.txt --without-hashes --output=/var/folders/13/g258r36n3fd7rj0jrgln5gd04dw8n3/T/tmpkgcb549m
+nox > poetry export --dev --format=requirements.txt --output=/var/folders/13/g258r36n3fd7rj0jrgln5gd04dw8n3/T/tmpyejztram
+nox > pip install --constraint=/var/folders/13/g258r36n3fd7rj0jrgln5gd04dw8n3/T/tmpyejztram safety
+nox > safety check --file=/var/folders/13/g258r36n3fd7rj0jrgln5gd04dw8n3/T/tmpkgcb549m --full-report
+╒══════════════════════════════════════════════════════════════════════════════╕
+│                                                                              │
+│                               /$$$$$$            /$$                         │
+│                              /$$__  $$          | $$                         │
+│           /$$$$$$$  /$$$$$$ | $$  \__//$$$$$$  /$$$$$$   /$$   /$$           │
+│          /$$_____/ |____  $$| $$$$   /$$__  $$|_  $$_/  | $$  | $$           │
+│         |  $$$$$$   /$$$$$$$| $$_/  | $$$$$$$$  | $$    | $$  | $$           │
+│          \____  $$ /$$__  $$| $$    | $$_____/  | $$ /$$| $$  | $$           │
+│          /$$$$$$$/|  $$$$$$$| $$    |  $$$$$$$  |  $$$$/|  $$$$$$$           │
+│         |_______/  \_______/|__/     \_______/   \___/   \____  $$           │
+│                                                          /$$  | $$           │
+│                                                         |  $$$$$$/           │
+│  by pyup.io                                              \______/            │
+│                                                                              │
+╞══════════════════════════════════════════════════════════════════════════════╡
+│ REPORT                                                                       │
+│ checked 48 packages, using default DB                                        │
+╞════════════════════════════╤═══════════╤══════════════════════════╤══════════╡
+│ package                    │ installed │ affected                 │ ID       │
+╞════════════════════════════╧═══════════╧══════════════════════════╧══════════╡
+│ insecure-package           │ 0.1.0     │ <0.2.0                   │ 25853    │
+╞══════════════════════════════════════════════════════════════════════════════╡
+│ This is an insecure package with lots of exploitable security                │
+│ vulnerabilities.                                                             │
+╘══════════════════════════════════════════════════════════════════════════════╛
+nox > Command safety check --file=/var/folders/13/g258r36n3fd7rj0jrgln5gd04dw8n3/T/tmpkgcb549m --full-report failed with exit code 255
+nox > Session safety failed.
+```
+
+Don't forget to uninstall this monster (just kidding, it's an empty package
+flagged by Safety DB for testing purposes):
+
+```sh
+poetry remove insecure-package
+```
+
+Feel free to re-run Safety via Nox.
+
 ## Managing dependencies in Nox sessions with Poetry
 
 {{< figure src="/images/hypermodern-python-03/cote07.jpg" link="/images/hypermodern-python-03/cote07.jpg" >}}
