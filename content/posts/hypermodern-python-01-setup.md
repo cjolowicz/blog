@@ -590,7 +590,9 @@ to try:
 
 In the next chapter, I'm going to discuss how to add unit tests to your project.
 
+<!-- 
 ---
 
 {{< figure src="/images/hypermodern-python-01/specimensofprint_crop05.png" link="../hypermodern-python-02-testing" class="centered" >}}
 <span class="centered">[Continue to the next chapter](../hypermodern-python-02-testing)</span>
+-->
