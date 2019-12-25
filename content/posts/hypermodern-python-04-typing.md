@@ -235,9 +235,10 @@ we *validate* the data we received.
 
 ## Runtime type validation using Desert and Marshmallow
 
-```sh
-poetry add desert
-```
+The standard [dataclasses](https://docs.python.org/3/library/dataclasses.html)
+module is a great choice for defining the data types of resources returned by an
+API. Defining a full-featured data type is as concise and straightforward as
+this:
 
 ```python
 # src/hypermodern_python/wikipedia.py
@@ -250,14 +251,58 @@ class Page:
     extract: str
 ```
 
+Th page resource of the Wikipedia API has a few more attributes, but we are only
+interested in the page title and extract.
+
+We are going to return this data type from `wikipedia.random_page`:
+
+```python
+# src/hypermodern_python/wikipedia.py
+def random_page(language: str = "en") -> Page:
+```
+
+The [https://github.com/marshmallow-code/marshmallow](marshmallow) library
+allows you to define schemas to serialize, deserialize and validate data. You
+use it to define
+
+- marshmallow allows data validation, serialization, deserialization using schemas
+- desert generates schemas from type annotations
+
+[marshmallow]() is a library which validates low-level data structures and
+converts them to application-level objects, using schemas. [desert]() is a
+front-end to marshmallow which uses type annotations to generate schemas
+automatically.
+
+Add desert to your dependencies using Poetry:
+
+```sh
+poetry add desert
+```
+
+You can generate a schema for `Page` like this:
+
 ```python
 # src/hypermodern_python/wikipedia.py
 import desert
 
 
 schema = desert.schema(Page)
+```
+
+Actually, we need to tell schema that it should simply ignore unknown fields:
+
+```python
+# src/hypermodern_python/wikipedia.py
+import marshmallow
 
 
+schema = desert.schema(Page, meta={"unknown": marshmallow.EXCLUDE})
+```
+
+Using this schema, we can implement `random_page`:
+
+```python
+# src/hypermodern_python/wikipedia.py
 def random_page(language: str = "en") -> Page:
     url = API_URL.format(language=language)
 
@@ -270,6 +315,8 @@ def random_page(language: str = "en") -> Page:
         message = str(error)
         raise click.ClickException(message)
 ```
+
+Thanks to the data type, we can simplify `console.main`:
 
 ```python
 # src/hypermodern_python/console.py
@@ -298,24 +345,24 @@ def main(language: str) -> None:
     click.echo(textwrap.fill(page.extract))
 ```
 
+Ignore import errors for `desert` and `marshmallow`:
+
 ```ini
 # mypy.ini
 [mypy-desert,marshmallow,nox.*,pytest,pytest_mock,_pytest.*]
 ignore_missing_imports = True
 ```
 
-```python
-# src/hypermodern_python/wikipedia.py
-import marshmallow
-
-
-schema = desert.schema(Page, meta={"unknown": marshmallow.EXCLUDE})
-```
+We also need to handle validation errors:
 
 ```python
 # src/hypermodern_python/wikipedia.py
     except (requests.RequestException, marshmallow.ValidationError) as error:
 ```
+
+TODO test driven
+
+Here is the final `wikipedia` module:
 
 ```python
 # src/hypermodern_python/wikipedia.py
