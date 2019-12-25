@@ -489,9 +489,8 @@ Git provides [hooks](https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks)
 which allow you to run custom commands when important actions occur, such as a
 commit or push. You can leverage this to run automated checks when you commit
 changes. [pre-commit](https://pre-commit.com/) is a framework for managing and
-maintaining such hooks. Use it to integrate the [best industry standard
-linters](https://pre-commit.com/hooks.html) into your workflow, even those
-written in a language other than Python.
+maintaining such hooks. Use it to integrate the best industry standard linters
+into your workflow, even those written in a language other than Python.
 
 Install pre-commit via [pip](https://pip.readthedocs.org/) or
 [pipx](https://github.com/pipxproject/pipx):
@@ -525,9 +524,9 @@ Install the hooks by running the following command:
 pre-commit install
 ```
 
-The hooks will run automatically every time you invoke `git commit`, with checks
-restricted to the files changed by the commit. When you add new hooks (like just
-now), you can trigger them manually for all files using the following command:
+The hooks run automatically every time you invoke `git commit`, applying checks
+to any newly created or modified files. When you add new hooks (like just now),
+you can trigger them manually for all files using the following command:
 
 ```sh
 $ pre-commit run --all-files
@@ -540,31 +539,34 @@ $ pre-commit run --all-files
 [INFO] Installing environment for https://github.com/psf/black.
 [INFO] Once installed this environment will be reused.
 [INFO] This may take a few minutes...
-Check Yaml...............................................................Passed
-Fix End of Files.........................................................Failed
+Check Yaml....................................................Passed
+Fix End of Files..............................................Failed
 - hook id: end-of-file-fixer
 - exit code: 1
 - files were modified by this hook
 
 Fixing LICENSE
 
-Trim Trailing Whitespace.................................................Passed
-black....................................................................Passed
+Trim Trailing Whitespace......................................Passed
+black.........................................................Passed
 ```
 
 As you can see from the output, the `end-of-file-fixer` hook failed because the
-license file was missing a final newline. The hook has already inserted the
-missing newline into the file, so you can simply commit LICENSE:
+license file was missing a final newline. The hook already appended the missing
+newline to the file, so you can simply commit the file:
 
 ```sh
 git commit --message="Fix missing newline at end of LICENSE" LICENSE
 ```
 
-The sample configuration contains an entry for Black, installing the specified
-version into an isolated environment managed by pre-commit. But we already
-manage Black as a development dependency with Poetry. Instead of managing the
-dependency in two separate places, you can run Black in the development
-environment created by Poetry:
+The sample configuration pins Black to a specific version, and so does Poetry's
+lock file. This setup requires us to keep the versions aligned manually, and may
+result in failed checks when the environments managed by pre-commit, Poetry, and
+Nox drift apart.
+
+Let's replace the Black entry using a [repository-local
+hook](https://pre-commit.com/#repository-local-hooks), and run Black in the
+development environment created by Poetry:
 
 ```yaml
 # .pre-commit-config.yaml
@@ -584,7 +586,7 @@ repos:
         types: [python]
 ```
 
-You can run Flake8 from the pre-commit hook using the same technique:
+Use the same technique to run Flake8 from the pre-commit hook:
 
 ```yaml
 # .pre-commit-config.yaml
@@ -599,7 +601,11 @@ You can run Flake8 from the pre-commit hook using the same technique:
         types: [python]
 ```
 
-These checks run somewhat faster than the corresponding Nox sessions, for two
+This method allows you to rely on Poetry to manage Black and Flake8 as
+development dependencies, without worrying about version mismatch caused by
+other tools.
+
+The checks run somewhat faster than the corresponding Nox sessions, for two
 reasons:
 
 - They only run on files changed by the commit in question.
