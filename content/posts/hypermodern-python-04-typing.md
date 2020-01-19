@@ -16,7 +16,7 @@ tags:
 In this fourth installment of the Hypermodern Python series, I'm going to
 discuss how to add type annotations and static type checking to your
 project.[^1] Previously, we discussed [how to add linting, static analysis, and
-code formatting](../hypermodern-python-03-linting) (Download the code for the
+code formatting](../hypermodern-python-03-linting). (Download the code for the
 previous chapter
 [here](https://github.com/cjolowicz/hypermodern-python/archive/chapter03.zip).)
 
