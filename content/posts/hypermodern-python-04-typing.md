@@ -595,7 +595,7 @@ from unittest.mock import Mock
 from pytest_mock import MockFixture
 
 
-def mock_wikipedia_random_page(mocker: MockFixture) -> None: ...
+def mock_wikipedia_random_page(mocker: MockFixture) -> Mock: ...
 ```
 
 The test module for `console` also defines a simple fixture returning a
