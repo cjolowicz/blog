@@ -768,6 +768,6 @@ your project. It will be published on January 22, 2020.
 
 {{< figure src="/images/hypermodern-python-03/train.jpg" class="centered" >}}
 <!-- 
-{{< figure src="/images/hypermodern-python-04/train.jpg" link="../hypermodern-python-04-typing" class="centered" >}}
+{{< figure src="/images/hypermodern-python-03/train.jpg" link="../hypermodern-python-04-typing" class="centered" >}}
 <span class="centered">[Continue to the next chapter](../hypermodern-python-04-typing)</span>
 -->

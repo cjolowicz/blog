@@ -484,13 +484,13 @@ are distributed separately, in the community-driven
 -->
 
 In this section, I show you how to add type annotations to Nox sessions. If you
-disabled type coverage warnings (`TYP`) for this location using
-`per-file-ignores`, remove this from your `.flake8` for now.
+disabled type coverage warnings (`TYP`) for Nox sessions, re-enable them for the
+purposes of this section.
 
 The central type for Nox sessions is `nox.sessions.Session`, which is also the
 first and only argument of your session functions. The return value of these
-functions is `None`---the implicit return value of every function that does not
-explicitly return anything. Annotate your session functions like this:
+functions is `None`---the implicit return value of every Python function that
+does not explicitly return anything. Annotate your session functions like this:
 
 ```python
 # noxfile.py
@@ -525,16 +525,37 @@ def install_with_constraints(session: Session, *args: str, **kwargs: Any) -> Non
 ## Adding type annotations to the test suite
 
 In this section, I show you how to add type annotations to the test suite. If
-you disabled type coverage warnings (`TYP`) for this location using
-`per-file-ignores`, remove this from your `.flake8` for now.
+you disabled type coverage warnings (`TYP`) for the test suite, re-enable them
+for the purposes of this section.
 
-Annotating the test suite requires only a little research:
+Test functions in Pytest use parameters to declare fixtures they use. Typing
+them is simpler than it may seem: You don't specify the type of the fixture
+itself, but the type of the value it supplies to the test function. For example,
+the `mock_requests_get` fixture returns a standard mock object of type
+[unittest.mock.Mock](https://docs.python.org/3/library/unittest.mock.html#unittest.mock.Mock).
+(The actual type is
+[unittest.mock.MagicMock](https://docs.python.org/3/library/unittest.mock.html#unittest.mock.MagicMock),
+but you can use the more general type to annotate your test functions.)
 
-- The mock objects have the type `unittest.mock.Mock`.
-- The mocker fixture has the type `pytest_mock.MockFixture`.
-- The runner fixture has the type `click.testing.CliRunner`.
+Let's start annotating the test functions in the `wikipedia` test module:
 
-With this out of the way, annotating the test suite becomes pretty straightforward:
+```python
+# tests/test_wikipedia.py
+from unittest.mock import Mock
+
+
+def test_random_page_uses_given_language(mock_requests_get: Mock) -> None: ...
+
+def test_random_page_returns_page(mock_requests_get: Mock) -> None: ...
+
+def test_random_page_handles_validation_errors(mock_requests_get: Mock) -> None: ...
+```
+
+Next, let's annotate `mock_requests_get` itself. The return type of this
+function is the same `unittest.mock.Mock`. The function takes a single argument,
+the `mocker` fixture from
+[pytest-mock](https://github.com/pytest-dev/pytest-mock), which is of type
+`pytest_mock.MockFixture`:
 
 ```python
 # tests/conftest.py
@@ -542,8 +563,42 @@ from unittest.mock import Mock
 
 from pytest_mock import MockFixture
 
-def mock_sleep(mocker: MockFixture) -> Mock:
+
+def mock_requests_get(mocker: MockFixture) -> Mock: ...
 ```
+
+Configure mypy to ignore the missing import for `pytest_mock`:
+
+```ini
+# mypy.ini
+[mypy-desert,marshmallow,nox.*,pytest,pytest_mock]
+ignore_missing_imports = True
+```
+
+Use the same type signature for the mock fixture in the `console` test module:
+
+```python
+# tests/test_console.py
+from unittest.mock import Mock
+
+from pytest_mock import MockFixture
+
+
+def mock_wikipedia_random_page(mocker: MockFixture) -> None: ...
+```
+
+The test module for `console` also defines a simple fixture returning a
+`click.testing.CliRunner`:
+
+```python
+# tests/test_console.py
+from click.testing import CliRunner
+
+
+def runner() -> CliRunner: ...
+```
+
+Typing the test functions for `console` is now straightforward:
 
 ```python
 # tests/test_console.py
@@ -552,22 +607,57 @@ from unittest.mock import Mock
 from click.testing import CliRunner
 from pytest_mock import MockFixture
 
-def runner() -> CliRunner:
 
-def mock_splines_reticulate(mocker: MockFixture) -> Mock:
+def test_main_succeeds(runner: CliRunner, mock_requests_get: Mock) -> None: ...
 
-def test_main_succeeds(runner: CliRunner, mock_splines_reticulate: Mock) -> None:
+def test_main_succeeds_in_production_env(runner: CliRunner) -> None: ...
 
-def test_main_prints_progress_message(runner: CliRunner, mock_sleep: Mock) -> None:
+def test_main_prints_title(runner: CliRunner, mock_requests_get: Mock) -> None: ...
+
+def test_main_invokes_requests_get(runner: CliRunner, mock_requests_get: Mock) -> None: ...
+
+def test_main_uses_en_wikipedia_org(runner: CliRunner, mock_requests_get: Mock) -> None: ...
+
+def test_main_uses_specified_language(runner: CliRunner, mock_wikipedia_random_page: Mock) -> None: ...
+
+def test_main_fails_on_request_error(runner: CliRunner, mock_requests_get: Mock) -> None: ...
+
+def test_main_prints_message_on_request_error(runner: CliRunner, mock_requests_get: Mock) -> None: ...
 ```
+
+The missing piece to achieve full type coverage (as far as the Flake8
+annotations plugin is concerned) is the `pytest_configure` hook. The function
+takes a Pytest configuration object as its single parameter. Unfortunately, the
+type of this object is not
+([yet](https://github.com/pytest-dev/pytest/issues/3342)) part of Pytest's
+public interface. You have the choice of using `Any` or reaching into Pytest's
+internals to import `_pytest.config.Config`:
 
 ```python
-# tests/test_splines.py
-from unittest.mock import Mock
+# tests/conftest.py
+from _pytest.config import Config
 
-def test_reticulate_yields_count_times(mock_sleep: Mock) -> None:
 
-def test_reticulate_sleeps(mock_sleep: Mock) -> None:
+def pytest_configure(config: Config) -> None: ...
 ```
 
-<center>[Continue to the next chapter](../hypermodern-python-05-documentation)</center>
+You also need to tell mypy to ignore missing imports for `_pytest.*`:
+
+```ini
+# mypy.ini
+[mypy-desert,marshmallow,nox.*,pytest,pytest_mock,_pytest.*]
+ignore_missing_imports = True
+```
+
+This concludes our foray into the Python type system. Happy typing!
+
+## Thanks for reading!
+
+The next chapter is about adding documentation for your project. It will be
+published on January 29, 2020.
+
+{{< figure src="/images/hypermodern-python-04/train.jpg" class="centered" >}}
+<!-- 
+{{< figure src="/images/hypermodern-python-04/train.jpg" link="../hypermodern-python-05-documentation" class="centered" >}}
+<span class="centered">[Continue to the next chapter](../hypermodern-python-05-documentation)</span>
+-->
