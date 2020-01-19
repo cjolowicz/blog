@@ -483,9 +483,7 @@ little research sometimes. If the project does not document its types, you may
 need to take a look at their source code. For some packages, type annotations
 are distributed separately, in the community-driven
 [typeshed](https://github.com/python/typeshed) or in a package named `foo-stubs`
-(where `foo` is the original package). (If this seems bothersome, don't forget
-that Python typing is both optional and gradual. You are free to decide if and
-to what extent you use it.)
+(where `foo` is the original package).
 
 The central type for Nox sessions is `nox.sessions.Session`, which is also the
 first and only argument of your session functions. The return value of these
