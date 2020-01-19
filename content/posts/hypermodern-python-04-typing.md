@@ -141,10 +141,9 @@ yourself, you should disable the error using the `mypy.ini` configuration file:
 ignore_missing_imports = True
 ```
 
-Specifying the packages explicitly helps you keep track which of your
-dependencies are currently out of scope of the type checker. You may soon be
-able to cut down this list, as many projects are actively working on typing
-support.
+Specifying the packages explicitly helps you keep track of dependencies that are
+currently out of scope of the type checker. You may soon be able to cut down on
+this list, as many projects are actively working on typing support.
 
 ## Static type checking with pytype
 
@@ -245,10 +244,10 @@ Wikipedia API. An API contract is not a type guarantee, but you can turn it into
 one by validating the data you receive. This will also demonstrate some great
 ways to use type annotations *at runtime*.
 
-The first step on the road is defining the target type for the validation.
-Currently, the function should return a dictionary with several keys, of which
-we are only interested in `title` and `extract`. But your program can do better
-than operating on a dictionary: Using
+The first step is to define the target type for the validation. Currently, the
+function should return a dictionary with several keys, of which we are only
+interested in `title` and `extract`. But your program can do better than
+operating on a dictionary: Using
 [dataclasses](https://docs.python.org/3/library/dataclasses.html) from the
 standard library, you can define a fully-featured data type in a concise and
 straightforward manner. Let's define a `wikipedia.Page` type for our
@@ -355,10 +354,10 @@ def random_page(language: str = "en") -> Page:
 ```
 
 Let's also handle validation errors gracefully by converting them to
-`ClickException`, like we did in [chapter
+`ClickException`, as we did in [chapter
 2](../hypermodern-python-02-testing#example-cli-handling-exceptions-gracefully)
-for request errors. As an example, suppose that Wikipedia responds with a body
-of "null" instead of an actual resource, due to a fictitious bug.
+for request errors. For example, suppose that Wikipedia responds with a body of
+"null" instead of an actual resource, due to a fictitious bug.
 
 We can turn this scenario into a test case by configuring the `requests.get`
 mock to produce `None` as the JSON object, and using
@@ -541,14 +540,15 @@ for the purposes of this section.
 
 Test functions in Pytest use parameters to declare fixtures they use. Typing
 them is simpler than it may seem: You don't specify the type of the fixture
-itself, but the type of the value it supplies to the test function. For example,
-the `mock_requests_get` fixture returns a standard mock object of type
+itself, but the type of the value that the fixture supplies to the test
+function. For example, the `mock_requests_get` fixture returns a standard mock
+object of type
 [unittest.mock.Mock](https://docs.python.org/3/library/unittest.mock.html#unittest.mock.Mock).
 (The actual type is
 [unittest.mock.MagicMock](https://docs.python.org/3/library/unittest.mock.html#unittest.mock.MagicMock),
 but you can use the more general type to annotate your test functions.)
 
-Let's start annotating the test functions in the `wikipedia` test module:
+Let's start by annotating the test functions in the `wikipedia` test module:
 
 ```python
 # tests/test_wikipedia.py
