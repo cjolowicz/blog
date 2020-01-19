@@ -37,7 +37,7 @@ Here are the topics covered in this chapter on Typing in Python:
 - [Static type checking with mypy](#static-type-checking-with-mypy)
 - [Static type checking with pytype](#static-type-checking-with-pytype)
 - [Adding type annotations to the package](#adding-type-annotations-to-the-package)
-- [Runtime type validation using Desert and Marshmallow](#runtime-type-validation-using-desert-and-marshmallow)
+- [Data validation using Desert and Marshmallow](#data-validation-using-desert-and-marshmallow)
 - [Increasing type coverage with flake8-annotations](#increasing-type-coverage-with-flake8-annotations)
 - [Adding type annotations to Nox sessions](#adding-type-annotations-to-nox-sessions)
 - [Adding type annotations to the test suite](#adding-type-annotations-to-the-test-suite)
@@ -235,7 +235,7 @@ permissive kind of type you can apply to a variable, parameter, or return type
 in your program. Contrast this with `object`, which can also hold values of any
 type, but only supports the minimal interface that is common to all of them.
 
-## Runtime type validation using Desert and Marshmallow
+## Data validation using Desert and Marshmallow
 
 {{< figure src="/images/hypermodern-python-04/beard06.jpg" link="/images/hypermodern-python-04/beard06.jpg" >}}
 

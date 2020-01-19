@@ -18,7 +18,9 @@ tags:
 In this second installment of the Hypermodern Python series, I'm going to
 discuss how to add automated testing to your project, and how to teach the
 random fact generator foreign languages.[^1] Previously, we discussed [How to
-set up a Python project](../hypermodern-python-01-setup).
+set up a Python project](../hypermodern-python-01-setup). (Download the code for
+the previous chapter
+[here](https://github.com/cjolowicz/hypermodern-python/archive/chapter01.zip).)
 
 [^1]: The images in this chapter come from Émile-Antoine Bayard's Illustrations
     for From the Earth to the Moon (De la terre à la lune) by Jules Verne (1870)

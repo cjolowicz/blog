@@ -19,6 +19,8 @@ tags:
 In this third installment of the Hypermodern Python series, I'm going to discuss
 how to add linting, code formatting, and static analysis to your project.[^1]
 Previously, we discussed [Automated Testing](../hypermodern-python-02-testing).
+(Download the code for the previous chapter
+[here](https://github.com/cjolowicz/hypermodern-python/archive/chapter02.zip).)
 
 [^1]: The images in this chapter come from a series of futuristic pictures by
     Jean-Marc Côté and other artists issued in France in 1899, 1900, 1901 and
