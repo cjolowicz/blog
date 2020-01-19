@@ -474,12 +474,14 @@ per-file-ignores =
 
 ## Adding type annotations to Nox sessions
 
+<!--
 Identifying the types associated with a third-party package still requires a
 little research sometimes. If the project does not document its types, you may
 need to take a look at their source code. For some packages, type annotations
 are distributed separately, in the community-driven
 [typeshed](https://github.com/python/typeshed) or in a package named `foo-stubs`
 (where `foo` is the original package).
+-->
 
 In this section, I show you how to add type annotations to Nox sessions. If you
 disabled type coverage warnings (`TYP`) for this location using
