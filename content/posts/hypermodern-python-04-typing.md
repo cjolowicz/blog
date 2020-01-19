@@ -642,7 +642,7 @@ takes a Pytest configuration object as its single parameter. Unfortunately, the
 type of this object is not
 ([yet](https://github.com/pytest-dev/pytest/issues/3342)) part of Pytest's
 public interface. You have the choice of using `Any` or reaching into Pytest's
-internals to import `_pytest.config.Config`:
+internals to import `_pytest.config.Config`. Let's opt for the latter:
 
 ```python
 # tests/conftest.py
