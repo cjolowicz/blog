@@ -269,7 +269,7 @@ We are going to return this data type from `wikipedia.random_page`:
 
 ```python
 # src/hypermodern_python/wikipedia.py
-def random_page(language: str = "en") -> Page:
+def random_page(language: str = "en") -> Page: ...
 ```
 
 Data types have a beneficial influence on the structure of code bases. You can
