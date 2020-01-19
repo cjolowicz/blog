@@ -16,13 +16,17 @@ tags:
 In this fourth installment of the Hypermodern Python series, I'm going to
 discuss how to add type annotations and static type checking to your
 project.[^1] Previously, we discussed [how to add linting, static analysis, and
-code formatting](../hypermodern-python-03-linting).
+code formatting](../hypermodern-python-03-linting)
+([code](https://github.com/cjolowicz/hypermodern-python/archive/chapter03.zip)).
 
 [^1]: The images in this chapter are details from illustrations to the book *A
     Journey in Other Worlds: A Romance of the Future* by John Jacob Astor, 1894
     (source: [The Internet
-    Archive](https://archive.org/details/journeyinotherwo00astouoft)).
-
+    Archive](https://archive.org/details/journeyinotherwo00astouoft)). Dan Beard
+    later went on to found the Boy Scouts of America, while John Jacob Astor
+    built the Astoria Hotel in New York City (predecessor of the Waldorf-Astoria
+    Hotel) and perished as the richest man on board the RMS Titanic.
+    
 Here are the topics covered in this chapter on Typing in Python:
 
 - [Type annotations and type checkers](#type-annotations-and-type-checkers)
@@ -75,19 +79,7 @@ typed language: it only verifies the types of your program at runtime, and uses
 *duck typing* to do so ("if it walks and quacks like a duck, it is a duck"). A
 static type checker, by contrast, can use type annotations and type inference to
 verify the type correctness of your program without executing it, helping you
-discover many bugs that would have otherwise gone unnoticed.
-
-<!--
-
-Static type checkers analyze your source code for type errors, like treating a
-string as an integer. 
-
-Type annotations are entirely optional: They do not interfere when running your
-program, and type checkers do not require your code to be fully annotated. Some
-type checkers are able to infer types for unannotated code, but all support the
-coexistence of dynamically and statically typed Python.
-
--->
+discover many bugs that would otherwise go unnoticed.
 
 The introduction of type annotations has paved the way for an entire generation
 of static type checkers: [mypy](http://mypy-lang.org/) can be considered the
@@ -417,7 +409,7 @@ def random_page(language: str = "en") -> Page:
 ## Increasing type coverage with flake8-annotations
 
 [flake8-annotations](https://github.com/python-discord/flake8-annotations) is a
-flake8 plugin that detects the absence of type annotations for functions,
+Flake8 plugin that detects the absence of type annotations for functions,
 helping you keep track of unannotated code.
 
 Add the plugin to your development dependencies:
