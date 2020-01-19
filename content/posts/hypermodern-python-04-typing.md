@@ -511,9 +511,9 @@ def tests(session: Session) -> None: ...
 ```
 
 Our helper function `install_with_constraints` is a wrapper for
-`Session.install`. The positional arguments of this function (`args`) are the
-command-line arguments for `pip`, so their type is `str`. The keyword arguments
-(`kwargs`) are the same as for [Session.run](
+`Session.install`. The positional arguments of this function are the
+command-line arguments for [pip](https://pip.pypa.io/), so their type is `str`.
+The keyword arguments are the same as for [Session.run](
 https://nox.thea.codes/en/stable/config.html#nox.sessions.Session.run). Instead
 of listing their types individually, we'll be pragmatic and type them as `Any`:
 
