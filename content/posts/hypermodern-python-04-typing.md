@@ -13,6 +13,8 @@ tags:
 
 [Read this article on Medium](https://medium.com/@cjolowicz/hypermodern-python-4-typing-xxxxxxxxxxxx)
 
+{{< figure src="/images/hypermodern-python-04/beard01.jpg" link="/images/hypermodern-python-04/beard01.jpg" >}}
+
 In this fourth installment of the Hypermodern Python series, I'm going to
 discuss how to add type annotations and static type checking to your
 project.[^1] Previously, we discussed [how to add linting, static analysis, and
@@ -25,8 +27,9 @@ previous chapter
     (source: [The Internet
     Archive](https://archive.org/details/journeyinotherwo00astouoft)). Dan Beard
     later went on to found the Boy Scouts of America, while John Jacob Astor
-    built the Astoria Hotel in New York City (predecessor of the Waldorf-Astoria
-    Hotel) and perished as the richest man on board the RMS Titanic.
+    built the Astoria Hotel in New York City---predecessor of the
+    Waldorf-Astoria Hotel---and perished as the richest man on board the RMS
+    Titanic.
     
 Here are the topics covered in this chapter on Typing in Python:
 
@@ -58,6 +61,8 @@ repository:
 - [Download code](https://github.com/cjolowicz/hypermodern-python/archive/chapter04.zip)
 
 ## Type annotations and type checkers
+
+{{< figure src="/images/hypermodern-python-04/beard02.jpg" link="/images/hypermodern-python-04/beard02.jpg" >}}
 
 [Type annotations](https://docs.python.org/3/library/typing.html), first
 introduced in Python 3.5, are a way to annotate functions and variables with
@@ -93,6 +98,8 @@ IDE [PyCharm](https://www.jetbrains.com/pycharm/) also ships with a static type
 checker. In this chapter, we introduce mypy and pytype.
 
 ## Static type checking with mypy
+
+{{< figure src="/images/hypermodern-python-04/beard03.jpg" link="/images/hypermodern-python-04/beard03.jpg" >}}
 
 Add [mypy](http://mypy-lang.org/) as a development dependency:
 
@@ -141,6 +148,8 @@ support.
 
 ## Static type checking with pytype
 
+{{< figure src="/images/hypermodern-python-04/beard04.jpg" link="/images/hypermodern-python-04/beard04.jpg" >}}
+
 Add [pytype](https://google.github.io/pytype/) as a development dependency, for
 [Python 3.7 only](https://github.com/google/pytype/issues/440):
 
@@ -180,14 +189,15 @@ nox.options.sessions = "lint", "mypy", "pytype", "tests"
 
 ## Adding type annotations to the package
 
+{{< figure src="/images/hypermodern-python-04/beard05.jpg" link="/images/hypermodern-python-04/beard05.jpg" >}}
+
 Let's add some type annotations to the package, starting with `console.main`.
 Don't be distracted by the decorators applied to it: This is a simple function
 accepting a `str`, and returning `None` by "falling off its end":
 
 ```python
 # src/hypermodern_python/console.py
-def main(language: str) -> None:
-    ...
+def main(language: str) -> None: ...
 ```
 
 In the `wikipedia` module, the `API_URL` constant is a string:
@@ -201,7 +211,7 @@ The `wikipedia.random_page` function accepts an optional parameter of type
 
 ```python
 # src/hypermodern_python/wikipedia.py
-def random_page(language: str = "en"):
+def random_page(language: str = "en"): ...
 ```
 
 The `wikipedia.random_page` function returns the JSON object received from the
@@ -216,7 +226,7 @@ given as [Any](https://docs.python.org/3/library/typing.html#the-any-type):
 from typing import Any
 
 
-def random_page(language: str = "en") -> Any:
+def random_page(language: str = "en") -> Any: ...
 ```
 
 You can think of the enigmatic `Any` type as a box which can hold *any* type on
@@ -226,6 +236,8 @@ in your program. Contrast this with `object`, which can also hold values of any
 type, but only supports the minimal interface that is common to all of them.
 
 ## Runtime type validation using Desert and Marshmallow
+
+{{< figure src="/images/hypermodern-python-04/beard06.jpg" link="/images/hypermodern-python-04/beard06.jpg" >}}
 
 Returning `Any` is unsatisfactory, because we know quite precisely [which JSON
 structures we can expect](https://en.wikipedia.org/api/rest_v1/#/) from the
@@ -409,6 +421,8 @@ def random_page(language: str = "en") -> Page:
 
 ## Increasing type coverage with flake8-annotations
 
+{{< figure src="/images/hypermodern-python-04/beard07.jpg" link="/images/hypermodern-python-04/beard07.jpg" >}}
+
 [flake8-annotations](https://github.com/python-discord/flake8-annotations) is a
 Flake8 plugin that detects the absence of type annotations for functions,
 helping you keep track of unannotated code.
@@ -467,6 +481,8 @@ per-file-ignores =
 
 ## Adding type annotations to Nox sessions
 
+{{< figure src="/images/hypermodern-python-04/beard08.jpg" link="/images/hypermodern-python-04/beard08.jpg" >}}
+
 <!--
 Identifying the types associated with a third-party package still requires a
 little research sometimes. If the project does not document its types, you may
@@ -516,6 +532,8 @@ def install_with_constraints(session: Session, *args: str, **kwargs: Any) -> Non
 ```
 
 ## Adding type annotations to the test suite
+
+{{< figure src="/images/hypermodern-python-04/beard09.jpg" link="/images/hypermodern-python-04/beard09.jpg" >}}
 
 In this section, I show you how to add type annotations to the test suite. If
 you disabled type coverage warnings (`TYP`) for the test suite, re-enable them
