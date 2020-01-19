@@ -474,16 +474,16 @@ per-file-ignores =
 
 ## Adding type annotations to Nox sessions
 
-In this section, I show you how to add type annotations to Nox sessions. If you
-disabled type coverage warnings (`TYP`) for this location using
-`per-file-ignores`, remove this from your `.flake8` for now.
-
 Identifying the types associated with a third-party package still requires a
 little research sometimes. If the project does not document its types, you may
 need to take a look at their source code. For some packages, type annotations
 are distributed separately, in the community-driven
 [typeshed](https://github.com/python/typeshed) or in a package named `foo-stubs`
 (where `foo` is the original package).
+
+In this section, I show you how to add type annotations to Nox sessions. If you
+disabled type coverage warnings (`TYP`) for this location using
+`per-file-ignores`, remove this from your `.flake8` for now.
 
 The central type for Nox sessions is `nox.sessions.Session`, which is also the
 first and only argument of your session functions. The return value of these
