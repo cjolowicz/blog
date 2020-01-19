@@ -250,7 +250,7 @@ Currently, the function should return a dictionary with several keys, of which
 we are only interested in `title` and `extract`. But your program can do better
 than operating on a dictionary: Using
 [dataclasses](https://docs.python.org/3/library/dataclasses.html) from the
-standard library, you can define fully-featured data types in a concise and
+standard library, you can define a fully-featured data type in a concise and
 straightforward manner. Let's define a `wikipedia.Page` type for our
 application:
 
