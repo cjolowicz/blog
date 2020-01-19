@@ -70,7 +70,7 @@ annotations:
 answer: int = 42
 
 
-# This is function which accepts and returns an integer.
+# This is a function which accepts and returns an integer.
 def increment(number: int) -> int:
     return number + 1
 ```
