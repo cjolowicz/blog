@@ -46,7 +46,7 @@ Here is a full list of the articles in this series:
 - [Chapter 1: Setup](../hypermodern-python-01-setup)
 - [Chapter 2: Testing](../hypermodern-python-02-testing)
 - [Chapter 3: Linting](../hypermodern-python-03-linting) (this article)
-- *Chapter 4: Typing*
+- [Chapter 4: Typing](../hypermodern-python-04-typing)
 - *Chapter 5: Documentation*
 - *Chapter 6: CI/CD*
 - *Appendix: Docker*
@@ -769,8 +769,5 @@ reasons:
 The next chapter is about adding type annotations and static type checking to
 your project. It will be published on January 22, 2020.
 
-{{< figure src="/images/hypermodern-python-03/train.jpg" class="centered" >}}
-<!-- 
 {{< figure src="/images/hypermodern-python-03/train.jpg" link="../hypermodern-python-04-typing" class="centered" >}}
 <span class="centered">[Continue to the next chapter](../hypermodern-python-04-typing)</span>
--->
