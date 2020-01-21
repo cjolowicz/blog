@@ -99,7 +99,7 @@ checker. In this chapter, we introduce mypy and pytype.
 
 ## Static type checking with mypy
 
-{{< figure src="/images/hypermodern-python-04/beard03.jpg" link="/images/hypermodern-python-04/beard03.jpg" >}}
+{{< figure src="/images/hypermodern-python-04/beard09.jpg" link="/images/hypermodern-python-04/beard09.jpg" >}}
 
 Add [mypy](http://mypy-lang.org/) as a development dependency:
 
@@ -480,7 +480,7 @@ per-file-ignores =
 
 ## Adding type annotations to Nox sessions
 
-{{< figure src="/images/hypermodern-python-04/beard08.jpg" link="/images/hypermodern-python-04/beard08.jpg" >}}
+{{< figure src="/images/hypermodern-python-04/beard03.jpg" link="/images/hypermodern-python-04/beard03.jpg" >}}
 
 <!--
 Identifying the types associated with a third-party package still requires a
@@ -532,7 +532,7 @@ def install_with_constraints(session: Session, *args: str, **kwargs: Any) -> Non
 
 ## Adding type annotations to the test suite
 
-{{< figure src="/images/hypermodern-python-04/beard09.jpg" link="/images/hypermodern-python-04/beard09.jpg" >}}
+{{< figure src="/images/hypermodern-python-04/beard08.jpg" link="/images/hypermodern-python-04/beard08.jpg" >}}
 
 In this section, I show you how to add type annotations to the test suite. If
 you disabled type coverage warnings (`TYP`) for the test suite, re-enable them
