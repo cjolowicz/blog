@@ -10,7 +10,7 @@ tags:
   - flake8
 ---
 
-[Read this article on Medium](https://medium.com/@cjolowicz/hypermodern-python-4-typing-xxxxxxxxxxxx)
+[Read this article on Medium](https://medium.com/@cjolowicz/hypermodern-python-4-typing-31bcf12314ff)
 
 {{< figure src="/images/hypermodern-python-04/beard01.jpg" link="/images/hypermodern-python-04/beard01.jpg" >}}
 
