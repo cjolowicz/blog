@@ -38,7 +38,7 @@ Here are the topics covered in this chapter on Typing in Python:
 - [Static type checking with pytype](#static-type-checking-with-pytype)
 - [Adding type annotations to the package](#adding-type-annotations-to-the-package)
 - [Data validation using Desert and Marshmallow](#data-validation-using-desert-and-marshmallow)
-- [Increasing type coverage with flake8-annotations](#increasing-type-coverage-with-flake8-annotations)
+- [Increasing type coverage with flake8-annotations](#increasing-type-coverage-with-flake8annotations)
 - [Adding type annotations to Nox sessions](#adding-type-annotations-to-nox-sessions)
 - [Adding type annotations to the test suite](#adding-type-annotations-to-the-test-suite)
 
