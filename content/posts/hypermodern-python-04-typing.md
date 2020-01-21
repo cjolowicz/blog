@@ -18,9 +18,10 @@ tags:
 In this fourth installment of the Hypermodern Python series, I'm going to
 discuss how to add type annotations and static type checking to your
 project.[^1] Previously, we discussed [how to add linting, static analysis, and
-code formatting](../hypermodern-python-03-linting). (Download the code for the
-previous chapter
-[here](https://github.com/cjolowicz/hypermodern-python/archive/chapter03.zip).)
+code formatting](../hypermodern-python-03-linting). (If you start reading here,
+you can also
+[download](https://github.com/cjolowicz/hypermodern-python/archive/chapter03.zip)
+the code for the previous chapter.)
 
 [^1]: The images in this chapter are details from illustrations to the book *A
     Journey in Other Worlds: A Romance of the Future* by John Jacob Astor, 1894
