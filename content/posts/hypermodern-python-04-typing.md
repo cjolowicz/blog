@@ -660,7 +660,12 @@ You also need to tell mypy to ignore missing imports for `_pytest.*`:
 ignore_missing_imports = True
 ```
 
-This concludes our foray into the Python type system. Happy typing!
+This concludes our foray into the Python type system. Type annotations make your
+programs easier to understand, debug, and maintain. Static type checkers use
+type annotations and type inference to verify the type correctness of your
+program without executing it, helping you discover many bugs that would
+otherwise go unnoticed. An increasing number of libraries leverage the power of
+type annotations at runtime, for example to validate data. Happy typing!
 
 ## Thanks for reading!
 
