@@ -1,5 +1,5 @@
 --- 
-date: 2020-01-15T10:04:00+01:00
+date: 2020-01-22T10:04:00+01:00
 title: "Hypermodern Python Chapter 4: Typing"
 description: "A guide to modern Python tooling with a focus on simplicity and minimalism."
 tags:
