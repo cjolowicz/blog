@@ -15,10 +15,10 @@ tags:
 {{< figure src="/images/hypermodern-python-04/beard01.jpg" link="/images/hypermodern-python-04/beard01.jpg" >}}
 
 In this fourth installment of the Hypermodern Python series, I'm going to
-discuss how to add type annotations and static type checking to your
-project.[^1] Previously, we discussed [how to add linting, static analysis, and
-code formatting](../hypermodern-python-03-linting). (If you start reading here,
-you can also
+discuss how to add type annotations and type checking to your project.[^1]
+Previously, we discussed [how to add linting, static analysis, and code
+formatting](../hypermodern-python-03-linting). (If you start reading here, you
+can also
 [download](https://github.com/cjolowicz/hypermodern-python/archive/chapter03.zip)
 the code for the previous chapter.)
 
@@ -38,6 +38,7 @@ Here are the topics covered in this chapter on Typing in Python:
 - [Static type checking with pytype](#static-type-checking-with-pytype)
 - [Adding type annotations to the package](#adding-type-annotations-to-the-package)
 - [Data validation using Desert and Marshmallow](#data-validation-using-desert-and-marshmallow)
+- [Runtime type checking with Typeguard](#runtime-type-checking-with-typeguard)
 - [Increasing type coverage with flake8-annotations](#increasing-type-coverage-with-flake8annotations)
 - [Adding type annotations to Nox sessions](#adding-type-annotations-to-nox-sessions)
 - [Adding type annotations to the test suite](#adding-type-annotations-to-the-test-suite)
@@ -95,7 +96,8 @@ Microsoft have each announced their own static type checkers for Python:
 [pytype](https://google.github.io/pytype/), [pyre](https://pyre-check.org/), and
 [pyright](https://github.com/microsoft/pyright), respectively. JetBrain's Python
 IDE [PyCharm](https://www.jetbrains.com/pycharm/) also ships with a static type
-checker. In this chapter, we introduce mypy and pytype.
+checker. In this chapter, we introduce mypy and pytype. We also take a look at
+[Typeguard](https://github.com/agronholm/typeguard), a runtime type checker.
 
 ## Static type checking with mypy
 
@@ -301,7 +303,9 @@ define schemas to serialize, deserialize and validate data. Used by countless
 applications, Marshmallow has also spawned an ecosystem of tools and libraries
 built on top of it. One of these libraries,
 [Desert](https://desert.readthedocs.io/), uses the type annotations of
-dataclasses to generate serialization schemas for them.
+dataclasses to generate serialization schemas for them. (Another great data
+validation library using type annotations is
+[typical](https://python-typical.org/).)
 
 Add Desert and Marshmallow to your dependencies:
 
@@ -417,6 +421,67 @@ def random_page(language: str = "en") -> Page:
         message = str(error)
         raise click.ClickException(message)
 ```
+
+## Runtime type checking with Typeguard
+
+{{< figure src="/images/hypermodern-python-04/beard10.jpg" link="/images/hypermodern-python-04/beard10.jpg" >}}
+
+[Typeguard](https://github.com/agronholm/typeguard) is a runtime type checker
+for Python: It checks that arguments match parameter types of annotated
+functions as your program is being executed (and similarly for return values).
+Runtime type checking can be a valuable tool when it is impossible or
+impractical to strictly type an entire code path, for example when crossing
+system boundaries or interfacing with other libraries. 
+
+Here is an example of a type-related bug which can be caught by a runtime type
+checker, but is not detected by mypy or pytype because the incorrectly typed
+argument is loaded from JSON. (Do not add this test function to your test suite
+permanently; it's for demonstration purposes only.)
+
+```python
+# tests/test_wikipedia.py
+def test_trigger_typeguard(mock_requests_get):
+    import json
+
+    data = json.loads('{ "language": 1 }')
+    wikipedia.random_page(language=data["language"])
+```
+
+Add typeguard to your development dependencies:
+
+```sh
+poetry add --dev typeguard
+```
+
+Typeguard comes with a Pytest plugin which instruments your package for type
+checking while you run the test suite. You can enable it by passing the
+`--typeguard-packages` option with the name of your package. Add a Nox session
+to run the test suite with runtime type checking:
+
+```python
+# noxfile.py
+package = "hypermodern_python"
+
+
+@nox.session(python=["3.8", "3.7"])
+def typeguard(session):
+    args = session.posargs or ["-m", "not e2e"]
+    session.run("poetry", "install", "--no-dev", external=True)
+    install_with_constraints(session, "pytest", "pytest-mock", "typeguard")
+    session.run("pytest", f"--typeguard-packages={package}", *args)
+```
+
+Run the Nox session:
+
+```sh
+nox -rs typeguard
+```
+
+Typeguard catches the bug we introduced at the start of this section. You will
+also notice a warning about missing type annotations for a Click object. This is
+due to the fact that `console.main` is wrapped by a decorator, and its type
+annotations only apply to the inner function, not the resulting object as seen
+by the test suite.
 
 ## Increasing type coverage with flake8-annotations
 
