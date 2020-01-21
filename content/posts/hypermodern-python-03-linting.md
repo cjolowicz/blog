@@ -611,7 +611,7 @@ poetry add --dev \
     flake8-black \
     flake8-bugbear \
     flake8-import-order \
-    security
+    safety
 ```
 
 You should also adapt the testing session. That session only needs packages
