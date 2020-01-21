@@ -188,6 +188,9 @@ default:
 nox.options.sessions = "lint", "mypy", "pytype", "tests"
 ```
 
+> Unfortunately, pytype installation is currently broken. The issue is being
+> tracked in [google/pytype#495](https://github.com/google/pytype/issues/495).
+
 ## Adding type annotations to the package
 
 {{< figure src="/images/hypermodern-python-04/beard05.jpg" link="/images/hypermodern-python-04/beard05.jpg" >}}
