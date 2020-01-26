@@ -1,6 +1,6 @@
 baseURL = "https://cjolowicz.github.io/"
 languageCode = "en-us"
-title = "Claudio Jolowicz's website"
+title = "Claudio Jolowicz"
 theme = "coder"
 
 paginate = 20
