@@ -45,6 +45,8 @@ Here are the topics covered in this chapter on documentation:
 
 - [Documenting code with Python docstrings](#documenting-code-with-python-docstrings)
 - [Linting code documentation with flake8-docstrings](#linting-code-documentation-with-flake8docstrings)
+- [Adding docstrings to Nox sessions](#adding-docstrings-to-nox-sessions)
+- [Adding docstrings to the test suite](#adding-docstrings-to-the-test-suite)
 - [Validating docstrings against function signatures with darglint](#validating-docstrings-against-function-signatures-with-darglint)
 - [Running examples in docstrings with xdoctest](#running-examples-in-docstrings-with-xdoctest)
 - [Creating documentation with Sphinx](#creating-documentation-with-sphinx)
