@@ -48,7 +48,7 @@ Here are the topics covered in this chapter on documentation:
 - [Adding docstrings to Nox sessions](#adding-docstrings-to-nox-sessions)
 - [Adding docstrings to the test suite](#adding-docstrings-to-the-test-suite)
 - [Validating docstrings against function signatures with darglint](#validating-docstrings-against-function-signatures-with-darglint)
-- [Running examples in docstrings with xdoctest](#running-examples-in-docstrings-with-xdoctest)
+- [Running documentation examples with xdoctest](#running-documentation-examples-with-xdoctest)
 - [Creating documentation with Sphinx](#creating-documentation-with-sphinx)
 - [Generating API documentation with autodoc](#generating-api-documentation-with-autodoc)
 
@@ -433,56 +433,99 @@ using the `.darglint` configuration file:
 strictness = short
 ```
 
-## Running examples in docstrings with xdoctest
+## Running documentation examples with xdoctest
 
 {{< figure
-    src="/images/hypermodern-python-05/robida06.jpg" 
-    link="/images/hypermodern-python-05/robida06.jpg"
+    src="/images/hypermodern-python-05/robida07.jpg" 
+    link="/images/hypermodern-python-05/robida07.jpg"
 >}}
 
-A good way to explain how to use your function is to include an example in your
-docstring:
+A good way to explain how to use your function or module is to
+include an example in its docstring.
+Good examples can substitute for long explanations,
+and humans are great at learning from examples.
+
+By convention, docstring examples are written as if entered at a Python prompt.
+Here is an example (pun intended) from the documentation of `wikipedia.random_page`:
 
 ```python
-# src/hypermodern_python/splines.py
-def reticulate(count: int = -1) -> Iterator[int]:
-    """Reticulate splines.
+# src/hypermodern_python/wikipedia.py
+def random_page(language: str = "en") -> Page:
+    """Return a random page.
+
+    Performs a GET request to the /page/random/summary endpoint.
 
     Args:
-        count: Number of splines to reticulate
+        language: The Wikipedia language edition. By default, the English
+            Wikipedia is used ("en").
 
-    Yields:
-        A reticulated spline
+    Returns:
+        A page resource.
+
+    Raises:
+        ClickException: The HTTP request failed or the HTTP response
+            contained an invalid body.
 
     Example:
-        >>> from hypermodern_python import splines
-        >>> a, b = splines.reticulate(2)
-        >>> a, b
-        (1, 2)
-
+        >>> from hypermodern_python import wikipedia
+        >>> page = wikipedia.random_page(language="en")
+        >>> bool(page.title)
+        True
     """
 ```
 
-The [xdoctest](https://github.com/Erotemic/xdoctest) package runs the examples
-in your docstrings and compares the actual output to the expected output as per
-the docstring. Add `xdoctest` to your developer dependencies:
+You may wonder why the example converts the page title to `bool`
+before printing it to the console.
+Admittedly, this makes the example less expressive,
+but on the upside, the example becomes reproducible.
+After all, it is impossible to know in advance which data the function returns.
+Why would you want the example to be reproducible?
+Because this makes it possible to run the example as a *test*.
+
+The [xdoctest](https://github.com/Erotemic/xdoctest) package
+runs the examples in your docstrings and
+compares the actual output to the expected output as per the docstring.
+This serves multiple purposes:
+
+- The example is checked for correctness.
+- You ensure that the documentation is up-to-date.
+- Your codebase gets additional test coverage for free.
+
+Add the tool to your developer dependencies:
 
 ```sh
 poetry add --dev xdoctest
 ```
 
-The `xdoctest` package integrates with pytest as a plugin. Invoke `pytest` with
-the `--xdoctest` option to activate the plugin:
+Add the following Nox session to install and run Xdoctest.
+The session also installs your package,
+because both the tool itself
+and your examples need to be able to import it.
 
 ```python
 # noxfile.py
 @nox.session(python=["3.8", "3.7"])
-def tests(session: Session) -> None:
-    """Run the test suite."""
-    args = session.posargs or ["--cov", "--xdoctest"]
-    session.run("poetry", "install", external=True)
-    session.run("pytest", *args)
+def xdoctest(session: Session) -> None:
+    """Run examples with xdoctest."""
+    args = session.posargs or ["all"]
+    session.run("poetry", "install", "--no-dev", external=True)
+    install_with_constraints(session, "xdoctest")
+    session.run("python", "-m", "xdoctest", package, *args)
 ```
+
+By default, the Nox session uses the `all` subcommand to run all examples.
+You can also list the examples using the `list` subcommand,
+or run specific examples:
+
+```sh
+nox -rs xdoctest -- random_page
+```
+
+Xdoctest integrates with Pytest as a plugin,
+so you could also install the tool into your existing Nox session for Pytest,
+and enable it via the `--xdoctest` option.
+We are using it in stand-alone mode here,
+which has the advantage of keeping unit tests and doctest separate.
 
 ## Creating documentation with Sphinx
 
