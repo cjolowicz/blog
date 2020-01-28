@@ -304,8 +304,49 @@ sessions marked with * are selected, sessions marked with - are skipped.
 
 ## Adding docstrings to the test suite
 
-Next, improve the readability of the test suite by adding docstrings to its
-modules, test cases, and fixtures.
+{{< figure
+    src="/images/hypermodern-python-05/robida05.jpg" 
+    link="/images/hypermodern-python-05/robida05.jpg"
+>}}
+
+Give your test suite as much love as you give your package:
+You will need to maintain both.
+If your test suite becomes hard to maintain, so will your package.
+Lint it, type-check it, document it.
+(Maybe don't give it a test suite, though.)
+
+Docstrings for test cases
+are a great way to
+improve the readability of your test suite.
+They help you keep test function names succinct without becoming obscure,
+and they can be used to make test output more friendly.
+
+Here are three useful guidelines about documenting test cases:
+
+1. State the expected behaviour and be specific about it.
+2. Omit everything that already follows from the fact that it is a test case.
+   For example, avoid words like "test if", "correctly", "should".
+3. Use "it" to refer to the [system under test](http://xunitpatterns.com/SUT.html).
+   There is no need to repeatedly name the function or class you are testing.
+   Describe what you are testing in the docstring for the test module
+   (or the test class if you use those).
+
+The following example demonstrates
+how you can write a docstring for a test case:
+
+```python
+# tests/test_console.py
+def test_main_succeeds(runner: CliRunner, mock_requests_get: Mock) -> None:
+    """It exits with a status code of zero."""
+```
+
+I will not repeat all the docstrings for the test suite in this section.
+You can take a look at the specific changes in the
+[companion repository](https://github.com/cjolowicz/hypermodern-python/compare/chapter04...chapter05)
+if you are interested.
+
+<!--
+Let's start by adding some short docstrings to the test package and modules:
 
 ```python
 # tests/__init__.py
@@ -315,41 +356,88 @@ modules, test cases, and fixtures.
 ```python
 # tests/conftest.py
 """Package-wide test fixtures."""
-
-@pytest.fixture
-def mock_sleep(mocker: MockFixture) -> Mock:
-    """Mock for time.sleep."""
 ```
 
 ```python
 # tests/test_console.py
 """Test cases for the console module."""
-
-@pytest.fixture
-def runner() -> CliRunner:
-    """Fixture for invoking command-line interfaces."""
- 
-@pytest.fixture
-def mock_splines_reticulate(mocker: MockFixture) -> Mock:
-    """Mock for splines.reticulate."""
-
-def test_main_succeeds(runner: CliRunner, mock_splines_reticulate: Mock) -> None:
-    """Test if console.main succeeds."""
- 
-def test_main_prints_progress_message(runner: CliRunner, mock_sleep: Mock) -> None:
-    """Test if console.main prints a progress message."""
 ```
 
 ```python
-# tests/test_splines.py
-"""Test cases for the splines module."""
- 
-def test_reticulate_yields_count_times(mock_sleep: Mock) -> None:
-    """Test if reticulate yields <count> times."""
- 
-def test_reticulate_sleeps(mock_sleep: Mock) -> None:
-    """Test if reticulate sleeps."""
+# tests/test_wikipedia.py
+"""Test cases for the wikipedia module."""
 ```
+
+Hooks and Fixtures:
+
+```python
+# tests/conftest.py
+def pytest_configure(config: Config) -> None:
+    """Pytest configuration hook."""
+```
+
+```python
+# tests/conftest.py
+def mock_requests_get(mocker: MockFixture) -> Mock:
+    """Fixture for mocking requests.get."""
+```
+
+```python
+# tests/test_console.py
+def runner() -> CliRunner:
+    """Fixture for invoking command-line interfaces."""
+```
+
+```python
+# tests/test_console.py
+def mock_wikipedia_random_page(mocker: MockFixture) -> Mock:
+    """Fixture for mocking wikipedia.random_page."""
+```
+
+```python
+# tests/test_console.py
+def test_main_succeeds(runner: CliRunner, mock_requests_get: Mock) -> None:
+    """It exits with a status code of zero."""
+ 
+def test_main_succeeds_in_production_env(runner: CliRunner) -> None:
+    """It exits with a status code of zero (end-to-end)."""
+
+def test_main_prints_title(runner: CliRunner, mock_requests_get: Mock) -> None:
+    """It prints the title of the Wikipedia page."""
+ 
+def test_main_invokes_requests_get(runner: CliRunner, mock_requests_get: Mock) -> None:
+    """It invokes requests.get."""
+ 
+def test_main_uses_en_wikipedia_org(runner: CliRunner, mock_requests_get: Mock) -> None:
+    """It uses the English Wikipedia by default."""
+
+def test_main_uses_specified_language(
+    runner: CliRunner, mock_wikipedia_random_page: Mock
+) -> None:
+    """It uses the specified language edition of Wikipedia."""
+ 
+def test_main_fails_on_request_error(
+    runner: CliRunner, mock_requests_get: Mock
+) -> None:
+    """It exits with a non-zero status code if the request fails."""
+
+def test_main_prints_message_on_request_error(
+    runner: CliRunner, mock_requests_get: Mock
+) -> None:
+    """It prints an error message if the request fails."""
+```
+
+```python
+def test_random_page_uses_given_language(mock_requests_get: Mock) -> None:
+    """It selects the specified Wikipedia language edition."""
+
+def test_random_page_returns_page(mock_requests_get: Mock) -> None:
+    """It returns an object of type Page."""
+ 
+def test_random_page_handles_validation_errors(mock_requests_get: Mock) -> None:
+    """It raises `ClickException` when validation fails."""
+```
+-->
 
 ## Validating docstrings against function signatures with darglint
 
