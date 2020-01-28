@@ -350,41 +350,42 @@ if you are interested.
 ## Validating docstrings against function signatures with darglint
 
 {{< figure
-    src="/images/hypermodern-python-05/robida05.jpg" 
-    link="/images/hypermodern-python-05/robida05.jpg"
+    src="/images/hypermodern-python-05/robida06.jpg" 
+    link="/images/hypermodern-python-05/robida06.jpg"
 >}}
 
-Documentation strings can include useful information about parameters accepted
-by a function, its return value, and any exceptions raised. A common format for
-this with good tooling support is the [Google docstring
-style](https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings).
-Other options are the
-[Sphinx](https://sphinx-rtd-tutorial.readthedocs.io/en/latest/docstrings.html)
-and
-[NumPy](https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_numpy.html#example-numpy)
-formats.
+Documentation has a nasty habit of getting out of step with a codebase.
+Embedding it in the codebase mitigates this problem,
+and that is part of what makes docstrings so useful:
+They sit right next to what they describe,
+so they're easy to keep in sync.
 
-Let's add usage information for the `splines.reticulate` function. This function
-accepts the number of splines as an optional parameter, and yields splines at
-each iteration:
+Alas, docstrings too are subject to that mysterious force
+driving code and documentation apart.
+The good news is that --
+by following a docstring convention like Google style --
+you make it possible for tools to detect this drift.
+
+[Darglint](https://github.com/terrencepreilly/darglint) 
+checks that docstring descriptions match function definitions,
+and integrates with Flake8 as a plugin.
+For example, imagine
+you renamed the `language` parameter of `wikipedia.random_page` to `lang`
+but forgot to update the docstring.
+Darglint would notice and remind you with the following warnings:
 
 ```python
-# src/hypermodern_python/splines.py
-def reticulate(count: int = -1) -> Iterator[int]:
-    """Reticulate splines.
-
-    Args:
-        count: Number of splines to reticulate
-
-    Yields:
-        A reticulated spline
-
-    """
+wikipedia.py:37:1: DAR101 Missing parameter(s) in Docstring: - lang
+wikipedia.py:38:1: DAR102 Excess parameter(s) in Docstring: + language
 ```
 
-The [darglint](https://github.com/terrencepreilly/darglint) tool checks that the
-docstring description matches the definition, and integrates with Flake8 as a
-plugin. Add the plugin to the lint session:
+Add Darglint to your development dependencies:
+
+```sh
+poetry add --dev darglint
+```
+
+Install the tool into the linting session:
 
 ```python
 # noxfile.py
@@ -405,9 +406,11 @@ def lint(session: Session) -> None:
     session.run("flake8", *args)
 ```
 
-Unlike other plugins, darglint enables most of its warnings by default. For
-consistency and to future-proof your Flake8 configuration, enable the plugin
-warnings explicitly (`DAR` like *darglint*):
+Unlike other plugins,
+darglint enables most of its warnings by default.
+For consistency and to future-proof your Flake8 configuration,
+enable the plugin warnings explicitly
+(`DAR` like *darglint*):
 
 ```ini
 # .flake8
@@ -415,13 +418,19 @@ warnings explicitly (`DAR` like *darglint*):
 select = B,B9,BLK,C,D,DAR,E,F,I,S,TYP,W
 ```
 
-Sometimes one-line docstrings are quite sufficient. Configure darglint to accept
-short docstrings, using the `.darglint` configuration file:
+By default, Darglint requires every docstring to
+completely specify parameters, return value, and exceptions.
+In some cases, this is not desirable.
+For example,
+documenting the parameters of test functions or Nox sessions
+would mostly create redundancy.
+Configure darglint to accept one-line docstrings,
+using the `.darglint` configuration file:
 
 ```ini
 # .darglint
 [darglint]
-strictness=short
+strictness = short
 ```
 
 ## Running examples in docstrings with xdoctest
