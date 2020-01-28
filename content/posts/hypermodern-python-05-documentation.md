@@ -1,7 +1,7 @@
 --- 
-date: 2019-11-07T12:52:59+02:00
-title: "Hypermodern Python 5: Documentation"
-description: "Coding in Python like Savielly Tartakower."
+date: 2020-01-28T06:56:59+02:00
+title: "Hypermodern Python Chapter 5: Documentation"
+description: "A guide to modern Python tooling with a focus on simplicity and minimalism."
 draft: true
 tags:
   - python
@@ -12,21 +12,36 @@ tags:
   - xdoctest
 ---
 
-In this fifth installment of the Hypermodern Python series, I'm going to discuss
-how to add documentation to your project.
+[Read this article on Medium](https://medium.com/@cjolowicz/hypermodern-python-5-documentation-xxxxxxxxxxxx)
 
-For your reference, below is a list of the articles in this series.
+{{< figure
+    src="/images/hypermodern-python-05/robida01.jpg" 
+    link="/images/hypermodern-python-05/robida01.jpg"
+>}}
 
-- [Chapter 1: Setup](../hypermodern-python-01-setup)
-- [Chapter 2: Testing](../hypermodern-python-02-testing)
-- [Chapter 3: Linting](../hypermodern-python-03-linting)
-- [Chapter 4: Typing](../hypermodern-python-04-typing)
-- [Chapter 5: Documentation](../hypermodern-python-05-documentation) (this article)
-- [Chapter 6: CI/CD](../hypermodern-python-06-ci-cd)
-- [Appendix: Docker](../hypermodern-python-07-deployment)
+In this fifth installment of the Hypermodern Python series,
+I'm going to discuss
+how to add documentation to your project.[^1]
+In the [previous chapter](../hypermodern-python-04-typing), we discussed
+how to add type annotations and type checking.
+(If you start reading here,
+you can also 
+[download the code](https://github.com/cjolowicz/hypermodern-python/archive/chapter04.zip) 
+for the previous chapter.)
 
-<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
-**In this chapter:**
+[^1]: The images in this chapter are details from
+      the photogravures
+      *Paris la nuit*
+      (Paris by night) and
+      *Départ d'un ballon transatlantique*
+      (Departure of a transatlantic balloon), and
+      the wood engraving
+      *Station centrale des aéronefs à Notre-Dame*
+      (Central aircraft station at Notre-Dame),
+      by Albert Robida, 1883
+      (via [Old Book Illustrations](https://www.oldbookillustrations.com/writers/robida-albert/)).
+
+Here are the topics covered in this chapter on documentation:
 
 - [Documenting code with Python docstrings](#documenting-code-with-python-docstrings)
 - [Linting code documentation with flake8-docstrings](#linting-code-documentation-with-flake8-docstrings)
@@ -35,69 +50,138 @@ For your reference, below is a list of the articles in this series.
 - [Creating documentation with Sphinx](#creating-documentation-with-sphinx)
 - [Generating API documentation with autodoc](#generating-api-documentation-with-autodoc)
 
-<!-- markdown-toc end -->
+Here is a full list of the articles in this series:
+
+- [Chapter 1: Setup](../hypermodern-python-01-setup)
+- [Chapter 2: Testing](../hypermodern-python-02-testing)
+- [Chapter 3: Linting](../hypermodern-python-03-linting)
+- [Chapter 4: Typing](../hypermodern-python-04-typing)
+- [Chapter 5: Documentation](../hypermodern-python-05-documentation) (this article)
+- *Chapter 6: CI/CD*
+- *Appendix: Docker*
 
 This guide has a companion repository:
 [cjolowicz/hypermodern-python](https://github.com/cjolowicz/hypermodern-python).
-Here is the link for the changes contained in this chapter:
+Each article in the guide corresponds to a set of commits in the GitHub repository:
 
-▶ **[View code](https://github.com/cjolowicz/hypermodern-python/compare/chapter04...chapter05)**
+- [View changes](https://github.com/cjolowicz/hypermodern-python/compare/chapter04...chapter05)
+- [Download code](https://github.com/cjolowicz/hypermodern-python/archive/chapter05.zip)
 
 ## Documenting code with Python docstrings
 
-[Documentation
-strings](https://www.python.org/dev/peps/pep-0257/#what-is-a-docstring), also
-known as *docstrings*, allow you to embed documentation directly into your code.
-An example of a docstring is the first line of `console.main`, used by `click`
-to generate the usage message of your command-line interface:
+{{< figure
+    src="/images/hypermodern-python-05/robida02.jpg" 
+    link="/images/hypermodern-python-05/robida02.jpg"
+>}}
+
+[Documentation strings](https://www.python.org/dev/peps/pep-0257/#what-is-a-docstring),
+also known as *docstrings*,
+allow you to embed documentation directly into your code.
+An example of a docstring is the first line of `console.main`,
+used by Click to
+generate the usage message of your command-line interface:
 
 ```python
 # src/hypermodern_python/console.py
-def main(count: int) -> None:
+def main(language: str) -> None:
     """The hypermodern Python project."""
-    for spline in splines.reticulate(count):
-        click.echo(f"Reticulating spline {spline}...")
 ```
 
-More commonly, documentation strings communicate the purpose and usage of a
-module, class, or function to other developers reading your code. As we shall
-see at the end of this chapter, they can also be used to generate API
-documentation.
+Documentation strings communicate
+the purpose and usage of a module, class, or function
+to other developers reading your code.
+Unlike comments, the Python bytecode compiler does not throw them away,
+but adds them to the `__doc__` attribute of documented objects.
+This allows tools like [Sphinx](http://www.sphinx-doc.org/)
+to generate API documentation from your code.
 
-Document your entire package by adding a docstring to the top of `__init__.py`:
+You can document your entire package
+by adding a docstring to the top of `__init__.py`:
 
 ```python
 # src/hypermodern_python/__init__.py
-"""The hypermodern Python project."""
-...
+"""The Hypermodern Python project."""
 ```
 
-Document the modules in the package by adding docstrings to the top of their
-respective source files:
+Document the modules in your package by adding docstrings
+to the top of their respective source files.
+Here's one for the `console` module:
 
 ```python
 # src/hypermodern_python/console.py
-"""Command-line interface for the hypermodern Python project."""
-...
+"""Command-line interface."""
 ```
 
+And here's a docstring for the `wikipedia` module:
+
 ```python
-# src/hypermodern_python/splines.py
-"""Utilities for spline manipulation."""
-...
+# src/hypermodern_python/wikipedia.py
+"""Client for the Wikipedia REST API, version 1."""
 ```
 
-Document functions by adding docstrings to the first line of the function body:
+So far we have used one-line docstrings.
+Docstrings can also consist of multiple lines.
+By convention, the first line is separated from the rest of the docstring by a blank line.
+This structures the docstring into a summary line and a more elaborate description.
+
+Docstring summaries can include useful information about
+class attributes, function parameters, return values, and other things.
+A common format for this with good readability and tooling support is the
+[Google docstring style](https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings).
+Other options are the
+[Sphinx](https://sphinx-rtd-tutorial.readthedocs.io/en/latest/docstrings.html) and
+[NumPy](https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_numpy.html#example-numpy)
+formats. In this chapter, we adopt the Google style.
+
+The following example shows a multi-line docstring for the `wikipedia.Page` class.
+The summary describes class attributes in Google style.
+Docstrings for classes are added to the first line of the class definition:
 
 ```python
-# src/hypermodern_python/splines.py
-def reticulate(count: int = -1) -> Iterator[int]:
-    """Reticulate splines."""
-    ...
+# src/hypermodern_python/wikipedia.py
+@dataclass
+class Page:
+    """Page resource.
 
+    Attributes:
+        title: The title of the Wikipedia page.
+        extract: A plain text summary.
+    """
+
+    title: str
+    extract: str
+```
+
+Similarly, you can document functions by 
+adding docstrings to the first line of the function body.
+Here is a multi-line docstring for the `wikipedia.random_page` function:
+
+```python
+# src/hypermodern_python/wikipedia.py
+def random_page(language: str = "en") -> Page:
+    """Return a random page.
+
+    Performs a GET request to the /page/random/summary endpoint.
+
+    Args:
+        language: The Wikipedia language edition. By default, the English
+            Wikipedia is used ("en").
+
+    Returns:
+        A page resource.
+
+    Raises:
+        ClickException: The HTTP request failed or the HTTP response
+            contained an invalid body.
+    """
 ```
 
 ## Linting code documentation with flake8-docstrings
+
+{{< figure
+    src="/images/hypermodern-python-05/robida03.jpg" 
+    link="/images/hypermodern-python-05/robida03.jpg"
+>}}
 
 The [flake8-docstrings](https://gitlab.com/pycqa/flake8-docstrings) plugin uses
 the tool [pydocstyle](https://github.com/pycqa/pydocstyle) to check that
@@ -136,6 +220,11 @@ docstring-convention = google
 ```
 
 ## Adding more docstrings to the project
+
+{{< figure
+    src="/images/hypermodern-python-05/robida04.jpg" 
+    link="/images/hypermodern-python-05/robida04.jpg"
+>}}
 
 Running `nox -rs lint` finds missing docstrings outside of the package, such as
 in `noxfile.py` itself. Let's fix this one first:
@@ -209,6 +298,11 @@ def test_reticulate_sleeps(mock_sleep: Mock) -> None:
 
 ## Validating docstrings against function signatures with darglint
 
+{{< figure
+    src="/images/hypermodern-python-05/robida05.jpg" 
+    link="/images/hypermodern-python-05/robida05.jpg"
+>}}
+
 Documentation strings can include useful information about parameters accepted
 by a function, its return value, and any exceptions raised. A common format for
 this with good tooling support is the [Google docstring
@@ -281,6 +375,11 @@ strictness=short
 
 ## Running examples in docstrings with xdoctest
 
+{{< figure
+    src="/images/hypermodern-python-05/robida06.jpg" 
+    link="/images/hypermodern-python-05/robida06.jpg"
+>}}
+
 A good way to explain how to use your function is to include an example in your
 docstring:
 
@@ -326,6 +425,11 @@ def tests(session: Session) -> None:
 ```
 
 ## Creating documentation with Sphinx
+
+{{< figure
+    src="/images/hypermodern-python-05/robida07.jpg" 
+    link="/images/hypermodern-python-05/robida07.jpg"
+>}}
 
 [Sphinx](http://www.sphinx-doc.org/) is the documentation tool used by the
 official Python documentation and many open-source projects. Sphinx
@@ -414,6 +518,11 @@ You can now open the file `docs/_build/index.html` in your browser to view your
 documentation offline.
 
 ## Generating API documentation with autodoc
+
+{{< figure
+    src="/images/hypermodern-python-05/robida08.jpg" 
+    link="/images/hypermodern-python-05/robida08.jpg"
+>}}
 
 In this section, you are going to use Sphinx to generate API documentation from
 the documentation strings and type annotations in your package, using three
@@ -511,4 +620,13 @@ Rebuild the documentation using `nox -rs docs`, and open the file
 `docs/_build/index.html` in your browser. Navigate to the `splines` module to
 view its API documentation.
 
-<center>[Continue to the next chapter](../hypermodern-python-06-ci-cd)</center>
+## Thanks for reading!
+
+The next chapter is about Continuous Integration and Delivery. It will be
+published on February 5, 2020.
+
+{{< figure src="/images/hypermodern-python-05/trolley.jpg" class="centered" >}}
+<!-- 
+{{< figure src="/images/hypermodern-python-05/trolley.jpg" link="../hypermodern-python-06-ci-cd" class="centered" >}}
+<span class="centered">[Continue to the next chapter](../hypermodern-python-06-ci-cd)</span>
+-->
