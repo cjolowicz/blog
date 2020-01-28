@@ -447,7 +447,7 @@ def test_trigger_typeguard(mock_requests_get):
     wikipedia.random_page(language=data["language"])
 ```
 
-Add typeguard to your development dependencies:
+Add Typeguard to your development dependencies:
 
 ```sh
 poetry add --dev typeguard
