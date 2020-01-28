@@ -44,7 +44,7 @@ for the previous chapter.)
 Here are the topics covered in this chapter on documentation:
 
 - [Documenting code with Python docstrings](#documenting-code-with-python-docstrings)
-- [Linting code documentation with flake8-docstrings](#linting-code-documentation-with-flake8-docstrings)
+- [Linting code documentation with flake8-docstrings](#linting-code-documentation-with-flake8docstrings)
 - [Validating docstrings against function signatures with darglint](#validating-docstrings-against-function-signatures-with-darglint)
 - [Running examples in docstrings with xdoctest](#running-examples-in-docstrings-with-xdoctest)
 - [Creating documentation with Sphinx](#creating-documentation-with-sphinx)
@@ -100,7 +100,7 @@ by adding a docstring to the top of `__init__.py`:
 
 ```python
 # src/hypermodern_python/__init__.py
-"""The Hypermodern Python project."""
+"""The hypermodern Python project."""
 ```
 
 Document the modules in your package by adding docstrings
@@ -154,7 +154,9 @@ class Page:
 
 Similarly, you can document functions by 
 adding docstrings to the first line of the function body.
-Here is a multi-line docstring for the `wikipedia.random_page` function:
+Here is a multi-line docstring for the `wikipedia.random_page` function,
+describing the function parameters and return value,
+as well as exceptions raised by the function:
 
 ```python
 # src/hypermodern_python/wikipedia.py
@@ -183,21 +185,30 @@ def random_page(language: str = "en") -> Page:
     link="/images/hypermodern-python-05/robida03.jpg"
 >}}
 
-The [flake8-docstrings](https://gitlab.com/pycqa/flake8-docstrings) plugin uses
-the tool [pydocstyle](https://github.com/pycqa/pydocstyle) to check that
-docstrings are compliant with the style recommendations of [PEP
-257](https://www.python.org/dev/peps/pep-0257/). Warnings range from missing
-docstrings to issues with whitespace, quoting, and docstring content.
+The
+[flake8-docstrings](https://gitlab.com/pycqa/flake8-docstrings)
+plugin uses the tool
+[pydocstyle](https://github.com/pycqa/pydocstyle)
+to check that docstrings are compliant with the style recommendations of
+[PEP 257](https://www.python.org/dev/peps/pep-0257/).
+Warnings range from missing docstrings to
+issues with whitespace, quoting, and docstring content.
 
-Add `flake8-docstrings` to the `lint` session:
+Add the plugin to your development dependencies:
+
+```sh
+poetry add --dev flake8-docstrings
+```
+
+Install the plugin into the linting session:
 
 ```python
 # noxfile.py
 @nox.session(python=["3.8", "3.7"])
 def lint(session: Session) -> None:
-    """Lint using flake8."""
     args = session.posargs or locations
-    session.install(
+    install_with_constraints(
+        session,
         "flake8",
         "flake8-annotations",
         "flake8-bandit",
@@ -209,9 +220,10 @@ def lint(session: Session) -> None:
     session.run("flake8", *args)
 ```
 
-Configure Flake8 to enable the plugin warnings (`D` for docstring) and adopt the
-[Google docstring
-style](http://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings):
+Configure Flake8 to enable the plugin warnings
+(`D` for docstring)
+and adopt the
+[Google docstring style](http://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings):
  
 ```ini
 # .flake8
@@ -219,25 +231,40 @@ select = B,B9,BLK,C,D,E,F,I,S,TYP,W
 docstring-convention = google
 ```
 
-## Adding more docstrings to the project
+Run `nox -rs lint` now,
+and the plugin will report missing docstrings.
+This is because
+the test suite and the Nox sessions are still undocumented.
+
+## Adding docstrings to Nox sessions
 
 {{< figure
     src="/images/hypermodern-python-05/robida04.jpg" 
     link="/images/hypermodern-python-05/robida04.jpg"
 >}}
 
-Running `nox -rs lint` finds missing docstrings outside of the package, such as
-in `noxfile.py` itself. Let's fix this one first:
+Docstrings in Nox sessions make your `noxfile.py`
+a friendly, welcoming place for contributors
+(as well as for yourself a few months down the road).
+This is especially true since
+Nox shows them when you list the sessions using
+[-\-list-sessions](https://nox.thea.codes/en/stable/usage.html#listing-available-sessions).
 
 ```python
 # noxfile.py
 """Nox sessions."""
+
+def install_with_constraints(session: Session, *args: str, **kwargs: Any) -> None:
+    """Install packages constrained by Poetry's lock file."""
 
 def black(session: Session) -> None:
     """Run black code formatter."""
 
 def lint(session: Session) -> None:
     """Lint using flake8."""
+
+def safety(session: Session) -> None:
+    """Scan dependencies for insecure packages."""
 
 def mypy(session: Session) -> None:
     """Type-check using mypy."""
@@ -247,7 +274,35 @@ def pytype(session: Session) -> None:
 
 def tests(session: Session) -> None:
     """Run the test suite."""
+
+def typeguard(session: Session) -> None:
+    """Runtime type checking using Typeguard."""
 ```
+
+Nox now gives you a quick and informative overview
+of the developer tasks it automates:
+
+```sh
+$ nox --list-sessions
+
+Sessions defined in …/hypermodern-python/noxfile.py:
+
+- black -> Run black code formatter.
+* lint-3.8 -> Lint using flake8.
+* lint-3.7 -> Lint using flake8.
+* safety -> Scan dependencies for insecure packages.
+* mypy-3.8 -> Type-check using mypy.
+* mypy-3.7 -> Type-check using mypy.
+* pytype -> Type-check using pytype.
+* tests-3.8 -> Run the test suite.
+* tests-3.7 -> Run the test suite.
+- typeguard-3.8 -> Runtime type checking using Typeguard.
+- typeguard-3.7 -> Runtime type checking using Typeguard.
+
+sessions marked with * are selected, sessions marked with - are skipped.
+```
+
+## Adding docstrings to the test suite
 
 Next, improve the readability of the test suite by adding docstrings to its
 modules, test cases, and fixtures.
