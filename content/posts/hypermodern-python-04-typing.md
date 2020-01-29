@@ -49,7 +49,7 @@ Here is a full list of the articles in this series:
 - [Chapter 2: Testing](../hypermodern-python-02-testing)
 - [Chapter 3: Linting](../hypermodern-python-03-linting)
 - [Chapter 4: Typing](../hypermodern-python-04-typing) (this article)
-- *Chapter 5: Documentation*
+- [Chapter 5: Documentation](../hypermodern-python-05-documentation)
 - *Chapter 6: CI/CD*
 - *Appendix: Docker*
 
@@ -736,11 +736,7 @@ type annotations at runtime, for example to validate data. Happy typing!
 
 ## Thanks for reading!
 
-The next chapter is about adding documentation for your project. It will be
-published on January 29, 2020.
+The next chapter is about adding documentation for your project.
 
-{{< figure src="/images/hypermodern-python-04/train.jpg" class="centered" >}}
-<!-- 
 {{< figure src="/images/hypermodern-python-04/train.jpg" link="../hypermodern-python-05-documentation" class="centered" >}}
 <span class="centered">[Continue to the next chapter](../hypermodern-python-05-documentation)</span>
--->

@@ -1,8 +1,7 @@
 --- 
-date: 2020-01-28T06:56:59+02:00
+date: 2020-01-29T12:49:59+02:00
 title: "Hypermodern Python Chapter 5: Documentation"
 description: "A guide to modern Python tooling with a focus on simplicity and minimalism."
-draft: true
 tags:
   - python
   - nox
@@ -12,7 +11,9 @@ tags:
   - xdoctest
 ---
 
+<!--
 [Read this article on Medium](https://medium.com/@cjolowicz/hypermodern-python-5-documentation-xxxxxxxxxxxx)
+-->
 
 {{< figure
     src="/images/hypermodern-python-05/robida01.jpg" 

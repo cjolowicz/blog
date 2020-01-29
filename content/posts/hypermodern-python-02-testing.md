@@ -47,7 +47,7 @@ Here is a full list of the articles in this series:
 - [Chapter 2: Testing](../hypermodern-python-02-testing) (this article)
 - [Chapter 3: Linting](../hypermodern-python-03-linting)
 - [Chapter 4: Typing](../hypermodern-python-04-typing)
-- *Chapter 5: Documentation*
+- [Chapter 5: Documentation](../hypermodern-python-05-documentation)
 - *Chapter 6: CI/CD*
 - *Appendix: Docker*
 
