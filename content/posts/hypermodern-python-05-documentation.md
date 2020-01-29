@@ -140,7 +140,7 @@ The following example shows a multi-line docstring for the `wikipedia.Page` clas
 describing the class attributes in Google style.
 Docstrings for classes are added to the first line of the class definition:
 
-```python
+```python {hl_lines=["4-10"]}
 # src/hypermodern_python/wikipedia.py
 @dataclass
 class Page:
