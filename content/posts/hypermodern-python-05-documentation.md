@@ -136,8 +136,8 @@ Other options are the
 [NumPy](https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_numpy.html#example-numpy)
 formats. In this chapter, we adopt the Google style.
 
-The following example shows a multi-line docstring for the `wikipedia.Page` class.
-The summary describes class attributes in Google style.
+The following example shows a multi-line docstring for the `wikipedia.Page` class,
+describing the class attributes in Google style.
 Docstrings for classes are added to the first line of the class definition:
 
 ```python
