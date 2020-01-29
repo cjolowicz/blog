@@ -449,7 +449,7 @@ Good examples can substitute for long explanations,
 and humans are great at learning from examples.
 
 By convention, docstring examples are written as if entered at a Python prompt.
-Here is an example (pun intended) from the documentation of `wikipedia.random_page`:
+Below is an example (pun intended) from the documentation of `wikipedia.random_page`:
 
 ```python
 # src/hypermodern_python/wikipedia.py
