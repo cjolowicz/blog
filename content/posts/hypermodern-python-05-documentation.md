@@ -782,63 +782,44 @@ nox -rs docs
 ## Generating API documentation with autodoc
 
 {{< figure
-    src="/images/hypermodern-python-05/robida08.jpg" 
-    link="/images/hypermodern-python-05/robida08.jpg"
+    src="/images/hypermodern-python-05/robida10.jpg" 
+    link="/images/hypermodern-python-05/robida10.jpg"
 >}}
 
-In this section, you are going to use Sphinx to generate API documentation from
-the documentation strings and type annotations in your package, using three
-Sphinx extensions:
+In this final section,
+we use Sphinx to generate API documentation 
+from the documentation strings and type annotations in the package,
+using three Sphinx extensions:
 
 - [autodoc](https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html)
-  enables Sphinx to generate API documentation from the docstrings in your
-  package.
+  enables Sphinx to generate API documentation
+  from the docstrings in your package.
 - [napoleon](https://www.sphinx-doc.org/en/master/usage/extensions/napoleon.html)
   pre-processes Google-style docstrings to reStructuredText.
 - [sphinx-autodoc-typehints](https://github.com/agronholm/sphinx-autodoc-typehints)
-  allows Sphinx to include type annotations in the generated API documentation.
+  uses type annotations to
+  document the types of function parameters and return values.
 
-For Sphinx to be able to read the documentation strings and type annotations in
-your package, you need to install your package before building the
-documentation. As the documentation dependencies include the package itself, it
-makes sense to declare them as *extra dependencies* of your package, rather than
-simply installing them in the Nox session. This has the following advantages:
+The autodoc and napoleon extensions are distributed with Sphinx,
+so there is no need to install them explicitly.
 
-- You can use Poetry to manage dependencies.
-- You can build the documentation from within CI, using the same environment.
-- Extra dependencies are kept separate from the main package dependencies.
-
-Add the documentation dependencies with Poetry using the `--optional` option,
-like this:
+Add `sphinx-autodoc-typehints` to your development dependencies:
 
 ```sh
-poetry add --optional sphinx sphinx-rtd-theme sphinx-autodoc-typehints
+poetry add --dev sphinx-autodoc-typehints
 ```
 
-In case you wonder, the `autodoc` and `napoleon` extensions are distributed with
-Sphinx, so there is no need to install them explicitly.
-
-Declare the documentation dependencies in `pyproject.toml`, as an extra named
-`docs`:
-
-```toml
-# pyproject.toml
-[tool.poetry.extras]
-docs = ["sphinx", "sphinx-rtd-theme", "sphinx-autodoc-typehints"]
-```
-
-Update the lock file by invoking [poetry
-lock](https://poetry.eustace.io/docs/cli/#lock).
-
-You can now simply install your package with the `--extras=docs` option. Update
-the Nox session:
+Install the extension and your own package into the Nox session.
+Your package is needed so Sphinx can
+read its documentation strings and type annotations.
 
 ```python
 # noxfile.py
 @nox.session(python="3.8")
 def docs(session: Session) -> None:
     """Build the documentation."""
-    session.run("poetry", "install", "--extras=docs", external=True)
+    session.run("poetry", "install", "--no-dev", external=True)
+    install_with_constraints(session, "sphinx", "sphinx-autodoc-typehints")
     session.run("sphinx-build", "docs", "docs/_build")
 ```
 
@@ -847,40 +828,81 @@ Activate the extensions by declaring them in the Sphinx configuration file:
 ```python
 # docs/conf.py
 extensions = [
-    "sphinx_rtd_theme",
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
     "sphinx_autodoc_typehints",
 ]
 ```
 
-From now on, you can reference docstrings in your Sphinx documentation using
-directives such as `autoclass` and `autofunction`.
+You can now reference docstrings in your Sphinx documentation
+using directives such as
+[automodule](http://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#directive-automodule),
+[autoclass](http://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#directive-autoclass), and
+[autofunction](http://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#directive-autofunction).
 
-Create the file `docs/splines.rst`, with API documentation for the `splines`
-module:
+Create the file `docs/reference.rst`,
+containing the API reference for the project:
 
 ```rst
-Splines
-=======
-.. py:module:: hypermodern_python.splines
+Reference
+=========
 
-.. autofunction:: reticulate()
+.. contents::
+    :local:
+    :backlinks: none
+
+
+hypermodern_python.console
+--------------------------
+
+.. automodule:: hypermodern_python.console
+   :members:
+
+
+hypermodern_python.wikipedia
+----------------------------
+
+.. automodule:: hypermodern_python.wikipedia
+   :members:
 ```
 
-Include the new file in a `toctree` directive at the end of `docs/index.rst`:
+The
+[automodule](http://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#directive-automodule)
+directive inserts the documentation for the specified Python module.
+With the `:members:` option,
+it also includes documentation for
+the classes and functions defined by the module.
+
+The
+[contents](https://docutils.sourceforge.io/docs/ref/rst/directives.html#table-of-contents)
+directive inserts a table of content into the document.
+The `:local:` option avoids including the page title in the table of contents.
+The `:backlinks: none` option avoids linking each section title to the table of contents.
+
+Include the new file in the navigation sidebar,
+by updating the `toctree` directive at the top of `docs/index.rst`:
 
 ```rst
+The Hypermodern Python Project
+==============================
+
 .. toctree::
-  :hidden:
-  :maxdepth: 2
+   :hidden:
+   :maxdepth: 1
 
-  splines
+   license
+   reference
 ```
 
-Rebuild the documentation using `nox -rs docs`, and open the file
-`docs/_build/index.html` in your browser. Navigate to the `splines` module to
-view its API documentation.
+Rebuild the documentation from Nox,
+and refresh your browser tab.
+
+```sh
+nox -rs docs
+```
+
+Navigate to the *Reference* page and
+you should be able to view the generated API documentation.
 
 ## Thanks for reading!
 
