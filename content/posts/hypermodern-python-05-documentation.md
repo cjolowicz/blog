@@ -11,9 +11,7 @@ tags:
   - xdoctest
 ---
 
-<!--
-[Read this article on Medium](https://medium.com/@cjolowicz/hypermodern-python-5-documentation-xxxxxxxxxxxx)
--->
+[Read this article on Medium](https://medium.com/@cjolowicz/hypermodern-python-5-documentation-13219991028c)
 
 {{< figure
     src="/images/hypermodern-python-05/robida01.jpg" 
