@@ -316,7 +316,7 @@ Docstrings for test cases
 are a great way to
 improve the readability of your test suite.
 They help you keep test function names succinct without becoming obscure,
-and they can be used to make test output more friendly.
+and they can be used to [make test output more friendly](https://github.com/gowtham-sai/pytest-pspec).
 
 Here are three useful guidelines about documenting test cases:
 
