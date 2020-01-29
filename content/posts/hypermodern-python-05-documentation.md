@@ -330,8 +330,8 @@ Here are three useful guidelines about documenting test cases:
    For example, avoid words like "test if", "correctly", "should".
 3. Use "it" to refer to the [system under test](http://xunitpatterns.com/SUT.html).
    There is no need to repeatedly name the function or class you are testing.
-   Describe what you are testing in the docstring for the test module
-   (or the test class if you use those).
+   (A better place for that is the docstring of the test module,
+   or the test class if you use those.)
 
 The following example demonstrates
 how you can write a docstring for a test case:
