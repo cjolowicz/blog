@@ -394,7 +394,8 @@ Install the tool into the linting session:
 def lint(session: Session) -> None:
     """Lint using flake8."""
     args = session.posargs or locations
-    session.install(
+    install_with_constraints(
+        session,
         "flake8",
         "flake8-annotations",
         "flake8-bandit",
