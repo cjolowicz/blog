@@ -205,7 +205,7 @@ poetry add --dev flake8-docstrings
 
 Install the plugin into the linting session:
 
-```python
+```python {hl_lines=[12]}
 # noxfile.py
 @nox.session(python=["3.8", "3.7"])
 def lint(session: Session) -> None:
@@ -388,7 +388,7 @@ poetry add --dev darglint
 
 Install the tool into the linting session:
 
-```python
+```python {hl_lines=[15]}
 # noxfile.py
 @nox.session(python=["3.8", "3.7"])
 def lint(session: Session) -> None:
@@ -450,7 +450,7 @@ and humans are great at learning from examples.
 By convention, docstring examples are written as if entered at a Python prompt.
 Below is an example (pun intended) from the documentation of `wikipedia.random_page`:
 
-```python
+```python {hl_lines=["18-22"]}
 # src/hypermodern_python/wikipedia.py
 def random_page(language: str = "en") -> Page:
     """Return a random page.
@@ -814,7 +814,7 @@ Install the extension and your own package into the Nox session.
 Your package is needed so Sphinx can
 read its documentation strings and type annotations.
 
-```python
+```python {hl_lines=["5-6"]}
 # noxfile.py
 @nox.session(python="3.8")
 def docs(session: Session) -> None:
@@ -826,8 +826,11 @@ def docs(session: Session) -> None:
 
 Activate the extensions by declaring them in the Sphinx configuration file:
 
-```python
+```python {hl_lines=["5-9"]}
 # docs/conf.py
+project = "hypermodern-python"
+author = "Your Name"
+copyright = f"2020, {author}"
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
@@ -883,7 +886,7 @@ The `:backlinks: none` option avoids linking each section title to the table of 
 Include the new file in the navigation sidebar,
 by updating the `toctree` directive at the top of `docs/index.rst`:
 
-```rst
+```rst {hl_lines=[9]}
 The Hypermodern Python Project
 ==============================
 
