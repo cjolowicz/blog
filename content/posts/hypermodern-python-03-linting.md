@@ -49,7 +49,6 @@ Here is a full list of the articles in this series:
 - [Chapter 4: Typing](../hypermodern-python-04-typing)
 - [Chapter 5: Documentation](../hypermodern-python-05-documentation)
 - *Chapter 6: CI/CD*
-- *Appendix: Docker*
 
 This guide has a companion repository:
 [cjolowicz/hypermodern-python](https://github.com/cjolowicz/hypermodern-python).
