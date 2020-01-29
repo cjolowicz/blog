@@ -312,12 +312,6 @@ sessions marked with * are selected, sessions marked with - are skipped.
     link="/images/hypermodern-python-05/robida05.jpg"
 >}}
 
-Give your test suite as much love as you give your package:
-You will need to maintain both.
-If your test suite becomes hard to maintain, so will your package.
-Lint it, type-check it, document it.
-(Maybe don't give it a test suite, though.)
-
 Docstrings for test cases
 are a great way to
 improve the readability of your test suite.
