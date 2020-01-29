@@ -50,6 +50,7 @@ Here are the topics covered in this chapter on documentation:
 - [Validating docstrings against function signatures with darglint](#validating-docstrings-against-function-signatures-with-darglint)
 - [Running documentation examples with xdoctest](#running-documentation-examples-with-xdoctest)
 - [Creating documentation with Sphinx](#creating-documentation-with-sphinx)
+- [Writing documentation using reStructuredText](#writing-documentation-using-restructuredtext)
 - [Generating API documentation with autodoc](#generating-api-documentation-with-autodoc)
 
 Here is a full list of the articles in this series:
@@ -530,67 +531,37 @@ which has the advantage of keeping unit tests and doctest separate.
 ## Creating documentation with Sphinx
 
 {{< figure
-    src="/images/hypermodern-python-05/robida07.jpg" 
-    link="/images/hypermodern-python-05/robida07.jpg"
+    src="/images/hypermodern-python-05/robida08.jpg" 
+    link="/images/hypermodern-python-05/robida08.jpg"
 >}}
 
-[Sphinx](http://www.sphinx-doc.org/) is the documentation tool used by the
-official Python documentation and many open-source projects. Sphinx
-documentation is commonly written using
-[reStructuredText](http://docutils.sourceforge.net/rst.html), although Markdown
-is also supported. 
+[Sphinx](http://www.sphinx-doc.org/)
+is the documentation tool used by the
+official Python documentation and many open-source projects.
+Add Sphinx to your development dependencies:
 
-Create a directory `docs` and place the text below in the file `docs/index.rst`:
-
-```rst
-The hypermodern Python project
-==============================
-
-Installation
-------------
-
-To install the hypermodern Python project, run this command in your terminal:
-
-.. code-block:: console
-
-   $ pip install hypermodern-python
-
-Usage
------
-
-Hypermodern Python's usage looks like:
-
-.. code-block:: console
-
-    $ hypermodern-python [OPTIONS]
-
-.. option:: -n <count>, --count <count>
-
-    Number of splines to reticulate. By default, the program reticulates
-    splines until interrupted by Ctrl+C.
-
-.. option:: --version
-
-    Display the version and exit.
-
-.. option:: --help
-
-    Display a short usage message and exit.
+```sh
+poetry add --dev sphinx
 ```
 
-Create the Sphinx configuration file `docs/conf.py`, in the same directory. This
-provides meta information about your project, and applies the theme
-[sphinx-rtd-theme](https://github.com/readthedocs/sphinx_rtd_theme):
+Create a directory `docs`.
+The master document is located in the file `docs/index.rst`.
+Let's start with a simple placeholder text:
 
+```rst
+This is docs/index.rst,
+documenting the Hypermodern Python project.
+```
+
+Create the Sphinx configuration file `docs/conf.py`.
+This provides meta information about your project:
 
 ```python
 # docs/conf.py
 """Sphinx configuration."""
 project = "hypermodern-python"
 author = "Your Name"
-copyright = f"2019, {author}"
-extensions = ["sphinx_rtd_theme"]
-html_theme = "sphinx_rtd_theme"
+copyright = f"2020, {author}"
 ```
 
 Add a Nox session to build the documentation:
@@ -598,9 +569,9 @@ Add a Nox session to build the documentation:
 ```python
 # noxfile.py
 @nox.session(python="3.8")
-def docs(session):
+def docs(session: Session) -> None:
     """Build the documentation."""
-    session.install("sphinx", "sphinx-rtd-theme")
+    install_with_constraints(session, "sphinx")
     session.run("sphinx-build", "docs", "docs/_build")
 ```
 
@@ -617,8 +588,196 @@ Run the Nox session:
 nox -rs docs
 ```
 
-You can now open the file `docs/_build/index.html` in your browser to view your
-documentation offline.
+You can now open the file `docs/_build/index.html` in your browser
+to view your documentation offline.
+
+## Writing documentation using reStructuredText
+
+{{< figure
+    src="/images/hypermodern-python-05/robida09.jpg" 
+    link="/images/hypermodern-python-05/robida09.jpg"
+>}}
+
+Sphinx documentation is commonly written using
+[reStructuredText](http://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html)
+(reST),
+although Markdown is also supported. 
+reStructuredText may not be as lightweight as Markdown,
+but its expressiveness and extensibility, among other reasons, make it
+[more suitable](https://www.ericholscher.com/blog/2016/mar/15/dont-use-markdown-for-technical-docs/)
+for writing technical documentation.
+
+Open the file `docs/index.rst`,
+and replace the placeholder text with the following document:
+
+```rst
+The Hypermodern Python Project
+==============================
+
+The example project for the
+`Hypermodern Python <https://medium.com/@cjolowicz/hypermodern-python-d44485d9d769>`_
+article series.
+The command-line interface prints random facts to your console,
+using the `Wikipedia API <https://en.wikipedia.org/api/rest_v1/#/>`_.
+
+
+Installation
+------------
+
+To install the Hypermodern Python project,
+run this command in your terminal:
+
+.. code-block:: console
+
+   $ pip install hypermodern-python
+
+
+Usage
+-----
+
+Hypermodern Python's usage looks like:
+
+.. code-block:: console
+
+   $ hypermodern-python [OPTIONS]
+
+.. option:: -l <language>, --language <language>
+
+   The Wikipedia language edition,
+   as identified by its subdomain on
+   `wikipedia.org <https://www.wikipedia.org/>`_.
+   By default, the English Wikipedia is selected.
+
+.. option:: --version
+
+   Display the version and exit.
+
+.. option:: --help
+
+   Display a short usage message and exit.
+```
+
+The Sphinx documentation contains a
+[good introduction](http://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html)
+to reStructuredText,
+so I'll limit myself to explaining the constructs used above.
+
+Headings are created by underlining with a punctuation character:
+
+```rst
+Usage
+-----
+```
+
+Links use this syntax:
+
+```rst
+`Display text <URL>`_
+```
+
+Code blocks are marked up by the
+[code-block](http://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html#directive-code-block)
+directive:
+
+```rst
+.. code-block:: python
+
+   print("Hello world")
+```
+
+Command-line options are marked up by the
+[option](https://www.sphinx-doc.org/en/master/usage/restructuredtext/domains.html#directive-option)
+directive:
+
+```rst
+.. option:: --help
+
+   Display a short usage message and exit.
+```
+
+Indentation is significant, like in Python.
+Three spaces are customary,
+because they line up directives with their content.
+
+Paragraphs are separated by a blank line.
+Newlines by themselves are just whitespace,
+and you can turn this to your advantage by treating them as
+[semantic linefeeds](https://rhodesmill.org/brandon/2012/one-sentence-per-line/):
+Use newlines to demarcate *ideas*.
+Text editors are great at manipulating lines,
+and version control will also benefit from the smaller diffs.
+
+Here is a paragraph filled to a line length of 79 characters:
+
+```rst
+The Wikipedia language edition, as identified by its subdomain on `wikipedia.org
+<https://www.wikipedia.org/>`_. By default, the English Wikipedia is selected.
+```
+
+Here is the same paragraph using semantic linefeeds:
+
+```rst
+The Wikipedia language edition,
+as identified by its subdomain on
+`wikipedia.org <https://www.wikipedia.org/>`_.
+By default, the English Wikipedia is selected.
+```
+
+Directives like `code-block` are Sphinx extensions,
+but unlike the fenced code blocks of [GitHub Flavored Markdown](https://github.github.com/gfm/),
+they use a standard extension mechanism built into the base language.
+While reStructuredText provides some directives of its own,
+Sphinx defines [many more](http://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html),
+creating an expressive semantic markup language that
+lets you focus on meaning instead of formatting.
+
+Sphinx documentation can be spread over multiple interconnected files.
+Let's see how this works by including the license in the documentation.
+Create a file `docs/license.rst`,
+which includes the `LICENSE` file from the parent directory
+using an
+[include](https://docutils.sourceforge.io/docs/ref/rst/directives.html#include)
+directive:
+
+```rst
+License
+=======
+
+.. include:: ../LICENSE
+```
+
+Add the license to the navigation sidebar
+by adding a
+[toctree](http://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html#directive-toctree)
+directive
+to the main document in `docs/index.rst`.
+
+```rst
+The Hypermodern Python Project
+==============================
+
+.. toctree::
+   :hidden:
+   :maxdepth: 1
+
+   license
+```
+
+The `:hidden:` option
+prevents the table of contents from being inserted into the main document itself,
+which makes sense since it is already included in the sidebar.
+The `:maxdepth: 1` option
+turns the navigation sidebar into a flat list,
+instead of a nested hierarchy
+including the internal structure of each documentation page.
+
+Build the documentation from Nox.
+After reloading the page in your browser,
+you should see the license in the navigation sidebar.
+
+```sh
+nox -rs docs
+```
 
 ## Generating API documentation with autodoc
 
