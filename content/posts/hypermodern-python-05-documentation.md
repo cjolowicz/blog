@@ -35,9 +35,11 @@ for the previous chapter.)
       (Paris by night) and
       *Départ d'un ballon transatlantique*
       (Departure of a transatlantic balloon), and
-      the wood engraving
+      the wood engravings
       *Station centrale des aéronefs à Notre-Dame*
-      (Central aircraft station at Notre-Dame),
+      (Central aircraft station at Notre-Dame) and
+      *Maison tournante aérienne*
+      (Aerial rotating house),
       by Albert Robida, 1883
       (via [Old Book Illustrations](https://www.oldbookillustrations.com/writers/robida-albert/)).
 
