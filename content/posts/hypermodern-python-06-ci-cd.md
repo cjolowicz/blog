@@ -64,20 +64,28 @@ Each article in the guide corresponds to a set of commits in the GitHub reposito
 
 ## Continuous integration using GitHub Actions
 
-*Continuous integration* (CI) helps you automate the integration of code changes
-into your project. The CI server verifies the correctness of changes, triggering
-tools such as unit tests, linters, or type checkers. GitHub displays Pull
-Requests with a green tick if they pass CI, and with a red x if the CI pipeline
-failed.
+{{< figure
+    src="/images/hypermodern-python-06/nasa02.jpg" 
+    link="/images/hypermodern-python-06/nasa02.jpg"
+>}}
+
+*Continuous integration* (CI) helps you
+automate the integration of code changes into your project.
+The CI server verifies the correctness of changes,
+triggering tools such as unit tests, linters, or type checkers.
+GitHub displays Pull Requests with a green tick if they pass CI,
+and with a red x if the CI pipeline failed.
 
 You have a plethora of options when it comes to continuous integration.
-Traditionally, many open-source projects have employed [Travis
-CI](https://travis-ci.com). Another popular choice are Microsoft's [Azure
-Pipelines](https://azure.microsoft.com/en-us/services/devops/pipelines/). In
-this guide, you are going to use GitHub's own offering, [GitHub
-Actions](https://github.com/features/actions).
+Traditionally, many open-source projects have employed
+[Travis CI](https://travis-ci.com).
+Another popular choice are Microsoft's
+[Azure Pipelines](https://azure.microsoft.com/en-us/services/devops/pipelines/).
+In this guide, we use GitHub's own offering,
+[GitHub Actions](https://github.com/features/actions).
 
-Configure GitHub Actions by adding the following [YAML](https://yaml.org) file
+Configure GitHub Actions by
+adding the following [YAML](https://yaml.org) file
 to the `.github/workflows` directory:
 
 ```yaml
@@ -98,10 +106,11 @@ jobs:
     - run: poetry build
 ```
 
-This file defines a so-called *workflow*, which is triggered on every push to
-your GitHub repository, and runs on the latest supported Ubuntu image. The
-workflow consists of five steps, either using preexisting GitHub Actions or
-invoking shell commands:
+This file defines a so-called *workflow*,
+which is triggered on every push to your GitHub repository,
+and runs on the latest supported Ubuntu image.
+The workflow consists of five steps,
+either using preexisting GitHub Actions or invoking shell commands:
 
 1. Fetch and check out your code, using [actions/checkout](https://github.com/actions/checkout).
 2. Activate Python and install Nox using [excitedleigh/setup-nox](https://github.com/excitedleigh/setup-nox).
@@ -110,9 +119,10 @@ invoking shell commands:
 5. Build the package by invoking [poetry
    build](https://poetry.eustace.io/docs/cli/#build).
 
-You should also add a GitHub Actions badge to your repository page. The badge
-indicates whether the tests are passing or failing on the master branch, and
-links to the GitHub Actions dashboard for your project. It looks like this:
+You should also add a GitHub Actions badge to your repository page.
+The badge indicates whether the tests are passing or failing on the master branch,
+and links to the GitHub Actions dashboard for your project.
+It looks like this:
 
 > [![tests](https://github.com/cjolowicz/hypermodern-python/workflows/tests/badge.svg)](https://github.com/cjolowicz/hypermodern-python/actions?workflow=tests)
 
