@@ -1,20 +1,52 @@
 --- 
-date: 2019-11-07T12:52:59+02:00
+date: 2020-01-30T06:02:59+02:00
 title: "Hypermodern Python 6: CI/CD"
-description: "Coding in Python like Savielly Tartakower."
+description: "A guide to modern Python tooling with a focus on simplicity and minimalism."
 draft: true
 tags:
   - python
   - GitHub Actions
   - Codecov
   - PyPI
-  - readthedocs
+  - Read the Docs
 ---
 
-In this sixth and last installment of the Hypermodern Python series, I'm going
-to discuss how to add continuous integration and delivery to your project.
+<!-- [Read this article on Medium](https://medium.com/@cjolowicz/hypermodern-python-6-ci-cd-xxxxxxxxxxxx) -->
 
-For your reference, below is a list of the articles in this series.
+{{< figure
+    src="/images/hypermodern-python-06/nasa01.jpg" 
+    link="/images/hypermodern-python-06/nasa01.jpg"
+>}}
+
+In this sixth and last installment of the Hypermodern Python series,
+I'm going to discuss
+how to add continuous integration and delivery to your project.[^1]
+In the [previous chapter](../hypermodern-python-05-documentation), we discussed
+how to add documentation.
+(If you start reading here,
+you can also 
+[download the code](https://github.com/cjolowicz/hypermodern-python/archive/chapter05.zip) 
+for the previous chapter.)
+
+[^1]: The images in this chapter are
+      artistic renderings of space colonies from the 1970s,
+      made during a series of space colony summer studies
+      held by the Princeton physicist Gerard O'Neill,
+      with the help of NASA Ames Research Center and Stanford University
+      (source:
+      [NASA Ames Research Center](https://settlement.arc.nasa.gov/70sArt/art.html)
+      via
+      [The Public Domain Review](https://publicdomainreview.org/collection/space-colony-art-from-the-1970s)). 
+
+Here are the topics covered in this chapter on
+Continuous Integration and Delivery:
+
+- [Continuous integration using GitHub Actions](#continuous-integration-using-github-actions)
+- [Coverage reporting with Codecov](#coverage-reporting-with-codecov)
+- [Uploading your package to PyPI](#uploading-your-package-to-pypi)
+- [A typical release process](#a-typical-release-process)
+
+Here is a full list of the articles in this series:
 
 - [Chapter 1: Setup](../hypermodern-python-01-setup)
 - [Chapter 2: Testing](../hypermodern-python-02-testing)
@@ -22,23 +54,13 @@ For your reference, below is a list of the articles in this series.
 - [Chapter 4: Typing](../hypermodern-python-04-typing)
 - [Chapter 5: Documentation](../hypermodern-python-05-documentation)
 - [Chapter 6: CI/CD](../hypermodern-python-06-ci-cd) (this article)
-- [Appendix: Docker](../hypermodern-python-07-deployment)
-
-<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
-**In this chapter:**
-
-- [Continuous integration using GitHub Actions](#continuous-integration-using-github-actions)
-- [Coverage reporting with Codecov](#coverage-reporting-with-codecov)
-- [Uploading your package to PyPI](#uploading-your-package-to-pypi)
-- [A typical release process](#a-typical-release-process)
-
-<!-- markdown-toc end -->
 
 This guide has a companion repository:
 [cjolowicz/hypermodern-python](https://github.com/cjolowicz/hypermodern-python).
-Here is the link for the changes contained in this chapter:
+Each article in the guide corresponds to a set of commits in the GitHub repository:
 
-▶ **[View code](https://github.com/cjolowicz/hypermodern-python/compare/chapter05...chapter06)**
+- [View changes](https://github.com/cjolowicz/hypermodern-python/compare/chapter05...chapter06)
+- [Download code](https://github.com/cjolowicz/hypermodern-python/archive/chapter06.zip)
 
 ## Continuous integration using GitHub Actions
 
