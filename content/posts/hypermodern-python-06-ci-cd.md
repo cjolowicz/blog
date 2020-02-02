@@ -90,20 +90,24 @@ to the `.github/workflows` directory:
 
 ```yaml
 # .github/workflows/tests.yml
-name: tests
+name: Tests
 on: push
 jobs:
-  test:
-    name: nox
+  tests:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.7', '3.8']
+    name: Python ${{ matrix.python-version }}
     steps:
-    - uses: actions/checkout@1.0.0
-    - uses: excitedleigh/setup-nox@0.1.0
-    - uses: dschep/install-poetry-action@v1.2
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v1
       with:
-        preview: true
+        python-version: ${{ matrix.python-version }}
+        architecture: x64
+    - run: pip install nox==2019.11.9
+    - run: pip install poetry==1.0.3
     - run: nox
-    - run: poetry build
 ```
 
 This file defines a so-called *workflow*,
@@ -145,6 +149,12 @@ use [Codecov](https://codecov.io/) for this; another common option is
 app, and add your repository to Codecov. The sign up process will guide you
 through these steps.
 
+Add the codecov tool to your development dependencies:
+
+```sh
+poetry add --dev codecov
+```
+
 Add the Nox session shown below. This session exports the coverage data to
 [cobertura](https://cobertura.github.io/cobertura/) XML format, which is the
 format expected by Codecov. It then uses the official
@@ -156,8 +166,8 @@ data.
 @nox.session(python="3.8")
 def coverage(session: Session) -> None:
     """Upload coverage data."""
-    session.install("coverage", "codecov")
-    session.run("coverage", "xml")
+    install_with_constraints(session, "coverage[toml]", "codecov")
+    session.run("coverage", "xml", "--fail-under=0")
     session.run("codecov", *session.posargs)
 ```
 
@@ -171,21 +181,29 @@ Next, grant GitHub Actions access to upload to Codecov:
 Invoke the session from the GitHub Actions workflow, providing the
 `CODECOV_TOKEN` secret as an environment variable:
 
-```yaml
+```yaml {hl_lines=["20-22"]}
 # .github/workflows/tests.yml
-name: tests
+name: Tests
 on: push
 jobs:
-  test:
-    name: nox
+  tests:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.7', '3.8']
+    name: Python ${{ matrix.python-version }}
     steps:
-...
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+        architecture: x64
+    - run: pip install nox==2019.11.9
+    - run: pip install poetry==1.0.3
     - run: nox
-    - run: nox -e coverage
+    - run: nox --session=coverage
       env:
         CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
-    - run: poetry build
 ```
 
 Finally, add the Codecov badge to your `README.md`:
@@ -228,11 +246,25 @@ permission to upload to PyPI:
 Add the following lines to the bottom of your GitHub workflow:
 
 ```yaml
-# .github/workflows/tests.yml
-...
-    - if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
-      run: |
-        poetry publish --username=__token__ --password=${{ secrets.PYPI_TOKEN }}
+# .github/workflows/release.yml
+name: Release
+on:
+  release:
+    types: [created]
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v1
+      with:
+        python-version: '3.8'
+        architecture: x64
+    - run: pip install nox==2019.11.9
+    - run: pip install poetry==1.0.3
+    - run: nox
+    - run: poetry build
+    - run: poetry publish --username=__token__ --password=${{ secrets.PYPI_TOKEN }}
 ```
 
 You can now trigger a PyPI release by creating and pushing an annotated Git tag.
@@ -274,6 +306,55 @@ the latest release:
 The badge looks like this: 
 [![PyPI](https://img.shields.io/pypi/v/hypermodern-python.svg)](https://pypi.org/project/hypermodern-python/)
 
+## Release Drafter
+
+```yaml
+# .github/workflows/release-drafter.yml
+name: Release Drafter
+on:
+  push:
+    branches:
+      - master
+jobs:
+  draft_release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: release-drafter/release-drafter@v5.6.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
+
+```yaml
+# .github/release-drafter.yml
+categories:
+  - title: ':boom: Breaking Changes'
+    label: 'breaking'
+  - title: ':package: Build System'
+    label: 'build'
+  - title: ':construction_worker: Continuous Integration'
+    label: 'ci'
+  - title: ':books: Documentation'
+    label: 'documentation'
+  - title: ':rocket: Features'
+    label: 'enhancement'
+  - title: ':beetle: Fixes'
+    label: 'bug'
+  - title: ':racehorse: Performance'
+    label: 'performance'
+  - title: ':hammer: Refactoring'
+    label: 'refactoring'
+  - title: ':fire: Removals and Deprecations'
+    label: 'removal'
+  - title: ':lipstick: Style'
+    label: 'style'
+  - title: ':rotating_light: Testing'
+    label: 'testing'
+template: |
+  ## What’s Changed
+
+  $CHANGES
+```
+
 ## Hosting documentation at Read the Docs
 
 {{< figure
@@ -298,8 +379,7 @@ python:
   version: 3.7
   install:
     - requirements: docs/requirements.txt
-    - method: pip
-      path: .
+    - path: .
 ```
 
 The `install` section in the configuration file tells Read the Docs how to
@@ -317,6 +397,12 @@ versions from `poetry.lock`, only the more generic version constraints in
 
 ```sh
 poetry export -f requirements.txt -E docs > docs/requirements.txt
+```
+
+```python
+# docs/requirements.txt
+sphinx==2.3.1
+sphinx-autodoc-typehints==1.10.3
 ```
 
 This file needs to be placed under source control to ensure that it is available
