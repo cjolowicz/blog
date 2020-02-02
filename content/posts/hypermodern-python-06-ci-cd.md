@@ -14,7 +14,7 @@ tags:
 <!-- [Read this article on Medium](https://medium.com/@cjolowicz/hypermodern-python-6-ci-cd-xxxxxxxxxxxx) -->
 
 {{< figure
-    src="/images/hypermodern-python-06/nasa01.jpg" 
+    src="/images/hypermodern-python-06/nasa01.jpg"
     link="/images/hypermodern-python-06/nasa01.jpg"
 >}}
 
@@ -65,7 +65,7 @@ Each article in the guide corresponds to a set of commits in the GitHub reposito
 ## Continuous integration using GitHub Actions
 
 {{< figure
-    src="/images/hypermodern-python-06/nasa02.jpg" 
+    src="/images/hypermodern-python-06/nasa02.jpg"
     link="/images/hypermodern-python-06/nasa02.jpg"
 >}}
 
@@ -134,6 +134,11 @@ Add the line below to the top of your `README.md` to display the badge:
 
 ## Coverage reporting with Codecov
 
+{{< figure
+    src="/images/hypermodern-python-06/nasa03.jpg"
+    link="/images/hypermodern-python-06/nasa03.jpg"
+>}}
+
 Let's also display code coverage right on your GitHub repository page. We will
 use [Codecov](https://codecov.io/) for this; another common option is
 [Coveralls](https://coveralls.io/). Sign up at Codecov, install their GitHub
@@ -194,6 +199,11 @@ The badge looks like this:
 > [![Codecov](https://codecov.io/gh/cjolowicz/hypermodern-python/branch/master/graph/badge.svg)](https://codecov.io/gh/cjolowicz/hypermodern-python)
 
 ## Uploading your package to PyPI
+
+{{< figure
+    src="/images/hypermodern-python-06/nasa04.jpg"
+    link="/images/hypermodern-python-06/nasa04.jpg"
+>}}
 
 [PyPI](https://pypi.org/) is the official Python package registry, also known by
 its affectionate nickname "[the Cheese
@@ -266,6 +276,11 @@ The badge looks like this:
 
 ## Hosting documentation at Read the Docs
 
+{{< figure
+    src="/images/hypermodern-python-06/nasa05.jpg"
+    link="/images/hypermodern-python-06/nasa05.jpg"
+>}}
+
 [Read the Docs](https://readthedocs.org/) hosts documentation for countless
 open-source Python projects. The hosting service also takes care of rebuilding
 the documentation when you update your project. Users can browse documentation
@@ -336,6 +351,11 @@ Docs](https://readthedocs.org/projects/hypermodern-python/badge/)](https://hyper
 
 ## Conclusion
 
+{{< figure
+    src="/images/hypermodern-python-06/nasa06.jpg"
+    link="/images/hypermodern-python-06/nasa06.jpg"
+>}}
+
 Thank you for reading this far. This chapter concludes the Hypermodern Python
 series.
 
@@ -345,3 +365,5 @@ of *Die hypermoderne Schachpartie* (The hypermodern chess game) in his
 bookshelf, written by [Savielly
 Tartakower](https://en.wikipedia.org/wiki/Savielly_Tartakower) in 1925 to
 modernize chess theory. That inspired the title of this guide.
+
+{{< figure src="/images/hypermodern-python-06/boat.jpg" class="centered" >}}
