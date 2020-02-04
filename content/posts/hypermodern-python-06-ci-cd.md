@@ -162,14 +162,14 @@ but you should really
 test your project on all Python versions it supports.
 You can achieve this using a *build matrix*.
 A build matrix lets you define variables,
-for example the operating system or the Python version,
+such as for the operating system or for the Python version,
 and specify multiple values for them.
 Jobs can reference these variables,
 and are instantiated for every combination of values.
 
-Let's define a build matrix for the Python version.
-The project supports Python 3.7 and 3.8.
-You can use the [strategy](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#jobsjob_idstrategy) and [matrix](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix) keywords
+Let's define a build matrix for the Python versions
+supported by the project (Python 3.7 and 3.8).
+Use the [strategy](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#jobsjob_idstrategy) and [matrix](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix) keywords
 to define a build matrix with a `python-version` variable,
 and reference the variable using the syntax `${{ matrix.python-version }}`:
 
@@ -197,7 +197,8 @@ jobs:
 
 If you commit and push now,
 you can watch the workflow execute
-under the *Actions* tab in your GitHub repository.
+under the *Actions* tab in your GitHub repository,
+with a separate job for each Python version.
 
 You should also add a GitHub Actions badge to your repository page.
 The badge indicates whether the tests are passing or failing on the master branch,
