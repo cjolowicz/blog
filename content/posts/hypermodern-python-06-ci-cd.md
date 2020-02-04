@@ -278,7 +278,7 @@ Next, grant GitHub Actions access to upload to Codecov:
 2. Go to your repository settings on GitHub,
    and add a secret named `CODECOV_TOKEN` with the token you just copied.
 
-Add the following GitHub Actions workflow to upload coverage data:
+Add the following GitHub workflow to upload coverage data:
 
 ```yaml
 # .github/workflows/coverage.yml
@@ -295,17 +295,15 @@ jobs:
         architecture: x64
     - run: pip install nox==2019.11.9
     - run: pip install poetry==1.0.3
-    - run: nox --session=tests-3.8 -- --cov --cov-fail-under=0 -m "not e2e"
-    - run: nox --session=coverage
+    - run: nox --sessions tests-3.8 coverage
       env:
         CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
 ```
 
 In contrast to the Tests workflow,
-this workflow is restricted to running the test suite on Python 3.8.
-The option `--cov-fail-under=0` is used to disable the coverage minimum, as above.
-Finally, the coverage data is uploaded using the Nox session defined above,
-providing the `CODECOV_TOKEN` secret as an environment variable.
+the Coverage workflow only runs on Python 3.8.
+It invokes Nox to execute the test suite and upload the coverage data,
+providing the Codecov token as an environment variable.
 
 Add the Codecov badge to your `README.md`:
 
