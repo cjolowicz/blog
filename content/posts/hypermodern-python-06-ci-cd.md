@@ -71,10 +71,14 @@ Each article in the guide corresponds to a set of commits in the GitHub reposito
 
 *Continuous integration* (CI) helps you
 automate the integration of code changes into your project.
-The CI server verifies the correctness of changes,
+When changes are pushed to the project repository,
+the CI server verifies their correctness,
 triggering tools such as unit tests, linters, or type checkers.
 GitHub displays Pull Requests with a green tick if they pass CI,
 and with a red x if the CI pipeline failed.
+In this way,
+continuous integration can function as a gate commits need to pass
+to enter the master branch.
 
 You have a plethora of options when it comes to continuous integration.
 Traditionally, many open-source projects have employed
@@ -89,6 +93,72 @@ adding the following [YAML](https://yaml.org) file
 to the `.github/workflows` directory:
 
 ```yaml
+# .github/workflows/tests.yml
+name: Tests
+on: push
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v1
+      with:
+        python-version: 3.8
+        architecture: x64
+    - run: pip install nox==2019.11.9
+    - run: pip install poetry==1.0.3
+    - run: nox
+```
+
+This file defines a so-called *workflow*.
+A workflow is an automated process
+executing a series of steps,
+grouped into one or many jobs.
+Workflows are triggered by events,
+for example when someone pushes a commit to a repository,
+or when someone creates a pull request, an issue, or a release.
+
+The workflow above
+is triggered on every push to your GitHub repository, and
+executes the test suite using Nox.
+It
+is aptly named "Tests",
+and consists of a single job
+running on the latest supported [Ubuntu image](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/virtual-environments-for-github-hosted-runners#supported-runners-and-hardware-resources).
+The job executes five steps,
+using either official GitHub Actions or
+invoking shell commands:
+
+1. Check out your repository using [actions/checkout](https://github.com/actions/checkout).
+2. Install Python 3.8 using [actions/setup-python](https://github.com/actions/setup-python).
+3. Install Nox with pip.
+4. Install Poetry with pip.
+5. Run your test suite with Nox.
+
+You can learn more about the workflow language and its supported keywords in the
+[official reference](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions).
+
+Every tool used in the CI process is pinned to a specific version.
+The reasoning behind this is that
+a CI process should be predictable and deterministic.
+
+The workflow currently uses Python 3.8 only,
+but you should really
+test your project on all Python versions it supports.
+You can achieve this using a *build matrix*.
+A build matrix lets you define variables,
+for example the operating system or the Python version,
+and specify multiple values for them.
+Jobs can reference these variables,
+and are instantiated for every combination of values.
+
+Let's define a build matrix for the Python version.
+The project supports Python 3.7 and 3.8.
+You can use the [strategy](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#jobsjob_idstrategy) and [matrix](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix) keywords
+to define a build matrix with a `python-version` variable,
+and reference the variable using the syntax `${{ matrix.python-version }}`:
+
+```yaml {hl_lines=["7-10",15]}
 # .github/workflows/tests.yml
 name: Tests
 on: push
@@ -110,18 +180,9 @@ jobs:
     - run: nox
 ```
 
-This file defines a so-called *workflow*,
-which is triggered on every push to your GitHub repository,
-and runs on the latest supported Ubuntu image.
-The workflow consists of five steps,
-either using preexisting GitHub Actions or invoking shell commands:
-
-1. Fetch and check out your code, using [actions/checkout](https://github.com/actions/checkout).
-2. Activate Python and install Nox using [excitedleigh/setup-nox](https://github.com/excitedleigh/setup-nox).
-3. Install Poetry using [dschep/install-poetry-action](https://github.com/dschep/install-poetry-action).
-4. Run your test suite by invoking `nox`.
-5. Build the package by invoking [poetry
-   build](https://poetry.eustace.io/docs/cli/#build).
+If you commit and push now,
+you can watch the workflow execute
+under the *Actions* tab in your GitHub repository.
 
 You should also add a GitHub Actions badge to your repository page.
 The badge indicates whether the tests are passing or failing on the master branch,
