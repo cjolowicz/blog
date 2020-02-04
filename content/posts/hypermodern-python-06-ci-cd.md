@@ -219,23 +219,40 @@ Add the line below to the top of your `README.md` to display the badge:
     link="/images/hypermodern-python-06/nasa03.jpg"
 >}}
 
-Let's also display code coverage right on your GitHub repository page. We will
-use [Codecov](https://codecov.io/) for this; another common option is
-[Coveralls](https://coveralls.io/). Sign up at Codecov, install their GitHub
-app, and add your repository to Codecov. The sign up process will guide you
-through these steps.
+[Earlier](../hypermodern-python-02-testing#code-coverage-with-coveragepy),
+we configured the test suite to fail
+if code coverage drops below 100%.
+A coverage reporting service offers some additional benefits,
+by making code coverage more visible:
 
-Add the codecov tool to your development dependencies:
+- Pull requests get automated comments
+  with a quick rundown of how the changes affect coverage.
+- The site visualizes code coverage
+  for every commit and file in your repository,
+  using graphs and code listings.
+- You can display code coverage on your repository page,
+  using a badge.
+
+In this section,
+we use [Codecov](https://codecov.io/) for coverage reporting;
+another common option is [Coveralls](https://coveralls.io/).
+Sign up at Codecov,
+install their GitHub app,
+and add your repository to Codecov.
+The sign up process will guide you through these steps.
+
+Add the official [codecov CLI](https://github.com/codecov/codecov-python)
+to your development dependencies:
 
 ```sh
 poetry add --dev codecov
 ```
 
-Add the Nox session shown below. This session exports the coverage data to
-[cobertura](https://cobertura.github.io/cobertura/) XML format, which is the
-format expected by Codecov. It then uses the official
-[codecov CLI](https://github.com/codecov/codecov-python) to upload the coverage
-data.
+Add the Nox session shown below.
+The session exports the coverage data to
+[cobertura](https://cobertura.github.io/cobertura/) XML format,
+which is the format expected by Codecov.
+It then uses `codecov` to upload the coverage data.
 
 ```python
 # noxfile.py
@@ -247,12 +264,18 @@ def coverage(session: Session) -> None:
     session.run("codecov", *session.posargs)
 ```
 
+Note that you need to disable the coverage minimum
+using the command-line option `--fail-under=0`.
+Otherwise, you would only get coverage reports
+when coverage is at 100%,
+defeating their very purpose.
+
 Next, grant GitHub Actions access to upload to Codecov:
 
-1. On Codecov, copy the *Repository Upload Token* from the settings page of your
-   repository.
-2. On GitHub, go to the settings page of your repository, and add a secret named
-   `CODECOV_TOKEN` with the token you copied.
+1. Go to your repository settings on Codecov,
+   and copy the *Repository Upload Token*.
+2. Go to your repository settings on GitHub,
+   and add a secret named `CODECOV_TOKEN` with the token you just copied.
 
 Invoke the session from the GitHub Actions workflow, providing the
 `CODECOV_TOKEN` secret as an environment variable:
