@@ -367,7 +367,7 @@ the latest release:
 The badge looks like this: 
 [![PyPI](https://img.shields.io/pypi/v/hypermodern-python.svg)](https://pypi.org/project/hypermodern-python/)
 
-## Release Drafter
+## Automating release notes with Release Drafter
 
 ```yaml
 # .github/workflows/release-drafter.yml
