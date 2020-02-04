@@ -44,7 +44,7 @@ Continuous Integration and Delivery:
 
 - [Continuous integration using GitHub Actions](#continuous-integration-using-github-actions)
 - [Coverage reporting with Codecov](#coverage-reporting-with-codecov)
-  [Uploading your package to PyPI](#uploading-your-package-to-pypi)
+- [Uploading your package to PyPI](#uploading-your-package-to-pypi)
 - [Automating release notes with Release Drafter](#automating-release-notes-with-release-drafter)
 - [Hosting documentation at Read the Docs](#hosting-documentation-at-read-the-docs)
 - [Conclusion](#conclusion)
