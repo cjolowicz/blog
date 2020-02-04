@@ -278,35 +278,36 @@ Next, grant GitHub Actions access to upload to Codecov:
 2. Go to your repository settings on GitHub,
    and add a secret named `CODECOV_TOKEN` with the token you just copied.
 
-Invoke the session from the GitHub Actions workflow, providing the
-`CODECOV_TOKEN` secret as an environment variable:
+Add the following GitHub Actions workflow to upload coverage data:
 
-```yaml {hl_lines=["20-22"]}
-# .github/workflows/tests.yml
-name: Tests
+```yaml
+# .github/workflows/coverage.yml
+name: Coverage
 on: push
 jobs:
-  tests:
+  coverage:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ['3.7', '3.8']
-    name: Python ${{ matrix.python-version }}
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-python@v1
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: '3.8'
         architecture: x64
     - run: pip install nox==2019.11.9
     - run: pip install poetry==1.0.3
-    - run: nox
+    - run: nox --session=tests-3.8 -- --cov --cov-fail-under=0 -m "not e2e"
     - run: nox --session=coverage
       env:
         CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
 ```
 
-Finally, add the Codecov badge to your `README.md`:
+In contrast to the Tests workflow,
+this workflow is restricted to running the test suite on Python 3.8.
+The option `--cov-fail-under=0` is used to disable the coverage minimum, as above.
+Finally, the coverage data is uploaded using the Nox session defined above,
+providing the `CODECOV_TOKEN` secret as an environment variable.
+
+Add the Codecov badge to your `README.md`:
 
 ```markdown
 [![Codecov](https://codecov.io/gh/<your-username>/hypermodern-python/branch/master/graph/badge.svg)](https://codecov.io/gh/<your-username>/hypermodern-python)
