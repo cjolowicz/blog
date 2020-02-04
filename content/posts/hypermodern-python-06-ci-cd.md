@@ -551,7 +551,6 @@ for providing their feedback to early drafts:
 [Holger Krekel](https://github.com/hpk42),
 [Hynek Schlawack](http://hynek.me/),
 [Ian Stapleton Cordasco](https://ian.stapletoncordas.co/),
-Marianna Jolowicz,
 Oliver Gondring,
 [Phil Jones](https://pgjones.dev/),
 [Pierre-Jean Vincent](https://github.com/Iracinder),
@@ -560,11 +559,19 @@ Oliver Gondring,
 [Thea Flowers](https://thea.codes/).
 Mistakes are mine.
 
-This series of articles is dedicated to my father who introduced me to
-programming in the 1980s, and who is an avid chess book collector. I saw a copy
-of *Die hypermoderne Schachpartie* (The hypermodern chess game) in his
-bookshelf, written by [Savielly
-Tartakower](https://en.wikipedia.org/wiki/Savielly_Tartakower) in 1925 to
-modernize chess theory. That inspired the title of this guide.
+The idea to use
+[retrofuturist](https://www.reddit.com/r/RetroFuturism/)
+imagery as a visual theme for this blog
+came from Marianna Jolowicz,
+whom I also wish to thank for supporting my spending endless hours on it,
+and for turning my fantasy language into actual English.
+
+This series of articles is dedicated to my father
+who introduced me to programming in the 1980s,
+and who is an avid chess book collector.
+His copy of *Die hypermoderne Schachpartie* (The hypermodern chess game) --
+written by [Savielly Tartakower](https://en.wikipedia.org/wiki/Savielly_Tartakower) in 1925
+to describe recent advances in chess theory --
+inspired the title of this guide.
 
 {{< figure src="/images/hypermodern-python-06/boat.jpg" class="centered" >}}
