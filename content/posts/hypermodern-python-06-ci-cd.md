@@ -545,7 +545,7 @@ Thank you for reading this far. This chapter concludes the Hypermodern Python
 series.
 
 I would like to acknowledge these wonderful people
-for providing insightful feedback to early drafts:
+for providing their feedback to early drafts:
 [Alex Grönholm](https://github.com/agronholm),
 [Bruno Oliveira](https://github.com/nicoddemus),
 [Holger Krekel](https://github.com/hpk42),
@@ -554,7 +554,7 @@ for providing insightful feedback to early drafts:
 Marianna Jolowicz,
 Oliver Gondring,
 [Phil Jones](https://pgjones.dev/),
-Pierre-Jean Vincent,
+[Pierre-Jean Vincent](https://github.com/Iracinder),
 [Ronny Pfannschmidt](https://github.com/RonnyPfannschmidt),
 [Terrence Reilly](https://github.com/terrencepreilly),
 [Thea Flowers](https://thea.codes/).
