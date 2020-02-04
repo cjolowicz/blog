@@ -144,6 +144,18 @@ Every tool used in the CI process is pinned to a specific version.
 The reasoning behind this is that
 a CI process should be predictable and deterministic.
 
+There is a common fallacy that
+you should always use the latest version of a specific tool,
+and therefore that tool should not be pinned.
+By all means, use the latest version of the tool, 
+but be explicit about it.
+This gives your project a higher level of auditability,
+and prevents things from magically breaking and un-breaking in CI.
+Upgrading tools in a dedicated pull request
+also lets you investigate the impact of an upgrade,
+rather than breaking your entire CI
+when a new version becomes available.
+
 The workflow currently uses Python 3.8 only,
 but you should really
 test your project on all Python versions it supports.
