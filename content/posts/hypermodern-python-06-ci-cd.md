@@ -506,6 +506,22 @@ Docs](https://readthedocs.org/projects/hypermodern-python/badge/)](https://hyper
 Thank you for reading this far. This chapter concludes the Hypermodern Python
 series.
 
+I would like to acknowledge these wonderful people
+for providing insightful feedback to early drafts:
+[Alex Grönholm](https://github.com/agronholm),
+[Bruno Oliveira](https://github.com/nicoddemus),
+[Holger Krekel](https://github.com/hpk42),
+[Hynek Schlawack](http://hynek.me/),
+[Ian Stapleton Cordasco](https://ian.stapletoncordas.co/),
+Marianna Jolowicz,
+Oliver Gondring,
+[Phil Jones](https://pgjones.dev/),
+Pierre-Jean Vincent,
+[Ronny Pfannschmidt](https://github.com/RonnyPfannschmidt),
+[Terrence Reilly](https://github.com/terrencepreilly),
+[Thea Flowers](https://thea.codes/).
+Mistakes are mine.
+
 This series of articles is dedicated to my father who introduced me to
 programming in the 1980s, and who is an avid chess book collector. I saw a copy
 of *Die hypermoderne Schachpartie* (The hypermodern chess game) in his
