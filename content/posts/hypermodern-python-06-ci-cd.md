@@ -20,7 +20,8 @@ tags:
 
 In this sixth and last installment of the Hypermodern Python series,
 I'm going to discuss
-how to add continuous integration and delivery to your project.[^1]
+how to add continuous integration and delivery to your project
+using GitHub Actions and Nox.[^1]
 In the [previous chapter](../hypermodern-python-05-documentation), we discussed
 how to add documentation.
 (If you start reading here,
