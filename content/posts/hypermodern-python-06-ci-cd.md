@@ -13,7 +13,7 @@ tags:
   - Nox
 ---
 
-<!-- [Read this article on Medium](https://medium.com/@cjolowicz/hypermodern-python-6-ci-cd-xxxxxxxxxxxx) -->
+[Read this article on Medium](https://medium.com/@cjolowicz/hypermodern-python-6-ci-cd-b233accfa2f6)
 
 {{< figure
     src="/images/hypermodern-python-06/nasa01.jpg"
