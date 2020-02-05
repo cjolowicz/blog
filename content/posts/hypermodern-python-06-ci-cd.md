@@ -46,7 +46,7 @@ Continuous Integration and Delivery:
 - [Coverage reporting with Codecov](#coverage-reporting-with-codecov)
 - [Uploading your package to PyPI](#uploading-your-package-to-pypi)
 - [Documenting releases with Release Drafter](#documenting-releases-with-release-drafter)
-- [Bumping the version](#bumping-the-version)
+- [Single-sourcing the package version](#single-sourcing-the-package-version)
 - [Hosting documentation at Read the Docs](#hosting-documentation-at-read-the-docs)
 - [Conclusion](#conclusion)
 
@@ -537,7 +537,7 @@ template: |
   $CHANGES
 ```
 
-## Bumping the version
+## Single-sourcing the package version
 
 {{< figure
     src="/images/hypermodern-python-06/nasa06.jpg"
