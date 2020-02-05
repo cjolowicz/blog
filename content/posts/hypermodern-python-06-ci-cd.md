@@ -602,7 +602,8 @@ However, the actual implementation is slightly more complicated,
 due to the fact
 that the import path depends on the Python version,
 and the possibility that the package has not been installed
-(although this should rarely happen, thanks to `src` layout).
+(although this should rarely happen,
+[thanks to src layout](https://blog.ionelmc.ro/2014/05/25/python-packaging/)).
 For the same reasons, we need to disable
 type checking and coverage for certain lines.
 
