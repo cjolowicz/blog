@@ -637,7 +637,6 @@ the single source of truth for your package version.
 is a separate instance of the Python Package Index
 that allows you to try distribution tools and processes
 without affecting the real index.
-
 The following GitHub workflow
 builds and uploads your package to TestPyPI
 from the master branch of your repository:
