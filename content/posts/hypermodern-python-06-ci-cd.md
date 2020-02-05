@@ -334,9 +334,14 @@ pip install hypermodern-python
 
 Before you can upload your Python package,
 you need to generate *distribution packages*.
-These are archives which an end-user can download and install on their system.
-Poetry supports packaging for distribution with the command
-[poetry build](https://poetry.eustace.io/docs/cli/#build):
+These are compressed archives which
+an end-user can download and install on their system.
+They come in two flavours:
+source (or *sdist*) archives, and 
+binary packages
+in the [wheel](https://www.python.org/dev/peps/pep-0427/) format.
+Poetry supports generating both with the
+[poetry build](https://poetry.eustace.io/docs/cli/#build) command:
 
 ```sh
 $ poetry build
@@ -349,27 +354,32 @@ Building hypermodern-python (0.1.0)
  - Built hypermodern_python-0.1.0-py3-none-any.whl
 ```
 
-The command creates two files in the `dist` subdirectory,
-both of which are compressed archives.
-The `tar.gz` file is a source distribution (or *sdist*),
-and contains the source code of your Python package,
-as well as some metadata such as the package name, version and dependencies.
-The `whl` file is a built distribution
-using the [wheel](https://www.python.org/dev/peps/pep-0427/) format,
-which can be installed
-mostly by extracting it to the correct location on the target system.
-
-Both distribution formats can be installed and run by end-users.
-The difference is particularly relevant
-when Python packages include a [C extension](https://docs.python.org/3/extending/extending.html),
-because installing a source distribution for such packages
-requires a compiler and linker on the target system.
-
 Poetry also supports uploading your package to PyPI,
-with the command
-[poetry publish](https://poetry.eustace.io/docs/cli/#publish).
+with the
+[poetry publish](https://poetry.eustace.io/docs/cli/#publish) command.
+Here's what it would look like
+if you uploaded your package now:
 
-Sign up at PyPI, if you do not have an account yet.
+```sh
+$ poetry publish
+
+Publishing hypermodern-python (0.1.0) to PyPI
+Username: <your-username>
+Password:
+ - Uploading hypermodern-python-0.1.0.tar.gz 100%
+ - Uploading hypermodern_python-0.1.0-py3-none-any.whl 100%
+```
+
+In the remainder of this section,
+we are going to automate the PyPI release process.
+Automation helps you ensure
+your Python package passes all checks
+before it is published,
+and keeps the build and upload process itself reliable.
+
+Sign up at [PyPI](https://pypi.org/),
+and enable two-factor authentication
+for an additional layer of security.
 Next, grant GitHub Actions permission to upload to PyPI:
 
 1. Go to the Account Settings on PyPI,
@@ -379,8 +389,9 @@ Next, grant GitHub Actions permission to upload to PyPI:
    and add a secret named `PYPI_TOKEN`
    with the token you just copied.
 
-Add the following GitHub workflow to
-upload your package to PyPI:
+The following GitHub workflow
+uploads your package to PyPI
+when you release it:
 
 ```yaml
 # .github/workflows/release.yml
@@ -404,13 +415,36 @@ jobs:
     - run: poetry publish --username=__token__ --password=${{ secrets.PYPI_TOKEN }}
 ```
 
-You can now trigger a PyPI release by creating and pushing an annotated Git tag.
-By convention, these tags have the form `v<version>`:
+The release workflow is triggered
+when you publish a
+[GitHub Release](https://help.github.com/en/github/administering-a-repository/about-releases).
+GitHub Releases are based on Git tags,
+which mark a specific point in your repository's history.
+Here's how you can create and publish a release for your project:
 
-```sh
-git tag --message="hypermodern-python 0.1.0" v0.1.0
-git push --follow-tags
+1. Go to the Releases tab of your main repository page.
+2. Click **Draft a new release**.
+3. Enter the Git tag. By convention, these tags have the form `v<version>`.
+4. Enter the title and description for your release.
+5. Click **Publish release**.
+
+The release workflow should now start building your package,
+and upload the resulting artifacts to PyPI.
+At the start of the workflow,
+the test suite is run once more to
+ensure that the package passes all checks.
+
+Add a badge to `README.md` which links to your PyPI project page and displays
+the latest release:
+
+```markdown
+[![PyPI](https://img.shields.io/pypi/v/hypermodern-python.svg)](https://pypi.org/project/hypermodern-python/)
 ```
+
+The badge looks like this: 
+[![PyPI](https://img.shields.io/pypi/v/hypermodern-python.svg)](https://pypi.org/project/hypermodern-python/)
+
+## Automating release notes with Release Drafter
 
 When releasing the next version of your package, you will need to bump the
 version of your package. Use [poetry
@@ -432,18 +466,6 @@ You should also document your release. For example, add a `CHANGELOG.md` file to
 your repository, using the format specified at [Keep a
 Changelog](https://keepachangelog.com/). Another option is to use [GitHub
 Releases](https://help.github.com/en/github/administering-a-repository/creating-releases).
-
-Add a badge to `README.md` which links to your PyPI project page and displays
-the latest release:
-
-```markdown
-[![PyPI](https://img.shields.io/pypi/v/hypermodern-python.svg)](https://pypi.org/project/hypermodern-python/)
-```
-
-The badge looks like this: 
-[![PyPI](https://img.shields.io/pypi/v/hypermodern-python.svg)](https://pypi.org/project/hypermodern-python/)
-
-## Automating release notes with Release Drafter
 
 ```yaml
 # .github/workflows/release-drafter.yml
