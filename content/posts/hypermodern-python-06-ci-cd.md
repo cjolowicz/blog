@@ -216,19 +216,19 @@ with a separate job for each Python version.
 You should also add a GitHub Actions badge to your repository page.
 The badge indicates whether the tests are passing or failing on the master branch,
 and links to the GitHub Actions dashboard for your project.
-Add the line below to the top of your `README.md` to display the badge:
-
-```markdown
-[![tests](https://github.com/<your-username>/hypermodern-python/workflows/tests/badge.svg)](https://github.com/<your-username>/hypermodern-python/actions?workflow=tests)
-```
-
-The badge looks like this:
+It looks like this:
 
 {{< figure
     src="https://github.com/cjolowicz/hypermodern-python/workflows/tests/badge.svg"
     link="https://github.com/cjolowicz/hypermodern-python/actions?workflow=tests"
     class="centered"
 >}}
+
+Add the line below to the top of your `README.md` to display the badge:
+
+```markdown
+[![tests](https://github.com/<your-username>/hypermodern-python/workflows/tests/badge.svg)](https://github.com/<your-username>/hypermodern-python/actions?workflow=tests)
+```
 
 ## Coverage reporting with Codecov
 
