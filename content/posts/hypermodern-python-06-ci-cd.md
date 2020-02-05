@@ -349,7 +349,7 @@ Add the following lines to the bottom of your GitHub workflow:
 name: Release
 on:
   release:
-    types: [created]
+    types: [published]
 jobs:
   release:
     runs-on: ubuntu-latest
