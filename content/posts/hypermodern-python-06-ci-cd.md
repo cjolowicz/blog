@@ -87,13 +87,13 @@ triggering tools such as unit tests, linters, or type checkers.
 are an important building block in this workflow.
 They let you propose a set of changes to the repository,
 for example a specific bugfix or new feature.
-When a pull request gets accepted,
+When the pull request gets accepted,
 its changes are merged into the target branch,
 typically master.
 GitHub displays Pull Requests with a green tick if they pass CI,
 and with a red x if the CI pipeline failed.
 In this way,
-continuous integration can function as a gate commits need to pass
+continuous integration functions as a gate commits need to pass
 to enter the master branch.
 
 You have a plethora of options when it comes to continuous integration.
@@ -157,11 +157,11 @@ You can learn more about the workflow language and its supported keywords in the
 Every tool used in the CI process is pinned to a specific version.
 The reasoning behind this is that
 a CI process should be predictable and deterministic.
-
 There is a common fallacy that
 you should always use the latest version of a specific tool,
 and therefore that tool should not be pinned.
-By all means, use the latest version of the tool, 
+
+By all means, use the latest versions of your tools, 
 but be explicit about it.
 This gives your project a higher level of auditability,
 and prevents things from magically breaking and un-breaking in CI.
@@ -571,12 +571,13 @@ refer to the [Semantic Versioning](https://semver.org/) standard.
 As it stands, you also need to
 update the version declared inside your package's `__init__.py`.
 We can streamline this process even further,
-by determining the version using the installed package metadata.
+by determining the version automatically
+using the installed package metadata.
 This is possible in Python 3.8 using the standard
 [importlib.metadata](https://docs.python.org/3/library/importlib.metadata.html)
 library,
-which has been backported to Python 3.7 and earlier
-as [importlib_metadata](https://importlib-metadata.readthedocs.io/en/latest/).
+and in Python 3.7 and earlier using its backport
+[importlib_metadata](https://importlib-metadata.readthedocs.io/en/latest/).
 
 Add the backport to your dependencies,
 for older Python versions only:
@@ -585,7 +586,8 @@ for older Python versions only:
 poetry add --python="<3.8" importlib_metadata
 ```
 
-Determining the version should really be as simple as the following:
+Determining the package version should really
+be as simple as the following:
 
 ```python
 # src/hypermodern_python/__init__.py
@@ -719,7 +721,7 @@ dependencies declared in the package are not pinned,
 so we might run into problems due to
 slightly different build environments.)
 Uploading the documentation from a GitHub workflow would solve this nicely,
-but this is [not currently supported](https://github.com/readthedocs/readthedocs.org/issues/1083).
+but this is [currently not supported](https://github.com/readthedocs/readthedocs.org/issues/1083).
 So let's be pragmatic and
 duplicate the documentation dependencies
 using a separate requirements file:
