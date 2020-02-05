@@ -322,27 +322,65 @@ The badge looks like this:
     link="/images/hypermodern-python-06/nasa04.jpg"
 >}}
 
-[PyPI](https://pypi.org/) is the official Python package registry, also known by
-its affectionate nickname "[the Cheese
-Shop](https://en.wikipedia.org/wiki/Cheese_Shop_sketch)". Uploading your package
-to PyPI allows others to install it with [pip](https://pip.readthedocs.org/),
-like so:
+[PyPI](https://pypi.org/) is the official Python package registry,
+also known by its affectionate nickname
+"[the Cheese Shop](https://en.wikipedia.org/wiki/Cheese_Shop_sketch)".
+Uploading your package to PyPI allows others to
+install it with [pip](https://pip.readthedocs.org/), like so:
 
 ```sh
 pip install hypermodern-python
 ```
 
-Poetry supports uploading your package to PyPI with the command [poetry
-publish](https://poetry.eustace.io/docs/cli/#publish).
+Before you can upload your Python package,
+you need to generate *distribution packages*.
+These are archives which an end-user can download and install on their system.
+Poetry supports packaging for distribution with the command
+[poetry build](https://poetry.eustace.io/docs/cli/#build):
 
-Sign up at PyPI, if you do not have an account yet. Next, grant GitHub Actions
-permission to upload to PyPI:
+```sh
+$ poetry build
 
-1. On PyPI, go to the Account Settings page. Generate an API token, and copy it.
-2. On GitHub, go to the repository settings. Add a secret named `PYPI_TOKEN`
-   with the token you copied.
+Building hypermodern-python (0.1.0)
+ - Building sdist
+ - Built hypermodern-python-0.1.0.tar.gz
 
-Add the following lines to the bottom of your GitHub workflow:
+ - Building wheel
+ - Built hypermodern_python-0.1.0-py3-none-any.whl
+```
+
+The command creates two files in the `dist` subdirectory,
+both of which are compressed archives.
+The `tar.gz` file is a source distribution (or *sdist*),
+and contains the source code of your Python package,
+as well as some metadata such as the package name, version and dependencies.
+The `whl` file is a built distribution
+using the [wheel](https://www.python.org/dev/peps/pep-0427/) format,
+which can be installed
+mostly by extracting it to the correct location on the target system.
+
+Both distribution formats can be installed and run by end-users.
+The difference is particularly relevant
+when Python packages include a [C extension](https://docs.python.org/3/extending/extending.html),
+because installing a source distribution for such packages
+requires a compiler and linker on the target system.
+
+Poetry also supports uploading your package to PyPI,
+with the command
+[poetry publish](https://poetry.eustace.io/docs/cli/#publish).
+
+Sign up at PyPI, if you do not have an account yet.
+Next, grant GitHub Actions permission to upload to PyPI:
+
+1. Go to the Account Settings on PyPI,
+   generate an API token,
+   and copy it.
+2. Go to the repository settings on GitHub,
+   and add a secret named `PYPI_TOKEN`
+   with the token you just copied.
+
+Add the following GitHub workflow to
+upload your package to PyPI:
 
 ```yaml
 # .github/workflows/release.yml
