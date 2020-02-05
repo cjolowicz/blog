@@ -48,7 +48,7 @@ Here is a full list of the articles in this series:
 - [Chapter 3: Linting](../hypermodern-python-03-linting) (this article)
 - [Chapter 4: Typing](../hypermodern-python-04-typing)
 - [Chapter 5: Documentation](../hypermodern-python-05-documentation)
-- *Chapter 6: CI/CD*
+- [Chapter 6: CI/CD](../hypermodern-python-06-ci-cd)
 
 This guide has a companion repository:
 [cjolowicz/hypermodern-python](https://github.com/cjolowicz/hypermodern-python).

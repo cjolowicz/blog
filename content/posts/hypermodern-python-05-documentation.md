@@ -61,7 +61,7 @@ Here is a full list of the articles in this series:
 - [Chapter 3: Linting](../hypermodern-python-03-linting)
 - [Chapter 4: Typing](../hypermodern-python-04-typing)
 - [Chapter 5: Documentation](../hypermodern-python-05-documentation) (this article)
-- *Chapter 6: CI/CD*
+- [Chapter 6: CI/CD](../hypermodern-python-06-ci-cd)
 
 This guide has a companion repository:
 [cjolowicz/hypermodern-python](https://github.com/cjolowicz/hypermodern-python).
@@ -904,11 +904,7 @@ you should be able to view the generated API documentation.
 
 ## Thanks for reading!
 
-The next chapter is about Continuous Integration and Delivery. It will be
-published on February 5, 2020.
+The next chapter is about Continuous Integration and Delivery.
 
-{{< figure src="/images/hypermodern-python-05/trolley.jpg" class="centered" >}}
-<!-- 
 {{< figure src="/images/hypermodern-python-05/trolley.jpg" link="../hypermodern-python-06-ci-cd" class="centered" >}}
 <span class="centered">[Continue to the next chapter](../hypermodern-python-06-ci-cd)</span>
--->
