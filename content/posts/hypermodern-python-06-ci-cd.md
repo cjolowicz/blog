@@ -652,26 +652,24 @@ support installation of dependencies using Poetry directly. Luckily, pip can
 install any package with a standard `pyproject.toml` file, and will use Poetry
 behind the scenes.
 
-While this means that you could install the documentation dependencies using
-`pip install .[docs]`, this installation method does not honor the exact pinned
-versions from `poetry.lock`, only the more generic version constraints in
-`pyproject.toml`. This is why you should specify the dependencies using pip's
-`requirements.txt` format. Export your pinned requirements to
-`docs/requirements.txt` using the following command:
-
-```sh
-poetry export -f requirements.txt -E docs > docs/requirements.txt
-```
+On the other hand,
+the development dependencies on Sphinx and its extensions
+are not declared in the package.
+(And even if they were,
+dependencies declared in the package are not pinned,
+so we might run into problems due to
+slightly different build environments.)
+Uploading the documentation from a GitHub workflow would solve this nicely,
+but this is [not currently supported](https://github.com/readthedocs/readthedocs.org/issues/1083).
+So let's be pragmatic and
+duplicate the documentation dependencies
+using a separate requirements file:
 
 ```python
 # docs/requirements.txt
 sphinx==2.3.1
 sphinx-autodoc-typehints==1.10.3
 ```
-
-This file needs to be placed under source control to ensure that it is available
-when Read the Docs installs your dependencies. Update the file whenever you
-upgrade or otherwise change your documentation dependencies.
 
 Sign up at Read the Docs, and import your GitHub repository, using the button
 *Import a Project*. Read the Docs automatically starts building your
