@@ -4,11 +4,14 @@ title: "Hypermodern Python Chapter 6: CI/CD"
 description: "A guide to modern Python tooling with a focus on simplicity and minimalism."
 draft: true
 tags:
-  - python
+  - Python
   - GitHub Actions
   - Codecov
   - PyPI
+  - TestPyPI
   - Read the Docs
+  - Poetry
+  - Nox
 ---
 
 <!-- [Read this article on Medium](https://medium.com/@cjolowicz/hypermodern-python-6-ci-cd-xxxxxxxxxxxx) -->
