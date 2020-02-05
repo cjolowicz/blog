@@ -1,5 +1,5 @@
 --- 
-date: 2020-02-04T06:02:59+02:00
+date: 2020-02-05T06:02:59+02:00
 title: "Hypermodern Python Chapter 6: CI/CD"
 description: "A guide to modern Python tooling with a focus on simplicity and minimalism."
 draft: true
