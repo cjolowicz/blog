@@ -47,6 +47,7 @@ Continuous Integration and Delivery:
 - [Uploading your package to PyPI](#uploading-your-package-to-pypi)
 - [Documenting releases with Release Drafter](#documenting-releases-with-release-drafter)
 - [Single-sourcing the package version](#single-sourcing-the-package-version)
+- [Uploading your package to TestPyPI](#uploading-your-package-to-testpypi)
 - [Hosting documentation at Read the Docs](#hosting-documentation-at-read-the-docs)
 - [Conclusion](#conclusion)
 
@@ -619,11 +620,66 @@ With this in place,
 `pyproject.toml` has become
 the single source of truth for your package version.
 
-## Hosting documentation at Read the Docs
+## Uploading your package to TestPyPI
 
 {{< figure
     src="/images/hypermodern-python-06/nasa07.jpg"
     link="/images/hypermodern-python-06/nasa07.jpg"
+>}}
+
+[TestPyPI](https://test.pypi.org)
+is a separate instance of the Python Package Index
+that allows you to try distribution tools and processes
+without affecting the real index.
+
+The following GitHub workflow
+builds and uploads your package to TestPyPI
+from the master branch of your repository:
+
+```yaml
+# .github/workflows/test-pypi.yml
+name: TestPyPI
+on:
+  push:
+    branches:
+      - master
+jobs:
+  test_pypi:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v1
+      with:
+        python-version: '3.8'
+        architecture: x64
+    - run: pip install poetry==1.0.3
+    - run: >-
+        poetry version patch &&
+        version=$(poetry version | awk '{print $2}') &&
+        poetry version $version.dev.$(date +%s)
+    - run: poetry build
+    - uses: pypa/gh-action-pypi-publish@v1.0.0a0
+      with:
+        user: __token__
+        password: ${{ secrets.TEST_PYPI_TOKEN }}
+        repository_url: https://test.pypi.org/legacy/
+```
+
+TestPyPI does not allow you to overwrite an existing package version.
+The workflow therefore bumps the version and
+appends a suffix of the form `.dev.<timestamp>`,
+indicating a
+[developmental release](https://www.python.org/dev/peps/pep-0440/#developmental-releases).
+The package is then built
+and uploaded using the
+[PyPI publish GitHub Action](https://github.com/marketplace/actions/pypi-publish)
+of the [Python Packaging Authority](https://www.pypa.io/).
+
+## Hosting documentation at Read the Docs
+
+{{< figure
+    src="/images/hypermodern-python-06/nasa08.jpg"
+    link="/images/hypermodern-python-06/nasa08.jpg"
 >}}
 
 [Read the Docs](https://readthedocs.org/) hosts documentation for countless
