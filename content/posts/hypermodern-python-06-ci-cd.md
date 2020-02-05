@@ -46,6 +46,7 @@ Continuous Integration and Delivery:
 - [Coverage reporting with Codecov](#coverage-reporting-with-codecov)
 - [Uploading your package to PyPI](#uploading-your-package-to-pypi)
 - [Documenting releases with Release Drafter](#documenting-releases-with-release-drafter)
+- [Bumping the version](#bumping-the-version)
 - [Hosting documentation at Read the Docs](#hosting-documentation-at-read-the-docs)
 - [Conclusion](#conclusion)
 
@@ -535,6 +536,88 @@ template: |
 
   $CHANGES
 ```
+
+## Bumping the version
+
+{{< figure
+    src="/images/hypermodern-python-06/nasa06.jpg"
+    link="/images/hypermodern-python-06/nasa06.jpg"
+>}}
+
+Before creating the next release of your package,
+you need to bump the version of your package.
+Use [poetry version](https://poetry.eustace.io/docs/cli/#version)
+to update the version declared in `pyproject.toml`:
+
+```sh
+poetry version <version>
+```
+
+You can pass the new version explicitly,
+or a rule such as `major`, `minor`, or `patch`.
+In a nutshell, increment the major version
+if the release contains breaking changes,
+the patch level if the release contains only bugfixes,
+and the minor version in all other cases.
+This assumes that your project has a stable and public API,
+and a version number greater than or equal to `1.0.0`.
+For more details,
+refer to the [Semantic Versioning](https://semver.org/) standard.
+
+As it stands, you also need to
+update the version declared inside your package's `__init__.py`.
+We can streamline this process even further,
+by determining the version using the installed package metadata.
+This is possible in Python 3.8 using the standard
+[importlib.metadata](https://docs.python.org/3/library/importlib.metadata.html)
+library,
+which has been backported to Python 3.7 and earlier
+as [importlib_metadata](https://importlib-metadata.readthedocs.io/en/latest/).
+
+Add the backport to your dependencies,
+for older Python versions only:
+
+```sh
+poetry add --python="<3.8" importlib_metadata
+```
+
+Determining the version should really be as simple as the following:
+
+```python
+# src/hypermodern_python/__init__.py
+"""The hypermodern Python project."""
+from importlib.metadata import version
+
+
+__version__ = version(__name__)
+```
+
+However, the actual implementation is slightly more complicated,
+due to the fact
+that the import path depends on the Python version,
+and the possibility that the package has not been installed
+(although this should rarely happen, thanks to `src` layout).
+For the same reasons, we need to disable
+type checking and coverage for certain lines.
+
+```python
+# src/hypermodern_python/__init__.py
+"""The hypermodern Python project."""
+try:
+    from importlib.metadata import version, PackageNotFoundError  # type: ignore
+except ImportError:  # pragma: no cover
+    from importlib_metadata import version, PackageNotFoundError  # type: ignore
+
+
+try:
+    __version__ = version(__name__)
+except PackageNotFoundError:  # pragma: no cover
+    __version__ = "unknown"
+```
+
+With this in place,
+`pyproject.toml` has become
+the single source of truth for your package version.
 
 ## Hosting documentation at Read the Docs
 
