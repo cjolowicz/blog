@@ -418,7 +418,8 @@ jobs:
 The release workflow is triggered
 when you publish a
 [GitHub Release](https://help.github.com/en/github/administering-a-repository/about-releases).
-GitHub Releases are based on Git tags,
+GitHub Releases are based on
+[Git tags](https://git-scm.com/book/en/v2/Git-Basics-Tagging),
 which mark a specific point in your repository's history.
 Here's how you can create and publish a release for your project:
 
