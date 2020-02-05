@@ -756,8 +756,8 @@ Docs](https://readthedocs.org/projects/hypermodern-python/badge/)](https://hyper
 ## Conclusion
 
 {{< figure
-    src="/images/hypermodern-python-06/nasa08.jpg"
-    link="/images/hypermodern-python-06/nasa08.jpg"
+    src="/images/hypermodern-python-06/nasa09.jpg"
+    link="/images/hypermodern-python-06/nasa09.jpg"
 >}}
 
 Thank you for reading this far. This chapter concludes the Hypermodern Python
