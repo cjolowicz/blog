@@ -45,7 +45,7 @@ Continuous Integration and Delivery:
 - [Continuous integration using GitHub Actions](#continuous-integration-using-github-actions)
 - [Coverage reporting with Codecov](#coverage-reporting-with-codecov)
 - [Uploading your package to PyPI](#uploading-your-package-to-pypi)
-- [Automating release notes with Release Drafter](#automating-release-notes-with-release-drafter)
+- [Documenting releases with Release Drafter](#documenting-releases-with-release-drafter)
 - [Hosting documentation at Read the Docs](#hosting-documentation-at-read-the-docs)
 - [Conclusion](#conclusion)
 
@@ -453,28 +453,27 @@ the latest release:
 The badge looks like this: 
 [![PyPI](https://img.shields.io/pypi/v/hypermodern-python.svg)](https://pypi.org/project/hypermodern-python/)
 
-## Automating release notes with Release Drafter
+## Documenting releases with Release Drafter
 
-When releasing the next version of your package, you will need to bump the
-version of your package. Use [poetry
-version](https://poetry.eustace.io/docs/cli/#version) to update the version
-declared in `pyproject.toml`:
+{{< figure
+    src="/images/hypermodern-python-06/nasa05.jpg"
+    link="/images/hypermodern-python-06/nasa05.jpg"
+>}}
 
-```sh
-poetry version minor  # or: major, patch, 0.2.0, etc.
-```
+The [Release Drafter](https://github.com/release-drafter/release-drafter) action
+drafts your next release notes
+as pull requests are merged into master.
+It does this by creating and maintaining a draft release.
+When a pull request gets accepted,
+the release description is updated to
+include its title, author, and a link to the pull request itself.
 
-Don't forget to also update the version in your package's `__init__.py`:
+When you're ready to make a release,
+you simply need to add the tag name, and click *Publish*.
+You're also free to edit the release description further,
+for example to include a more general description of the release.
 
-```python
-# src/hypermodern_python/__init__.py
-__version__ = "0.2.0"  # or: 0.1.1, 1.0.0
-```
-
-You should also document your release. For example, add a `CHANGELOG.md` file to
-your repository, using the format specified at [Keep a
-Changelog](https://keepachangelog.com/). Another option is to use [GitHub
-Releases](https://help.github.com/en/github/administering-a-repository/creating-releases).
+Add the following workflow to use Release Drafter:
 
 ```yaml
 # .github/workflows/release-drafter.yml
@@ -491,6 +490,20 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
+
+Another useful feature of Release Drafter is
+to group pull requests based on labels you apply to them.
+This would allow you, for example,
+to have separate headings for features, bugfixes, and documentation
+in the release notes,
+using GitHub's *enhancement*, *bug*, and *documentation* labels.
+
+The configuration file below goes somewhat further,
+and is very loosely based on the
+[Angular Commit Message Convention](https://github.com/angular/angular/blob/master/CONTRIBUTING.md#commit) and
+[gitmoji](https://gitmoji.carloscuesta.me/).
+You will need to add the remaining labels to your repository manually,
+using *New Label* on the Issues tab of the repository.
 
 ```yaml
 # .github/release-drafter.yml
