@@ -622,8 +622,8 @@ the single source of truth for your package version.
 ## Hosting documentation at Read the Docs
 
 {{< figure
-    src="/images/hypermodern-python-06/nasa05.jpg"
-    link="/images/hypermodern-python-06/nasa05.jpg"
+    src="/images/hypermodern-python-06/nasa07.jpg"
+    link="/images/hypermodern-python-06/nasa07.jpg"
 >}}
 
 [Read the Docs](https://readthedocs.org/) hosts documentation for countless
@@ -700,8 +700,8 @@ Docs](https://readthedocs.org/projects/hypermodern-python/badge/)](https://hyper
 ## Conclusion
 
 {{< figure
-    src="/images/hypermodern-python-06/nasa06.jpg"
-    link="/images/hypermodern-python-06/nasa06.jpg"
+    src="/images/hypermodern-python-06/nasa08.jpg"
+    link="/images/hypermodern-python-06/nasa08.jpg"
 >}}
 
 Thank you for reading this far. This chapter concludes the Hypermodern Python
