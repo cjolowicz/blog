@@ -786,9 +786,7 @@ Mistakes are mine.
 The idea to use
 [retrofuturist](https://www.reddit.com/r/RetroFuturism/)
 imagery as a visual theme for this blog
-came from Marianna Jolowicz,
-whom I also wish to thank for supporting my spending endless hours on it,
-and for turning my fantasy language into actual English.
+came from Marianna Jolowicz.
 
 This series of articles is dedicated to my father
 who introduced me to programming in the 1980s,
