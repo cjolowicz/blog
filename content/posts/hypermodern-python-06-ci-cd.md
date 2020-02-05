@@ -77,6 +77,14 @@ automate the integration of code changes into your project.
 When changes are pushed to the project repository,
 the CI server verifies their correctness,
 triggering tools such as unit tests, linters, or type checkers.
+
+[Pull Requests](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/about-pull-requests)
+are an important building block in this workflow.
+They let you propose a set of changes to the repository,
+for example a specific bugfix or new feature.
+When a pull request gets accepted,
+its changes are merged into the target branch,
+typically master.
 GitHub displays Pull Requests with a green tick if they pass CI,
 and with a red x if the CI pipeline failed.
 In this way,
