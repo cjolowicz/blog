@@ -216,15 +216,19 @@ with a separate job for each Python version.
 You should also add a GitHub Actions badge to your repository page.
 The badge indicates whether the tests are passing or failing on the master branch,
 and links to the GitHub Actions dashboard for your project.
-It looks like this:
-
-> [![tests](https://github.com/cjolowicz/hypermodern-python/workflows/tests/badge.svg)](https://github.com/cjolowicz/hypermodern-python/actions?workflow=tests)
-
 Add the line below to the top of your `README.md` to display the badge:
 
 ```markdown
 [![tests](https://github.com/<your-username>/hypermodern-python/workflows/tests/badge.svg)](https://github.com/<your-username>/hypermodern-python/actions?workflow=tests)
 ```
+
+The badge looks like this:
+
+{{< figure
+    src="https://github.com/cjolowicz/hypermodern-python/workflows/tests/badge.svg"
+    link="https://github.com/cjolowicz/hypermodern-python/actions?workflow=tests"
+    class="centered"
+>}}
 
 ## Coverage reporting with Codecov
 
@@ -326,7 +330,11 @@ Add the Codecov badge to your `README.md`:
 
 The badge looks like this:
 
-> [![Codecov](https://codecov.io/gh/cjolowicz/hypermodern-python/branch/master/graph/badge.svg)](https://codecov.io/gh/cjolowicz/hypermodern-python)
+{{< figure
+    src="https://codecov.io/gh/cjolowicz/hypermodern-python/branch/master/graph/badge.svg"
+    link="https://codecov.io/gh/cjolowicz/hypermodern-python"
+    class="centered"
+>}}
 
 ## Uploading your package to PyPI
 
@@ -456,7 +464,12 @@ the latest release:
 ```
 
 The badge looks like this: 
-[![PyPI](https://img.shields.io/pypi/v/hypermodern-python.svg)](https://pypi.org/project/hypermodern-python/)
+
+{{< figure
+    src="https://img.shields.io/pypi/v/hypermodern-python.svg"
+    link="https://pypi.org/project/hypermodern-python/"
+    class="centered"
+>}}
 
 ## Documenting releases with Release Drafter
 
@@ -755,8 +768,13 @@ badge to `README.md`:
 [![Read the Docs](https://readthedocs.org/projects/hypermodern-python/badge/)](https://hypermodern-python.readthedocs.io/)
 ```
 
-The badge looks like this: [![Read the
-Docs](https://readthedocs.org/projects/hypermodern-python/badge/)](https://hypermodern-python.readthedocs.io/)
+The badge looks like this:
+
+{{< figure
+    src="https://readthedocs.org/projects/hypermodern-python/badge/"
+    link="https://hypermodern-python.readthedocs.io/"
+    class="centered"
+>}}
 
 ## Conclusion
 
