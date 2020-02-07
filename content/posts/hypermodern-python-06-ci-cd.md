@@ -649,6 +649,17 @@ the single source of truth for your package version.
 is a separate instance of the Python Package Index
 that allows you to try distribution tools and processes
 without affecting the real index.
+
+Sign up at TestPyPI, and
+grant GitHub Actions permission to upload to TestPyPI:
+
+1. Go to the Account Settings on TestPyPI,
+   generate an API token,
+   and copy it.
+2. Go to the repository settings on GitHub,
+   and add a secret named `TEST_PYPI_TOKEN`
+   with the token you just copied.
+
 The following GitHub workflow
 builds and uploads your package to TestPyPI
 from the master branch of your repository:
