@@ -218,15 +218,15 @@ and links to the GitHub Actions dashboard for your project.
 It looks like this:
 
 {{< figure
-    src="https://github.com/cjolowicz/hypermodern-python/workflows/tests/badge.svg"
-    link="https://github.com/cjolowicz/hypermodern-python/actions?workflow=tests"
+    src="https://github.com/cjolowicz/hypermodern-python/workflows/Tests/badge.svg"
+    link="https://github.com/cjolowicz/hypermodern-python/actions?workflow=Tests"
     class="centered"
 >}}
 
 Add the line below to the top of your `README.md` to display the badge:
 
 ```markdown
-[![tests](https://github.com/<your-username>/hypermodern-python/workflows/tests/badge.svg)](https://github.com/<your-username>/hypermodern-python/actions?workflow=tests)
+[![Tests](https://github.com/<your-username>/hypermodern-python/workflows/Tests/badge.svg)](https://github.com/<your-username>/hypermodern-python/actions?workflow=Tests)
 ```
 
 ## Coverage reporting with Codecov
