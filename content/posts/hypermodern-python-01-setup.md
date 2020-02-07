@@ -186,7 +186,7 @@ versions are accessible as `python3.7` and `python3.8`, respectively.
 
 {{< figure src="/images/hypermodern-python-01/opera_crop05.jpg" link="/images/hypermodern-python-01/opera_crop05.jpg" >}}
 
-[Poetry](https://poetry.eustace.io) is a tool to manage Python packaging and
+[Poetry](https://python-poetry.org/) is a tool to manage Python packaging and
 dependencies. Its ease of use and support for modern workflows make it the ideal
 successor to the venerable [setuptools](http://setuptools.readthedocs.io). It is
 similar to `npm` and `yarn` in the JavaScript world, and to other modern package
@@ -311,7 +311,7 @@ installation, or other projects you're working on.
 
 Poetry manages virtual environments for your projects. To see it in action,
 install the skeleton package using [poetry
-install](https://poetry.eustace.io/docs/cli/#install):
+install](https://python-poetry.org/docs/cli/#install):
 
 ```sh
 $ poetry install
@@ -333,7 +333,7 @@ file*, named `poetry.lock`. You will learn more about this file in the next
 section.
 
 Let's run a Python session inside the new virtual environment, using [poetry
-run](https://poetry.eustace.io/docs/cli/#run):
+run](https://python-poetry.org/docs/cli/#run):
 
 ```python
 $ poetry run python
@@ -355,7 +355,7 @@ Let's install the first dependency, the
 [click](https://click.palletsprojects.com/) package. This Python package allows
 you to create beautiful command-line interfaces in a composable way with as
 little code as necessary. You can install dependencies using [poetry
-add](https://poetry.eustace.io/docs/cli/#add):
+add](https://python-poetry.org/docs/cli/#add):
 
 ```sh
 $ poetry add click
@@ -380,7 +380,7 @@ Several things are happening here:
 - A more general version constraint is added to `pyproject.toml`.
 
 The dependency entry in `pyproject.toml` contains a [version
-constraint](https://poetry.eustace.io/docs/versions/) for the installed package:
+constraint](https://python-poetry.org/docs/versions/) for the installed package:
 `^7.0`. This means that users of the package need to have at least the current
 release, `7.0`. The constraint also allows newer releases of the package, as
 long as the version number does not indicate breaking changes. (After 1.0.0,
@@ -394,7 +394,7 @@ everybody in your team to work with the same environment. It also helps you
 possible](https://12factor.net/dev-prod-parity).
 
 Upgrading the dependency to a new minor or patch release is now as easy as
-invoking [poetry update](https://poetry.eustace.io/docs/cli/#update) with the
+invoking [poetry update](https://python-poetry.org/docs/cli/#update) with the
 package name:
 
 ```sh
