@@ -361,7 +361,7 @@ source (or *sdist*) archives, and
 binary packages
 in the [wheel](https://www.python.org/dev/peps/pep-0427/) format.
 Poetry supports generating both with the
-[poetry build](https://poetry.eustace.io/docs/cli/#build) command:
+[poetry build](https://python-poetry.org/docs/cli/#build) command:
 
 ```sh
 $ poetry build
@@ -376,7 +376,7 @@ Building hypermodern-python (0.1.0)
 
 Poetry also supports uploading your package to PyPI,
 with the
-[poetry publish](https://poetry.eustace.io/docs/cli/#publish) command.
+[poetry publish](https://python-poetry.org/docs/cli/#publish) command.
 Here's what it would look like
 if you uploaded your package now:
 
@@ -562,7 +562,7 @@ template: |
 
 Before creating the next release of your package,
 you need to bump the version of your package.
-Use [poetry version](https://poetry.eustace.io/docs/cli/#version)
+Use [poetry version](https://python-poetry.org/docs/cli/#version)
 to update the version declared in `pyproject.toml`:
 
 ```sh
