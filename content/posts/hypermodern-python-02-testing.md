@@ -732,7 +732,7 @@ from . import __version__, wikipedia
 @click.version_option(version=__version__)
 def main(language):
     """The hypermodern Python project."""
-    data = wikipedia.random_page(language)
+    data = wikipedia.random_page(language=language)
 
     title = data["title"]
     extract = data["extract"]
