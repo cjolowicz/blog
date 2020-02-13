@@ -538,8 +538,8 @@ these locations using Flake8's `per-file-ignores` option:
 # .flake8
 [flake8]
 per-file-ignores =
-    tests/*:S101,TYP
-    noxfile.py:TYP
+    tests/*:S101,ANN
+    noxfile.py:ANN
 ```
 
 ## Adding type annotations to Nox sessions
