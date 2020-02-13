@@ -230,7 +230,7 @@ and adopt the
  
 ```ini
 # .flake8
-select = B,B9,BLK,C,D,E,F,I,S,TYP,W
+select = ANN,B,B9,BLK,C,D,E,F,I,S,W
 docstring-convention = google
 ```
 
@@ -411,7 +411,7 @@ enable the plugin warnings explicitly
 ```ini
 # .flake8
 [flake8]
-select = B,B9,BLK,C,D,DAR,E,F,I,S,TYP,W
+select = ANN,B,B9,BLK,C,D,DAR,E,F,I,S,W
 ```
 
 By default, Darglint requires every docstring to
