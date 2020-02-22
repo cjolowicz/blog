@@ -594,8 +594,7 @@ to try:
 
 ## Thanks for reading!
 
-The next chapter is about adding unit tests to your project. It will be
-published on January 8, 20202.
+The next chapter is about adding unit tests to your project.
 
 {{< figure src="/images/hypermodern-python-01/train.png" link="../hypermodern-python-02-testing" class="centered" >}}
 <span class="centered">[Continue to the next chapter](../hypermodern-python-02-testing)</span>
