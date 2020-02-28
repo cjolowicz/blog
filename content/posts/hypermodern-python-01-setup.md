@@ -159,27 +159,27 @@ libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python-openssl git
 You're ready to install the latest Python releases. This may take a while:
 
 ```sh
-pyenv install 3.8.1
+pyenv install 3.8.2
 pyenv install 3.7.6
 ```
 
 Make your fresh Pythons available inside the repository:
 
 ```sh
-pyenv local 3.8.1 3.7.6
+pyenv local 3.8.2 3.7.6
 ```
 
 Congratulations! You have access to the latest and greatest of Python:
 
 ```sh
 $ python --version
-Python 3.8.1
+Python 3.8.2
 
 $ python3.7 --version
 Python 3.7.6
 ```
 
-Python 3.8.1 is the default version and can be invoked as `python`, but both
+Python 3.8.2 is the default version and can be invoked as `python`, but both
 versions are accessible as `python3.7` and `python3.8`, respectively.
 
 ## Setting up a Python project using Poetry
@@ -338,7 +338,7 @@ run](https://python-poetry.org/docs/cli/#run):
 ```python
 $ poetry run python
 
-Python 3.8.1 (default, Dec 29 2019, 16:28:23)
+Python 3.8.2 (default, Feb 26 2020, 07:03:58)
 [GCC 8.3.0] on linux
 Type "help", "copyright", "credits" or "license" for more information.
 >>> import hypermodern_python
