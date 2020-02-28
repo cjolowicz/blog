@@ -145,7 +145,7 @@ Invoke `pytest` to run the test suite:
 ```python
 $ poetry run pytest
 ============================ test session starts =============================
-platform linux -- Python 3.8.1, pytest-5.3.2, py-1.8.0, pluggy-0.13.1
+platform linux -- Python 3.8.2, pytest-5.3.4, py-1.8.1, pluggy-0.13.1
 rootdir: /hypermodern-python
 collected 1 item
 
@@ -193,14 +193,14 @@ To enable coverage reporting, invoke `pytest` with the `--cov` option:
 ```python
 $ poetry run pytest --cov
 ============================= test session starts ==============================
-platform linux -- Python 3.8.1, pytest-5.3.2, py-1.8.0, pluggy-0.13.1
+platform linux -- Python 3.8.2, pytest-5.3.4, py-1.8.1, pluggy-0.13.1
 rootdir: /hypermodern-python
 plugins: cov-2.8.1
 collected 1 item
 
 tests/test_console.py .                                                 [100%]
 
---------------- coverage: platform linux, python 3.8.1-final-0 -----------------
+--------------- coverage: platform linux, python 3.8.2-final-0 -----------------
 Name                                 Stmts   Miss Branch BrPart  Cover   Missing
 --------------------------------------------------------------------------------
 src/hypermodern_python/__init__.py       1      0      0      0   100%
