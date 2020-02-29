@@ -121,7 +121,7 @@ jobs:
         python-version: 3.8
         architecture: x64
     - run: pip install nox==2019.11.9
-    - run: pip install poetry==1.0.3
+    - run: pip install poetry==1.0.4
     - run: nox
 ```
 
@@ -203,7 +203,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
         architecture: x64
     - run: pip install nox==2019.11.9
-    - run: pip install poetry==1.0.3
+    - run: pip install poetry==1.0.4
     - run: nox
 ```
 
@@ -310,7 +310,7 @@ jobs:
         python-version: '3.8'
         architecture: x64
     - run: pip install nox==2019.11.9
-    - run: pip install poetry==1.0.3
+    - run: pip install poetry==1.0.4
     - run: nox --sessions tests-3.8 coverage
       env:
         CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
@@ -429,7 +429,7 @@ jobs:
         python-version: '3.8'
         architecture: x64
     - run: pip install nox==2019.11.9
-    - run: pip install poetry==1.0.3
+    - run: pip install poetry==1.0.4
     - run: nox
     - run: poetry build
     - run: poetry publish --username=__token__ --password=${{ secrets.PYPI_TOKEN }}
@@ -680,7 +680,7 @@ jobs:
       with:
         python-version: '3.8'
         architecture: x64
-    - run: pip install poetry==1.0.3
+    - run: pip install poetry==1.0.4
     - run: >-
         poetry version patch &&
         version=$(poetry version | awk '{print $2}') &&
