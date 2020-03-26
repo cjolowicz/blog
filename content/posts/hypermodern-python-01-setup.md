@@ -160,13 +160,13 @@ You're ready to install the latest Python releases. This may take a while:
 
 ```sh
 pyenv install 3.8.2
-pyenv install 3.7.6
+pyenv install 3.7.7
 ```
 
 Make your fresh Pythons available inside the repository:
 
 ```sh
-pyenv local 3.8.2 3.7.6
+pyenv local 3.8.2 3.7.7
 ```
 
 Congratulations! You have access to the latest and greatest of Python:
@@ -176,7 +176,7 @@ $ python --version
 Python 3.8.2
 
 $ python3.7 --version
-Python 3.7.6
+Python 3.7.7
 ```
 
 Python 3.8.2 is the default version and can be invoked as `python`, but both
