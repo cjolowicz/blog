@@ -22,14 +22,16 @@ can also
 [download](https://github.com/cjolowicz/hypermodern-python/archive/chapter03.zip)
 the code for the previous chapter.)
 
-[^1]: The images in this chapter are details from illustrations to the book *A
-    Journey in Other Worlds: A Romance of the Future* by John Jacob Astor, 1894
-    (source: [The Internet
-    Archive](https://archive.org/details/journeyinotherwo00astouoft)). Dan Beard
-    later went on to found the Boy Scouts of America, while John Jacob Astor
-    built the Astoria Hotel in New York City---predecessor of the
-    Waldorf-Astoria Hotel---and perished as the richest man on board the RMS
-    Titanic.
+[^1]: The images in this chapter are details from
+    Daniel Carter Beard’s illustrations to the book
+    *A Journey in Other Worlds: A Romance of the Future*
+    by John Jacob Astor, 1894
+    (source:
+    [The Internet Archive](https://archive.org/details/journeyinotherwo00astouoft)).
+    Dan Beard later went on to found the Boy Scouts of America,
+    while John Jacob Astor built
+    the Astoria Hotel in New York City---predecessor of the Waldorf-Astoria Hotel---and
+    perished as the richest man on board the RMS Titanic.
     
 Here are the topics covered in this chapter on Typing in Python:
 
