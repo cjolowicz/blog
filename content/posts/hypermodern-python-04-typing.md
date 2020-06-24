@@ -558,7 +558,7 @@ are distributed separately, in the community-driven
 -->
 
 In this section, I show you how to add type annotations to Nox sessions. If you
-disabled type coverage warnings (`TYP`) for Nox sessions, re-enable them for the
+disabled type coverage warnings (`ANN`) for Nox sessions, re-enable them for the
 purposes of this section.
 
 The central type for Nox sessions is `nox.sessions.Session`, which is also the
@@ -603,7 +603,7 @@ def install_with_constraints(session: Session, *args: str, **kwargs: Any) -> Non
 {{< figure src="/images/hypermodern-python-04/beard08.jpg" link="/images/hypermodern-python-04/beard08.jpg" >}}
 
 In this section, I show you how to add type annotations to the test suite. If
-you disabled type coverage warnings (`TYP`) for the test suite, re-enable them
+you disabled type coverage warnings (`ANN`) for the test suite, re-enable them
 for the purposes of this section.
 
 Test functions in Pytest use parameters to declare fixtures they use. Typing
