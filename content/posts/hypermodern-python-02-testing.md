@@ -34,7 +34,7 @@ Here are the topics covered in this chapter on Testing in Python:
 - [Unit testing with pytest](#unit-testing-with-pytest)
 - [Code coverage with Coverage.py](#code-coverage-with-coveragepy)
 - [Test automation with Nox](#test-automation-with-nox)
-- [Mocking with pytest-mock](#mocking-with-pytestmock)
+- [Mocking with pytest-mock](#mocking-with-pytest-mock)
 - [Example CLI: Refactoring](#example-cli-refactoring)
 - [Example CLI: Handling exceptions gracefully](#example-cli-handling-exceptions-gracefully)
 - [Example CLI: Selecting the Wikipedia language edition](#example-cli-selecting-the-wikipedia-language-edition)
